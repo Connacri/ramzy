@@ -55,7 +55,12 @@ class _ProfileState extends State<Profile> with TickerProviderStateMixin {
   String? _imageUrl;
 
   Future pickImage(ImageSource source) async {
-    final pickedFile = await picker.getImage(source: source);
+    final pickedFile = await picker.getImage(
+      source: source,
+      maxHeight: 1080,
+      maxWidth: 1920,
+      imageQuality: 40,
+    );
     setState(() {
       _imageFile = pickedFile;
     });
