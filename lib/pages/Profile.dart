@@ -61,7 +61,7 @@ class _ProfileState extends State<Profile> with TickerProviderStateMixin {
     });
   }
 
-  Future uploadImage() async {
+  Future uploadOneImage(String field) async {
     if (_imageFile == null) {
       return;
     }
@@ -74,18 +74,18 @@ class _ProfileState extends State<Profile> with TickerProviderStateMixin {
     final downloadUrl = await snapshot.ref.getDownloadURL();
     setState(() {
       _imageUrl = downloadUrl;
-      saveImage();
+      saveImage(field);
     });
   }
 
-  Future saveImage() async {
+  Future saveImage(String field) async {
     if (_imageUrl == null) {
       return;
     }
     final timestamp = DateTime.now().millisecondsSinceEpoch.toString();
     final firestoreRef =
         FirebaseFirestore.instance.collection('Users').doc(userGoo!.uid);
-    await firestoreRef.update({'avatar': _imageUrl});
+    await firestoreRef.update({field: _imageUrl});
   }
 
   @override
@@ -148,25 +148,74 @@ class _ProfileState extends State<Profile> with TickerProviderStateMixin {
                       ),
                     ],
                   ),
-                  background: ShaderMask(
-                    shaderCallback: (rect) {
-                      return const LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomLeft,
-                        colors: [Colors.transparent, Colors.black],
-                      ).createShader(
-                          Rect.fromLTRB(0, 0, rect.width, rect.height));
-                    },
-                    blendMode: BlendMode.darken,
-                    child: CachedNetworkImage(
-                      fit: BoxFit.cover,
-                      imageUrl: data['timeline'] ??
-                          'https://source.unsplash.com/random?sig=20*3+1',
-                      errorWidget: (context, url, error) => const Icon(
-                        Icons.error,
-                        color: Colors.red,
+                  background: Stack(
+                    fit: StackFit.expand,
+                    children: [
+                      ShaderMask(
+                        shaderCallback: (rect) {
+                          return const LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomLeft,
+                            colors: [Colors.transparent, Colors.black],
+                          ).createShader(
+                              Rect.fromLTRB(0, 0, rect.width, rect.height));
+                        },
+                        blendMode: BlendMode.darken,
+                        child: CachedNetworkImage(
+                          fit: BoxFit.cover,
+                          imageUrl: data['timeline'] ??
+                              'https://source.unsplash.com/random?sig=20*3+1',
+                          errorWidget: (context, url, error) => const Icon(
+                            Icons.error,
+                            color: Colors.red,
+                          ),
+                        ),
                       ),
-                    ),
+                      Positioned(
+                        right: 36,
+                        bottom: 36,
+                        child: IconButton(
+                          icon: Icon(Icons.add_a_photo),
+                          color: Colors.black,
+                          onPressed: () {
+                            showModalBottomSheet(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return SafeArea(
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: <Widget>[
+                                      ListTile(
+                                        leading: Icon(Icons.camera_alt),
+                                        title: Text('Camera'),
+                                        onTap: () {
+                                          pickImage(ImageSource.camera).then(
+                                            (value) =>
+                                                uploadOneImage('timeline'),
+                                          );
+                                          Navigator.of(context).pop();
+                                        },
+                                      ),
+                                      ListTile(
+                                        leading: Icon(Icons.photo_album),
+                                        title: Text('Gallery'),
+                                        onTap: () {
+                                          pickImage(ImageSource.gallery).then(
+                                            (value) =>
+                                                uploadOneImage('timeline'),
+                                          );
+                                          Navigator.of(context).pop();
+                                        },
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              },
+                            );
+                          },
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),
@@ -200,67 +249,103 @@ class _ProfileState extends State<Profile> with TickerProviderStateMixin {
                           right: 36,
                           bottom: 36,
                           child: IconButton(
-                              icon: Icon(Icons.add_a_photo),
-                              color: Colors.black,
-                              onPressed: () {}),
-                        )
-                      ],
-                    ),
-                    Column(
-                      children: [
-                        if (_imageFile != null)
-                          Container(
-                            height: 200,
-                            child: Image.file(File(_imageFile!.path)),
+                            icon: Icon(Icons.add_a_photo),
+                            color: Colors.black,
+                            onPressed: () {
+                              showModalBottomSheet(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return SafeArea(
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: <Widget>[
+                                        ListTile(
+                                          leading: Icon(Icons.camera_alt),
+                                          title: Text('Camera'),
+                                          onTap: () {
+                                            pickImage(ImageSource.camera).then(
+                                              (value) =>
+                                                  uploadOneImage('avatar'),
+                                            );
+                                            Navigator.of(context).pop();
+                                          },
+                                        ),
+                                        ListTile(
+                                          leading: Icon(Icons.photo_album),
+                                          title: Text('Gallery'),
+                                          onTap: () {
+                                            pickImage(ImageSource.gallery).then(
+                                              (value) =>
+                                                  uploadOneImage('avatar'),
+                                            );
+                                            Navigator.of(context).pop();
+                                          },
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                },
+                              );
+                            },
                           ),
-                        ElevatedButton(
-                          onPressed: () {
-                            showModalBottomSheet(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return SafeArea(
-                                  child: Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: <Widget>[
-                                      ListTile(
-                                        leading: Icon(Icons.camera_alt),
-                                        title: Text('Camera'),
-                                        onTap: () {
-                                          pickImage(ImageSource.camera);
-                                          Navigator.of(context).pop();
-                                        },
-                                      ),
-                                      ListTile(
-                                        leading: Icon(Icons.photo_album),
-                                        title: Text('Gallery'),
-                                        onTap: () {
-                                          pickImage(ImageSource.gallery);
-                                          Navigator.of(context).pop();
-                                        },
-                                      ),
-                                    ],
-                                  ),
-                                );
-                              },
-                            );
-                          },
-                          child: Text('Choose Image'),
-                        ),
-                        ElevatedButton(
-                          onPressed: uploadImage,
-                          child: Text('Upload Image'),
-                        ),
-                        if (_imageUrl != null)
-                          Container(
-                            height: 200,
-                            child: Image.network(_imageUrl!),
-                          ),
-                        ElevatedButton(
-                          onPressed: saveImage,
-                          child: Text('Save Image'),
                         ),
                       ],
                     ),
+                    // Column(
+                    //   children: [
+                    //     if (_imageFile != null)
+                    //       Container(
+                    //         height: 200,
+                    //         child: Image.file(File(_imageFile!.path)),
+                    //       ),
+                    //     ElevatedButton(
+                    //       onPressed: () {
+                    //         showModalBottomSheet(
+                    //           context: context,
+                    //           builder: (BuildContext context) {
+                    //             return SafeArea(
+                    //               child: Column(
+                    //                 mainAxisSize: MainAxisSize.min,
+                    //                 children: <Widget>[
+                    //                   ListTile(
+                    //                     leading: Icon(Icons.camera_alt),
+                    //                     title: Text('Camera'),
+                    //                     onTap: () {
+                    //                       pickImage(ImageSource.camera);
+                    //                       Navigator.of(context).pop();
+                    //                     },
+                    //                   ),
+                    //                   ListTile(
+                    //                     leading: Icon(Icons.photo_album),
+                    //                     title: Text('Gallery'),
+                    //                     onTap: () {
+                    //                       pickImage(ImageSource.gallery);
+                    //                       Navigator.of(context).pop();
+                    //                     },
+                    //                   ),
+                    //                 ],
+                    //               ),
+                    //             );
+                    //           },
+                    //         );
+                    //       },
+                    //       child: Text('Choose Image'),
+                    //     ),
+                    //     ElevatedButton(
+                    //       onPressed: uploadOneImage,
+                    //       child: Text('Upload Image'),
+                    //     ),
+                    //     if (_imageUrl != null)
+                    //       Container(
+                    //         height: 200,
+                    //         child: Image.network(_imageUrl!),
+                    //       ),
+                    //     ElevatedButton(
+                    //       onPressed: saveImage,
+                    //       child: Text('Save Image'),
+                    //     ),
+                    //   ],
+                    // ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -308,7 +393,7 @@ class _ProfileState extends State<Profile> with TickerProviderStateMixin {
                   child: data['phone'] == null
                       ? Text('${userGoo!.phoneNumber ?? ' '.toUpperCase()}',
                           style: const TextStyle())
-                      : Text(data['phone'].toString()),
+                      : Text('+213 ${data['phone']}'),
                 ),
 
                 // Text(userGoo.phoneNumber != null
@@ -330,7 +415,7 @@ class _ProfileState extends State<Profile> with TickerProviderStateMixin {
                     ),
                     label: const Text(
                       'Deconnexion',
-                      style: TextStyle(fontSize: 24, color: Colors.white),
+                      style: TextStyle(color: Colors.white),
                     ),
                     onPressed: () async {
                       FirebaseAuth.instance.signOut();
