@@ -4,6 +4,7 @@ import 'package:avatar_glow/avatar_glow.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutterflow_paginate_firestore/paginate_firestore.dart';
 import 'package:flutterflow_paginate_firestore/widgets/bottom_loader.dart';
@@ -15,7 +16,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import 'package:ramzy/pages/profile_edit.dart';
-
+import 'package:path/path.dart' as Path;
 import '../Oauth/Ogoogle/googleSignInProvider.dart';
 import '../Oauth/Privacy_Policy.dart';
 import '../services/upload_random.dart';
@@ -33,6 +34,8 @@ class Profile extends StatefulWidget {
 
 class _ProfileState extends State<Profile> with TickerProviderStateMixin {
   late TabController _tabController;
+  final userGoo = FirebaseAuth.instance.currentUser;
+  late firebase_storage.Reference ref;
 
   @override
   void initState() {
@@ -46,9 +49,47 @@ class _ProfileState extends State<Profile> with TickerProviderStateMixin {
     super.dispose();
   }
 
+  final picker = ImagePicker();
+
+  PickedFile? _imageFile;
+  String? _imageUrl;
+
+  Future pickImage(ImageSource source) async {
+    final pickedFile = await picker.getImage(source: source);
+    setState(() {
+      _imageFile = pickedFile;
+    });
+  }
+
+  Future uploadImage() async {
+    if (_imageFile == null) {
+      return;
+    }
+    final fileName = DateTime.now().millisecondsSinceEpoch.toString();
+    final firebaseStorageRef = FirebaseStorage.instance
+        .ref()
+        .child('Users/${Path.basename(_imageFile!.path)}');
+    final uploadTask = firebaseStorageRef.putFile(File(_imageFile!.path));
+    final snapshot = await uploadTask.whenComplete(() {});
+    final downloadUrl = await snapshot.ref.getDownloadURL();
+    setState(() {
+      _imageUrl = downloadUrl;
+      saveImage();
+    });
+  }
+
+  Future saveImage() async {
+    if (_imageUrl == null) {
+      return;
+    }
+    final timestamp = DateTime.now().millisecondsSinceEpoch.toString();
+    final firestoreRef =
+        FirebaseFirestore.instance.collection('Users').doc(userGoo!.uid);
+    await firestoreRef.update({'avatar': _imageUrl});
+  }
+
   @override
   Widget build(BuildContext context) {
-    final userGoo = FirebaseAuth.instance.currentUser;
     TabController _tabController = TabController(length: 2, vsync: this);
     return Scaffold(
       backgroundColor: Colors.white,
@@ -159,22 +200,65 @@ class _ProfileState extends State<Profile> with TickerProviderStateMixin {
                           right: 36,
                           bottom: 36,
                           child: IconButton(
-                            icon: Icon(Icons.add_a_photo),
-                            color: Colors.black,
-                            onPressed: () async {
-                              final imageFile = await _pickImage();
-                              if (imageFile != null) {
-                                final fileName =
-                                    'profile_picture_${userGoo.uid}.jpg';
-                                final downloadURL =
-                                    await _uploadImage(imageFile, fileName);
-                                if (downloadURL != null) {
-                                  _updatePicture(userGoo.uid, downloadURL);
-                                }
-                              }
-                            },
-                          ),
+                              icon: Icon(Icons.add_a_photo),
+                              color: Colors.black,
+                              onPressed: () {}),
                         )
+                      ],
+                    ),
+                    Column(
+                      children: [
+                        if (_imageFile != null)
+                          Container(
+                            height: 200,
+                            child: Image.file(File(_imageFile!.path)),
+                          ),
+                        ElevatedButton(
+                          onPressed: () {
+                            showModalBottomSheet(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return SafeArea(
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: <Widget>[
+                                      ListTile(
+                                        leading: Icon(Icons.camera_alt),
+                                        title: Text('Camera'),
+                                        onTap: () {
+                                          pickImage(ImageSource.camera);
+                                          Navigator.of(context).pop();
+                                        },
+                                      ),
+                                      ListTile(
+                                        leading: Icon(Icons.photo_album),
+                                        title: Text('Gallery'),
+                                        onTap: () {
+                                          pickImage(ImageSource.gallery);
+                                          Navigator.of(context).pop();
+                                        },
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              },
+                            );
+                          },
+                          child: Text('Choose Image'),
+                        ),
+                        ElevatedButton(
+                          onPressed: uploadImage,
+                          child: Text('Upload Image'),
+                        ),
+                        if (_imageUrl != null)
+                          Container(
+                            height: 200,
+                            child: Image.network(_imageUrl!),
+                          ),
+                        ElevatedButton(
+                          onPressed: saveImage,
+                          child: Text('Save Image'),
+                        ),
                       ],
                     ),
                     Row(
@@ -200,7 +284,7 @@ class _ProfileState extends State<Profile> with TickerProviderStateMixin {
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        userGoo.emailVerified == true
+                        userGoo?.emailVerified == true
                             ? Icon(
                                 Icons.check_circle,
                                 color: Colors.blue,
@@ -209,20 +293,20 @@ class _ProfileState extends State<Profile> with TickerProviderStateMixin {
                                 Icons.not_interested_outlined,
                                 color: Colors.red,
                               ),
-                        Text(userGoo.email.toString().toUpperCase()),
+                        Text(userGoo!.email.toString().toUpperCase()),
                       ],
                     ),
                   ],
                 ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: Text(userGoo.emailVerified != true
+                  child: Text(userGoo?.emailVerified != true
                       ? 'Email Not Verified'
                       : ''),
                 ),
                 Center(
                   child: data['phone'] == null
-                      ? Text('${userGoo.phoneNumber ?? ' '.toUpperCase()}',
+                      ? Text('${userGoo!.phoneNumber ?? ' '.toUpperCase()}',
                           style: const TextStyle())
                       : Text(data['phone'].toString()),
                 ),
@@ -291,11 +375,11 @@ class _ProfileState extends State<Profile> with TickerProviderStateMixin {
                         controller: _tabController,
                         children: [
                           PostListOfMyProfil(
-                            userID: userGoo.uid,
+                            userID: userGoo!.uid,
                             collection: 'Products',
                           ),
                           PostListOfMyProfil(
-                            userID: userGoo.uid,
+                            userID: userGoo!.uid,
                             collection: 'Instalives',
                           ),
                         ],
@@ -332,40 +416,6 @@ class _ProfileState extends State<Profile> with TickerProviderStateMixin {
         },
       ),
     );
-  }
-
-  Future<File?> _pickImage() async {
-    final picker = ImagePicker();
-    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
-
-    if (pickedFile != null) {
-      return File(pickedFile.path);
-    } else {
-      return null;
-    }
-  }
-
-  Future<String?> _uploadImage(File imageFile, String fileName) async {
-    try {
-      final storageRef =
-          firebase_storage.FirebaseStorage.instance.ref().child(fileName);
-      final uploadTask = storageRef.putFile(imageFile);
-      final snapshot = await uploadTask.whenComplete(() {});
-      final downloadURL = await snapshot.ref.getDownloadURL();
-      return downloadURL;
-    } catch (e) {
-      print(e);
-      return null;
-    }
-  }
-
-  void _updatePicture(String userId, String newPictureUrl) {
-    FirebaseFirestore.instance
-        .collection('users')
-        .doc(userId)
-        .update({'pictureUrl': newPictureUrl})
-        .then((_) => print('Picture updated'))
-        .catchError((error) => print('Failed to update picture: $error'));
   }
 }
 

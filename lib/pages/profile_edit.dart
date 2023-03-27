@@ -150,6 +150,7 @@ class _profile_editState extends State<profile_edit> {
                   'phone': int.parse(_telContactController.text),
                 }).then((value) {
                   print("Document mis à jour avec succès");
+                  Navigator.of(context).pop();
                 }).catchError((error) {
                   print("Erreur lors de la mise à jour du document: $error");
                 });
