@@ -1,0 +1,128 @@
+name: ramzy
+description: A new Flutter project.
+
+publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.0-290.0.dev <4.0.0'
+
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cloud_firestore: ^4.3.1
+  firebase_messaging: ^14.2.1
+  firebase_database: ^10.0.9
+  firebase_core: ^2.4.1
+  firebase_auth: ^4.2.5
+  firebase_storage: any
+  google_sign_in: ^5.4.4
+  cached_network_image: ^3.2.3
+  flutter_slidable: ^2.0.0
+  lottie: ^2.2.0
+  provider: ^6.0.5
+  fluttertoast:
+  font_awesome_flutter: ^10.3.0
+  email_validator: ^2.1.17
+  flutter_native_splash: ^2.2.16
+  shared_preferences: ^2.0.17
+  avatar_glow: ^2.0.2
+  url_launcher: ^6.1.8
+  carousel_slider: ^4.2.1
+  image_picker: ^0.8.6+4
+  intl_phone_field: ^3.1.0
+  pretty_qr_code: ^2.0.3
+  ticket_widget: ^0.0.1
+  readmore: ^2.2.0
+  flutterflow_paginate_firestore: ^1.0.3+1
+  dart_date: ^1.1.1
+  flutter_staggered_grid_view: ^0.6.2
+  http: ^0.13.5
+  calendar_timeline: ^1.0.5
+  syncfusion_flutter_calendar: ^20.3.47
+  favorite_button: ^0.0.4
+  like_button: ^2.0.5
+  timeago: ^3.3.0
+  video_player: ^2.4.7
+  entry: ^0.0.7
+  sliding_up_panel2: ^3.2.2
+  marquee: ^2.2.3
+  screenshot: ^1.2.3
+  share_plus: ^4.4.0
+  shimmer: ^2.0.0
+  rename: ^2.1.1
+  flutter_rating_bar: ^4.0.1
+  horizontal_calendar: any
+  geocoding: ^2.0.5
+  geolocator: ^9.0.2
+  #  geocode: ^1.0.2
+  map_launcher: ^2.4.0
+  open_location_picker: ^0.2.1
+  flutter_osm_plugin: ^0.50.0
+  flutter_hooks: ^0.18.5+1
+  pointer_interceptor: ^0.9.3+3
+  background_locator_2: ^2.0.6
+
+  #######################################################################"
+  cupertino_icons: ^1.0.2
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_launcher_icons: ^0.11.0
+
+flutter_icons:
+  android: true
+  ios: true
+  #  image_path: "assets/images/dolphin-emoji.png"
+  image_path: "assets/images/ic_launcher/1024.png"
+  min_sdk_android: 21 # android min sdk min:16, default 21
+  web:
+    generate: true
+    image_path: "assets/images/ic_launcher/1024.png"
+    #    image_path: "assets/images/ic_launcher/1024.png"
+    adaptive_icon_foreground: "assets/images/ic_launcher/1024.png"
+    background_color: "#hexcode"
+    theme_color: "#hexcode"
+  windows:
+    generate: true
+    image_path: "assets/images/ic_launcher/1024.png"
+    icon_size: 48 # min:48, max:256, default: 48
+  macos:
+    generate: true
+    image_path: "assets/images/ic_launcher/1024.png"
+
+flutter_native_splash:
+  color: "#ffffff"
+  image: assets/images/ic_launcher/1024.png
+
+  flutter_lints: ^2.0.1
+
+flutter:
+
+  uses-material-design: true
+
+
+
+  fonts:
+    - family: Oswald
+      fonts:
+        - asset: assets/fonts/Oswald-Bold.ttf
+        - asset: assets/fonts/Oswald-ExtraLight.ttf
+        - asset: assets/fonts/Oswald-SemiBold.ttf
+        - asset: assets/fonts/Oswald-Regular.ttf
+        - asset: assets/fonts/Oswald-Light.ttf
+        - asset: assets/fonts/Oswald-Medium.ttf
+        - asset: assets/fonts/ArbFONTS-khalaad-al-arabeh.ttf
+        - asset: assets/fonts/NizarBBCKurdish-Bold.ttf
+
+  assets:
+    - assets/
+    - assets/lotties/
+    - assets/images/ic_launcher/1024.png
+    - assets/firebase_logo.png
+    - assets/google_logo.png
+
+
