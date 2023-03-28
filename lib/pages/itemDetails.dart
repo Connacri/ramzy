@@ -53,10 +53,9 @@ class SilverdetailItem extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.only(left: 15),
                     child: Text(
-                      data['category'] ?? 'null',
+                      data['category'] ?? ' ',
                       overflow: TextOverflow.fade,
                       style: TextStyle(
-                          fontFamily: 'oswald',
                           color: Colors.white,
                           fontSize: 16,
                           fontWeight: FontWeight.w500),
@@ -103,7 +102,6 @@ class SilverdetailItem extends StatelessWidget {
                         color: Colors.black54,
                         fontWeight: FontWeight.normal,
                         fontSize: 12,
-                        fontFamily: 'Oswald',
                       )),
             ),
           ),
@@ -224,35 +222,39 @@ class SilverdetailItem extends StatelessWidget {
           SliverList(
             delegate: SliverChildListDelegate(
               [
-                Padding(
-                  padding: new EdgeInsets.symmetric(horizontal: 20.0),
-                  child: new Text(
-                    data['item'].toString().toUpperCase(),
-                    style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                        fontFamily: 'oswald'),
-                  ),
-                ),
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: Padding(
-                    padding: new EdgeInsets.symmetric(horizontal: 20.0),
-                    child: new Text(
-                      'Prix : ' +
-                          NumberFormat.currency(
-                                  symbol: 'DZD ', decimalDigits: 2)
-                              .format(data['price']),
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                          //backgroundColor: Colors.black45,
-                          fontSize: 18,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.green,
-                          fontFamily: 'oswald'),
-                    ),
-                  ),
-                ),
+                data['item'] == null
+                    ? Container()
+                    : Padding(
+                        padding: new EdgeInsets.symmetric(horizontal: 20.0),
+                        child: new Text(
+                          data['item'].toString().toUpperCase(),
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                data['price'] == null
+                    ? Container()
+                    : Align(
+                        alignment: Alignment.centerLeft,
+                        child: Padding(
+                          padding: new EdgeInsets.symmetric(horizontal: 20.0),
+                          child: new Text(
+                            'Prix : ' +
+                                NumberFormat.currency(
+                                        symbol: 'DZD ', decimalDigits: 2)
+                                    .format(data['price']),
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              //backgroundColor: Colors.black45,
+                              fontSize: 18,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.green,
+                            ),
+                          ),
+                        ),
+                      ),
                 Container(
                   padding: EdgeInsets.symmetric(horizontal: 8, vertical: 10),
                   height: 150.0,
@@ -271,7 +273,7 @@ class SilverdetailItem extends StatelessWidget {
                 ),
                 Container(
                   child: data['position'] == null
-                      ? null
+                      ? Container()
                       : Stack(
                           children: [
                             SizedBox(
@@ -349,7 +351,7 @@ class SilverdetailItem extends StatelessWidget {
                   padding:
                       const EdgeInsets.symmetric(horizontal: 60, vertical: 10),
                   child: data['position'] == null
-                      ? null
+                      ? Container()
                       : ElevatedButton.icon(
                           style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.indigo),
@@ -374,19 +376,21 @@ class SilverdetailItem extends StatelessWidget {
                           )),
                 ),
 
-                Center(
-                  child: Padding(
-                    padding: new EdgeInsets.all(20.0),
-                    child: Text(
-                      'Niveau : ' + data['levelItem'],
-                      style: TextStyle(
-                          color: Colors.red,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
-                          fontFamily: 'oswald'),
-                    ),
-                  ),
-                ),
+                data['levelItem'] == null
+                    ? Container()
+                    : Center(
+                        child: Padding(
+                          padding: new EdgeInsets.all(20.0),
+                          child: Text(
+                            'Niveau : ' + data['levelItem'],
+                            style: TextStyle(
+                              color: Colors.red,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
+                      ),
                 Padding(
                   padding: new EdgeInsets.symmetric(horizontal: 20.0),
                   child: Text(
@@ -397,14 +401,18 @@ class SilverdetailItem extends StatelessWidget {
                         color: Colors.black54),
                   ),
                 ),
-                Padding(
-                  padding: new EdgeInsets.all(20.0),
-                  child: Text(
-                    'Made In  ${data['origine'] ?? 'Algeria'}',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 16, fontFamily: 'oswald'),
-                  ),
-                ),
+                data['origine'] == null
+                    ? Container()
+                    : Padding(
+                        padding: new EdgeInsets.all(20.0),
+                        child: Text(
+                          'Made In  ${data['origine'] ?? 'Algeria'}',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 16,
+                          ),
+                        ),
+                      ),
                 // Padding(
                 //     padding: new EdgeInsets.symmetric(horizontal: 20.0),
                 //     child: new Text(

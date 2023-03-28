@@ -85,7 +85,6 @@ class _ProfileOthersState extends State<ProfileOthers>
                       color: Colors.black54,
                       fontWeight: FontWeight.normal,
                       fontSize: 12,
-                      fontFamily: 'Oswald',
                     )),
               ),
               Padding(
@@ -97,7 +96,6 @@ class _ProfileOthersState extends State<ProfileOthers>
                       color: Colors.black54,
                       fontWeight: FontWeight.normal,
                       fontSize: 12,
-                      fontFamily: 'Oswald',
                     )),
               ),
             ],
@@ -110,7 +108,6 @@ class _ProfileOthersState extends State<ProfileOthers>
                   color: Colors.black54,
                   overflow: TextOverflow.ellipsis,
                   fontWeight: FontWeight.w500,
-                  fontFamily: 'Oswald',
                   fontSize: 20),
             ),
           ),
@@ -161,7 +158,6 @@ class _ProfileOthersState extends State<ProfileOthers>
                 widget.datauser!['plan'].toUpperCase(),
                 style: const TextStyle(
                   fontWeight: FontWeight.normal,
-                  fontFamily: 'Oswald',
                   fontSize: 14,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -174,7 +170,6 @@ class _ProfileOthersState extends State<ProfileOthers>
               style: const TextStyle(
                 color: Colors.black45,
                 fontWeight: FontWeight.normal,
-                fontFamily: 'Oswald',
                 fontSize: 10,
                 overflow: TextOverflow.ellipsis,
               ),
@@ -347,7 +342,6 @@ class PostListOfUserProfile extends StatelessWidget {
                       color: Colors.black45,
                       fontWeight: FontWeight.normal,
                       fontSize: 15,
-                      fontFamily: 'Oswald',
                     ),
                   ),
                   subtitle: Text(
@@ -357,7 +351,6 @@ class PostListOfUserProfile extends StatelessWidget {
                       color: Colors.green,
                       fontWeight: FontWeight.bold,
                       fontSize: 15,
-                      fontFamily: 'Oswald',
                     ),
                   ),
                   isThreeLine: true,

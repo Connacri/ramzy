@@ -116,7 +116,7 @@ class _ProfileState extends State<Profile> with TickerProviderStateMixin {
           if (snapshot.connectionState == ConnectionState.done) {
             Map<String, dynamic> data =
                 snapshot.data!.data() as Map<String, dynamic>;
-
+            bool uploading = false;
             return CustomScrollView(slivers: <Widget>[
               SliverAppBar(
                 expandedHeight: 220.0,
@@ -129,11 +129,12 @@ class _ProfileState extends State<Profile> with TickerProviderStateMixin {
                   centerTitle: true,
                   title: Row(
                     crossAxisAlignment: CrossAxisAlignment.end,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Padding(
                         padding: const EdgeInsets.only(left: 15),
                         child: Text(
-                          data['displayName'] ?? '',
+                          data['displayName'].toString().toUpperCase() ?? '',
                           overflow: TextOverflow.fade,
                           style: TextStyle(
                               fontFamily: 'oswald',
@@ -142,7 +143,61 @@ class _ProfileState extends State<Profile> with TickerProviderStateMixin {
                               fontWeight: FontWeight.w500),
                         ),
                       ),
-                      Spacer(),
+                      //Spacer(),
+                      IconButton(
+                        icon: uploading == false
+                            ? Icon(
+                                Icons.add_a_photo,
+                                color: Colors.white70,
+                                size: 15,
+                              )
+                            : CircularProgressIndicator(),
+                        color: Colors.black,
+                        onPressed: () {
+                          showModalBottomSheet(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return SafeArea(
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: <Widget>[
+                                    ListTile(
+                                      leading: Icon(
+                                        Icons.camera_alt,
+                                      ),
+                                      title: Text('Camera'),
+                                      onTap: () {
+                                        pickImage(ImageSource.camera).then(
+                                          (value) {
+                                            uploadOneImage('timeline');
+                                          },
+                                        );
+
+                                        Navigator.of(context).pop();
+                                      },
+                                    ),
+                                    ListTile(
+                                      leading: Icon(Icons.photo_album),
+                                      title: Text('Gallery'),
+                                      onTap: () {
+                                        pickImage(ImageSource.gallery).then(
+                                          (value) {
+                                            // if (uploading) return;
+                                            // setState(() => uploading = true);
+                                            uploadOneImage('timeline');
+                                          },
+                                        );
+                                        Navigator.of(context).pop();
+                                      },
+                                    ),
+                                  ],
+                                ),
+                              );
+                            },
+                          );
+                        },
+                      ),
+
                       Padding(
                         padding: const EdgeInsets.symmetric(
                             horizontal: 10, vertical: 2),
@@ -153,75 +208,95 @@ class _ProfileState extends State<Profile> with TickerProviderStateMixin {
                       ),
                     ],
                   ),
-                  background: Stack(
-                    fit: StackFit.expand,
-                    children: [
-                      ShaderMask(
-                        shaderCallback: (rect) {
-                          return const LinearGradient(
-                            begin: Alignment.topCenter,
-                            end: Alignment.bottomLeft,
-                            colors: [Colors.transparent, Colors.black],
-                          ).createShader(
-                              Rect.fromLTRB(0, 0, rect.width, rect.height));
-                        },
-                        blendMode: BlendMode.darken,
-                        child: CachedNetworkImage(
-                          fit: BoxFit.cover,
-                          imageUrl: data['timeline'] ??
-                              'https://source.unsplash.com/random?sig=20*3+1',
-                          errorWidget: (context, url, error) => const Icon(
-                            Icons.error,
-                            color: Colors.red,
-                          ),
-                        ),
+                  background: ShaderMask(
+                    shaderCallback: (rect) {
+                      return const LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomLeft,
+                        colors: [Colors.transparent, Colors.black],
+                      ).createShader(
+                          Rect.fromLTRB(0, 0, rect.width, rect.height));
+                    },
+                    blendMode: BlendMode.darken,
+                    child: CachedNetworkImage(
+                      fit: BoxFit.cover,
+                      imageUrl: data['timeline'] ??
+                          'https://source.unsplash.com/random?sig=20*3+1',
+                      errorWidget: (context, url, error) => const Icon(
+                        Icons.error,
+                        color: Colors.red,
                       ),
-                      Positioned(
-                        right: 36,
-                        bottom: 36,
-                        child: IconButton(
-                          icon: Icon(Icons.add_a_photo),
-                          color: Colors.black,
-                          onPressed: () {
-                            showModalBottomSheet(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return SafeArea(
-                                  child: Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: <Widget>[
-                                      ListTile(
-                                        leading: Icon(Icons.camera_alt),
-                                        title: Text('Camera'),
-                                        onTap: () {
-                                          pickImage(ImageSource.camera).then(
-                                            (value) =>
-                                                uploadOneImage('timeline'),
-                                          );
-                                          Navigator.of(context).pop();
-                                        },
-                                      ),
-                                      ListTile(
-                                        leading: Icon(Icons.photo_album),
-                                        title: Text('Gallery'),
-                                        onTap: () {
-                                          pickImage(ImageSource.gallery).then(
-                                            (value) =>
-                                                uploadOneImage('timeline'),
-                                          );
-                                          Navigator.of(context).pop();
-                                        },
-                                      ),
-                                    ],
-                                  ),
-                                );
-                              },
-                            );
-                          },
-                        ),
-                      ),
-                    ],
+                    ),
                   ),
+                  // Stack(
+                  //   fit: StackFit.expand,
+                  //   children: [
+                  //     ShaderMask(
+                  //       shaderCallback: (rect) {
+                  //         return const LinearGradient(
+                  //           begin: Alignment.topCenter,
+                  //           end: Alignment.bottomLeft,
+                  //           colors: [Colors.transparent, Colors.black],
+                  //         ).createShader(
+                  //             Rect.fromLTRB(0, 0, rect.width, rect.height));
+                  //       },
+                  //       blendMode: BlendMode.darken,
+                  //       child: CachedNetworkImage(
+                  //         fit: BoxFit.cover,
+                  //         imageUrl: data['timeline'] ??
+                  //             'https://source.unsplash.com/random?sig=20*3+1',
+                  //         errorWidget: (context, url, error) => const Icon(
+                  //           Icons.error,
+                  //           color: Colors.red,
+                  //         ),
+                  //       ),
+                  //     ),
+                  //     Positioned(
+                  //       right: 10,
+                  //       bottom: 30,
+                  //       child: IconButton(
+                  //         icon: Icon(Icons.add_a_photo),
+                  //         color: Colors.black,
+                  //         onPressed: () {
+                  //           showModalBottomSheet(
+                  //             context: context,
+                  //             builder: (BuildContext context) {
+                  //               return SafeArea(
+                  //                 child: Column(
+                  //                   mainAxisSize: MainAxisSize.min,
+                  //                   children: <Widget>[
+                  //                     ListTile(
+                  //                       leading: Icon(Icons.camera_alt),
+                  //                       title: Text('Camera'),
+                  //                       onTap: () {
+                  //                         pickImage(ImageSource.camera).then(
+                  //                           (value) =>
+                  //                               uploadOneImage('timeline'),
+                  //                         );
+                  //                         Navigator.of(context).pop();
+                  //                       },
+                  //                     ),
+                  //                     ListTile(
+                  //                       leading: Icon(Icons.photo_album),
+                  //                       title: Text('Gallery'),
+                  //                       onTap: () {
+                  //                         pickImage(ImageSource.gallery).then(
+                  //                           (value) =>
+                  //                               uploadOneImage('timeline'),
+                  //                         );
+                  //                         Navigator.of(context).pop();
+                  //                       },
+                  //                     ),
+                  //                   ],
+                  //                 ),
+                  //               );
+                  //             },
+                  //           );
+                  //         },
+                  //       ),
+                  //     ),
+                  //   ],
+                  // ),
                 ),
               ),
               SliverList(
@@ -251,11 +326,14 @@ class _ProfileState extends State<Profile> with TickerProviderStateMixin {
                           ),
                         ),
                         Positioned(
-                          right: 36,
-                          bottom: 36,
+                          right: 15,
+                          top: 10,
                           child: IconButton(
-                            icon: Icon(Icons.add_a_photo),
-                            color: Colors.black,
+                            icon: Icon(
+                              Icons.add_a_photo,
+                              color: Colors.black,
+                              size: 20,
+                            ),
                             onPressed: () {
                               showModalBottomSheet(
                                 context: context,
@@ -389,7 +467,7 @@ class _ProfileState extends State<Profile> with TickerProviderStateMixin {
                   ],
                 ),
                 Padding(
-                  padding: const EdgeInsets.all(8.0),
+                  padding: const EdgeInsets.all(0.0),
                   child: Text(userGoo?.emailVerified != true
                       ? 'Email Not Verified'
                       : ''),
@@ -406,17 +484,17 @@ class _ProfileState extends State<Profile> with TickerProviderStateMixin {
                 //     : ' '.toUpperCase()),
                 Padding(
                   padding:
-                      const EdgeInsets.symmetric(vertical: 8, horizontal: 38),
+                      const EdgeInsets.symmetric(vertical: 20, horizontal: 100),
                   child: ElevatedButton.icon(
                     style: ElevatedButton.styleFrom(
-                        primary: Colors.black54,
+                        backgroundColor: Colors.red,
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(15)),
                         elevation: 4.0,
                         minimumSize: const Size.fromHeight(50)),
                     icon: Icon(
-                      Icons.cancel,
-                      color: Colors.red,
+                      Icons.logout,
+                      color: Colors.white,
                     ),
                     label: const Text(
                       'Deconnexion',

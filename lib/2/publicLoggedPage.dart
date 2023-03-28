@@ -632,11 +632,18 @@ class UnsplashSlider extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => Navigator.of(context).push(MaterialPageRoute(
-        builder: (context) => UnsplashSlider(
-          UnsplashUrl: UnsplashUrl,
-        ),
-      )),
+      onTap: () async {
+        await Navigator.push(context,
+            MaterialPageRoute(builder: (BuildContext) {
+          return Hero_UnsplashUrl(UnsplashUrl: UnsplashUrl);
+        }));
+      },
+
+      // onTap: () => Navigator.of(context).push(MaterialPageRoute(
+      //   builder: (context) => UnsplashSlider(
+      //     UnsplashUrl: UnsplashUrl,
+      //   ),
+      // )),
       child: Card(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(15.0),
@@ -663,6 +670,42 @@ class UnsplashSlider extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+class Hero_UnsplashUrl extends StatelessWidget {
+  const Hero_UnsplashUrl({
+    super.key,
+    required this.UnsplashUrl,
+  });
+
+  final String UnsplashUrl;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        leading: Builder(
+          builder: (BuildContext context) {
+            return IconButton(
+              icon: const Icon(Icons.backspace),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            );
+          },
+        ),
+      ),
+      body: Hero(
+          tag: 'Hero_UnsplashUrl',
+          transitionOnUserGestures: true,
+          child: Container(
+            child: CachedNetworkImage(
+              imageUrl: UnsplashUrl,
+              fit: BoxFit.cover,
+            ),
+          )),
     );
   }
 }
