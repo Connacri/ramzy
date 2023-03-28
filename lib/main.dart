@@ -19,7 +19,7 @@ Future<void> main() async {
       );
 
   // splash.FlutterNativeSplash.removeAfter(initialization);
-   //WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+  //WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
   //splash.FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
   SystemChrome.setEnabledSystemUIMode(
       SystemUiMode.edgeToEdge, //.immersiveSticky,
@@ -41,33 +41,33 @@ class MyApp extends StatelessWidget {
 
   static const String _title = 'Oran ';
   final GoogleUser2 = FirebaseAuth.instance.currentUser;
+  final GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
 
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (context) => googleSignInProvider(),
-      //lazy: true,
-      child: MaterialApp(
-        locale: const Locale('fr', ''),
-        //scaffoldMessengerKey: Utils.messengerKey,
-        navigatorKey: navigatorKey,
-        debugShowCheckedModeBanner: false,
-        title: _title,
-        themeMode: ThemeMode.dark,
-        theme: ThemeData(
-          useMaterial3: true,
-          fontFamily: "Oswald",
-          primarySwatch: Colors.blue,
-          appBarTheme: AppBarTheme(
-            systemOverlayStyle: SystemUiOverlayStyle(
-              statusBarColor: Colors.transparent,
+        create: (context) => googleSignInProvider(),
+        //lazy: true,
+        child: MaterialApp(
+          locale: const Locale('fr', ''),
+          //scaffoldMessengerKey: Utils.messengerKey,
+          navigatorKey: navigatorKey,
+          debugShowCheckedModeBanner: false,
+          title: _title,
+          themeMode: ThemeMode.dark,
+          theme: ThemeData(
+            useMaterial3: true,
+            fontFamily: "Oswald",
+            primarySwatch: Colors.blue,
+            appBarTheme: AppBarTheme(
+              systemOverlayStyle: SystemUiOverlayStyle(
+                statusBarColor: Colors.transparent,
+              ),
             ),
           ),
-        ),
-        home: // upload_random(),
+          home: // upload_random(),
 
-            verifi_auth(),
-      ),
-    );
+              verifi_auth(),
+        ));
   }
 }
