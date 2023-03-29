@@ -97,7 +97,7 @@ class _stepper2_widgetState extends State<stepper2_widget> {
                 ),
               ),
               const Text(
-                ' Va Publier Une Annonce',
+                ' Va Publier Un Post',
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(fontFamily: 'oswald', fontSize: 17),
               ),

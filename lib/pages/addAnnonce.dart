@@ -131,6 +131,8 @@ class _stepper_widgetState extends State<stepper_widget> {
 
   @override
   Widget build(BuildContext context) {
+    // late final GeoPoint p;
+
     return Scaffold(
       appBar: AppBar(
           leading: Padding(
@@ -228,9 +230,7 @@ class _stepper_widgetState extends State<stepper_widget> {
                                       ? () async {
                                           await Navigator.push(context,
                                               MaterialPageRoute(builder: (_) {
-                                            return //widget.ccollection == 'Products'
-                                                // ?
-                                                page_detail(
+                                            return page_detail(
                                               //   code: _codeController.text,
                                               geoLocation: notifier,
                                               imagesList: _imagesList,
@@ -606,23 +606,31 @@ class _stepper_widgetState extends State<stepper_widget> {
                             height: 10,
                           ),
                           TextFormField(
-                              keyboardType: TextInputType.multiline,
-                              maxLines: 5,
-                              textAlign: TextAlign.center,
-                              style: const TextStyle(
-                                fontSize: 25,
-                              ),
-                              controller: _descriptionController,
-                              decoration: const InputDecoration(
-                                hintStyle: TextStyle(color: Colors.black38),
-                                fillColor: Colors.white,
-                                hintText: 'Ecrire Une Description',
-                                border: InputBorder.none,
-                                filled: true,
-                                contentPadding: EdgeInsets.all(15),
-                              ),
-                              textInputAction:
-                                  TextInputAction.next), // description
+                            keyboardType: TextInputType.multiline,
+                            maxLines: 5,
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(
+                              fontSize: 25,
+                            ),
+                            controller: _descriptionController,
+                            decoration: const InputDecoration(
+                              hintStyle: TextStyle(color: Colors.black38),
+                              fillColor: Colors.white,
+                              hintText: 'Ecrire Une Description',
+                              border: InputBorder.none,
+                              filled: true,
+                              contentPadding: EdgeInsets.all(15),
+                            ),
+                            textInputAction: TextInputAction.next,
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Vous Devez Ecrire Une Description';
+                              } else if (isSelected == false) {
+                                return 'Vous Devez Choisir Location ou Vente';
+                              }
+                              return null;
+                            },
+                          ), // description
                         ],
                       ),
                     ),
@@ -647,10 +655,10 @@ class _stepper_widgetState extends State<stepper_widget> {
                         padding: const EdgeInsets.all(8.0),
                         child: ValueListenableBuilder<GeoPoint?>(
                           valueListenable: notifier,
-                          builder: (ctx, p, child) {
+                          builder: (ctx, px, child) {
                             return Center(
                               child: Text(
-                                "${p?.toString() ?? ""}",
+                                "${px?.toString() ?? ""}",
                                 textAlign: TextAlign.center,
                               ),
                             );
@@ -675,6 +683,7 @@ class _stepper_widgetState extends State<stepper_widget> {
                   ),
                 ),
               ),
+              // Disable the next button if p is null
             ],
           ),
         ),
