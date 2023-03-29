@@ -134,7 +134,7 @@ class _ProfileState extends State<Profile> with TickerProviderStateMixin {
                       Padding(
                         padding: const EdgeInsets.only(left: 15),
                         child: Text(
-                          data['displayName'].toString().toUpperCase() ?? '',
+                          data['displayName'].toString().toUpperCase(),
                           overflow: TextOverflow.fade,
                           style: TextStyle(
                               fontFamily: 'oswald',

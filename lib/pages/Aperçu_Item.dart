@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart' as cloud;
+import 'package:dart_date/dart_date.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -417,26 +418,19 @@ class _page_detailState extends State<page_detail> {
       'category': typeSelected,
       'createdAt': cloud.Timestamp.now(), //now.toString(),
       'Description': description,
-      'likes': likes,
+      'likes': 0, //likes,
       'usersLike': usersLike,
       'dateDebut': DateTime.now().add(const Duration(days: 3)),
       'dateFin': DateTime.now().add(const Duration(days: 11)),
-      'levelItem': '',
+      'levelItem': 'free',
       'phone': phone,
       'position': geoPoint,
     });
-    // userRef.doc(user!.uid).set({
-    //   'userID': userID,
-    //   'userEmail': userEmail,
-    //  // 'userAvatar': userAvatar,
-    //   'UcreatedAt': Timestamp.now(), //now.toString(),
-    //   'userDisplayName': userDisplayName,
-    //   'userAge': userAge,
-    //   'userItemsNbr': FieldValue.increment(1),
-    //   'userPhone': userPhone,
-    //   'userSex': userSex,
-    //   'userState': userState,
-    // }, SetOptions(merge: true));
+    userRef.doc(user!.uid).update(
+      {
+        'userItemsNbr': cloud.FieldValue.increment(1),
+      },
+    );
   }
 }
 
@@ -480,7 +474,7 @@ class TicketData extends StatelessWidget {
               ),
               child: const Center(
                 child: Text(
-                  'Business Class',
+                  'Free Class',
                   style: TextStyle(color: Colors.green, fontFamily: 'oswald'),
                 ),
               ),
@@ -523,7 +517,7 @@ class TicketData extends StatelessWidget {
             children: [
               const Expanded(
                 child: Text(
-                  'Aperçu de Publication',
+                  'Aperçu',
                   style: TextStyle(
                       color: Colors.black,
                       fontSize: 22.0,
@@ -552,20 +546,25 @@ class TicketData extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.only(top: 12.0, right: 20.0),
               child: ticketDetailsWidget(
-                  'Passengers',
-                  itemController.toString().toUpperCase(),
-                  'Date',
-                  '28-08-2022'),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(top: 12.0, right: 20.0),
-              child: ticketDetailsWidget('Flight', '76836A45', 'Gate', '66B'),
+                'Item',
+                itemController.toString().toUpperCase(),
+                'Date',
+                cloud.Timestamp.now()
+                    .toDate()
+                    .format('yMMMMEEEEd', 'fr_FR')
+                    .toString(),
+              ),
             ),
             Padding(
               padding: const EdgeInsets.only(top: 12.0, right: 20.0),
               child: ticketDetailsWidget(
-                  'Class', typeSelected.toString(), 'Seat', '21B'),
+                  'category', typeSelected, 'level Item', 'free'),
             ),
+            // Padding(
+            //   padding: const EdgeInsets.only(top: 12.0, right: 20.0),
+            //   child: ticketDetailsWidget(
+            //       'Class', typeSelected.toString(), 'Seat', '21B'),
+            // ),
           ],
         ),
         Padding(
@@ -887,7 +886,7 @@ class _page_detail_instaState extends State<page_detail_insta> {
                             // await Future.delayed(Duration(seconds: 5));
                             // setState(() => uploading = false);
 
-                            uploadFile().whenComplete(() => Navigator.push(
+                            uploadFileinsta().whenComplete(() => Navigator.push(
                                     context, MaterialPageRoute(builder: (_) {
                                   return verifi_auth();
                                 })));
@@ -928,7 +927,7 @@ class _page_detail_instaState extends State<page_detail_insta> {
             ]));
   }
 
-  Future uploadFile() async {
+  Future uploadFileinsta() async {
     int i = 1;
     String typeSelected = widget.typeSelected;
     String locationvente = widget.locationventeSelected;
@@ -982,11 +981,11 @@ class _page_detail_instaState extends State<page_detail_insta> {
       'category': typeSelected,
       'createdAt': cloud.Timestamp.now(), //now.toString(),
       'Description': description,
-      'likes': likes,
+      'likes': 0, //likes,
       'usersLike': usersLike,
       'dateDebut': DateTime.now().add(const Duration(days: 3)),
       'dateFin': DateTime.now().add(const Duration(days: 11)),
-      'levelItem': '',
+      'levelItem': 'free',
     });
     // userRef.doc(user!.uid).set({
     //   'userID': userID,

@@ -9,7 +9,6 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
 import 'itemDetails.dart';
-import 'item_details-statefull.dart';
 
 class ProfileOthers extends StatefulWidget {
   const ProfileOthers({

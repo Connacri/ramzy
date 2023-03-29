@@ -16,11 +16,10 @@ import 'package:timeago/timeago.dart' as timeago;
 import '../Oauth/AuthPage.dart';
 import 'ProfileOthers.dart';
 import 'ProvidersPublic.dart';
-import 'addPost.dart';
-import 'addPost2.dart';
+import 'addAnnonce.dart';
+import 'addPost_Insta.dart';
 import 'homeList.dart';
 import 'itemDetails.dart';
-import 'item_details-statefull.dart';
 import 'package:intl/intl.dart' as intl;
 import 'package:intl/intl.dart';
 

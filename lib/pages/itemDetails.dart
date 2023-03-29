@@ -376,13 +376,14 @@ class SilverdetailItem extends StatelessWidget {
                           )),
                 ),
 
-                data['levelItem'] == null
+                data['levelItem'] == null || data['levelItem'] == ''
                     ? Container()
                     : Center(
                         child: Padding(
                           padding: new EdgeInsets.all(20.0),
                           child: Text(
-                            'Niveau : ' + data['levelItem'],
+                            'Niveau : ' +
+                                data['levelItem'].toString().toUpperCase(),
                             style: TextStyle(
                               color: Colors.red,
                               fontSize: 16,

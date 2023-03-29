@@ -92,7 +92,7 @@ class _global_roomsState extends State<global_rooms> {
               lastDate: DateTime.now().add(const Duration(days: 365)),
               onDateSelected: (date) {
                 setState(() {
-                  _selectedDate = date!;
+                  _selectedDate = date;
                   _selectedDate1 = date.add(const Duration(days: 1));
                   _selectedDate2 = date.add(const Duration(days: 2));
                   _selectedDate3 = date.add(const Duration(days: 3));

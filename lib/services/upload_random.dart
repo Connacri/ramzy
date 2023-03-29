@@ -336,6 +336,7 @@ class _upload_randomState extends State<upload_random> {
       double long = -1 * Random().nextDouble(); //-180,180
       GeoPoint ramdomPosition = GeoPoint(lat, long);
       double randomStars = 34 * Random().nextDouble();
+      int userItemsNbr = 0;
 
       final userA = UserClass(
         id: randomUserId,
@@ -352,6 +353,7 @@ class _upload_randomState extends State<upload_random> {
         coins: 0.0,
         levelUser: '',
         stars: randomStars,
+        userItemsNbr: userItemsNbr,
       );
 
       //userCollection.add(user_a);
@@ -781,6 +783,7 @@ class UserClass {
   final double coins;
   final String levelUser;
   final double stars;
+  final int userItemsNbr;
   UserClass({
     required this.id,
     required this.phone,
@@ -796,6 +799,7 @@ class UserClass {
     required this.coins,
     required this.levelUser,
     required this.stars,
+    required this.userItemsNbr,
   });
   UserClass.fromJson(Map<String, Object?> json)
       : this(
@@ -813,6 +817,7 @@ class UserClass {
           coins: json['coins'] as double,
           levelUser: json['levelUser']! as String,
           stars: json['stars'] as double,
+          userItemsNbr: json['userItemsNbr'] as int,
         );
 
   Map<String, Object?> toJson() => {
@@ -830,5 +835,6 @@ class UserClass {
         'coins': coins,
         'levelUser': levelUser,
         'stars': stars,
+        'userItemsNbr': userItemsNbr,
       };
 }

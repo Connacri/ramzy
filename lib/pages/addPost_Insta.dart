@@ -16,7 +16,7 @@ import 'package:path/path.dart' as Path;
 import 'package:fluttertoast/fluttertoast.dart';
 
 import '../Oauth/verifi_auth.dart';
-import '../pages/addPost_page_detail.dart';
+import '../pages/Aperçu_Item.dart';
 
 class stepper2_widget extends StatefulWidget {
   stepper2_widget({Key? key, required this.ccollection, required this.userDoc})
@@ -427,7 +427,7 @@ class _stepper2_widgetState extends State<stepper2_widget> {
       'imageUrls': imageFiles,
       'createdAt': cloud.Timestamp.now(),
       'Description': description,
-      'likes': 213,
+      'likes': 0,
       'usersLike': usersLike,
     });
   }

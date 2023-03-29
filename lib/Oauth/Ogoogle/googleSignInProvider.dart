@@ -113,6 +113,7 @@ Future setUserDoc(User userGoo) async {
     'coins': 0.0,
     'levelUser': 'begin',
     'stars': 0.0,
+    'userItemsNbr': 0,
   }, SetOptions(merge: true));
 }
 

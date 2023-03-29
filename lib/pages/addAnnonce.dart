@@ -14,7 +14,7 @@ import 'package:path/path.dart' as Path;
 
 import 'package:fluttertoast/fluttertoast.dart';
 
-import '../pages/addPost_page_detail.dart';
+import '../pages/Aperçu_Item.dart';
 
 class stepper_widget extends StatefulWidget {
   stepper_widget({Key? key, required this.ccollection, required this.userDoc})

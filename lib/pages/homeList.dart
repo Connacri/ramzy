@@ -26,7 +26,7 @@ import '../2/publicLoggedPage.dart';
 import '../Oauth/AuthPage.dart';
 import '../services/upload_random.dart';
 import 'Profile.dart';
-import 'addPost.dart';
+import 'addAnnonce.dart';
 import 'itemDetails.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 
@@ -62,10 +62,15 @@ class homeList extends StatelessWidget {
           Navigator.push(context, MaterialPageRoute(builder: (_) {
             return userDoc == null
                 ? unloggedPublicPage()
-                : stepper_widget(
-                    userDoc: userDoc,
-                    ccollection: 'Products',
-                  );
+                : userDoc['userItemsNbr'] >= 5
+                    ? Scaffold(
+                        body:
+                            Center(child: Text('Vous Devez Acheter Du Credit')),
+                      )
+                    : stepper_widget(
+                        userDoc: userDoc,
+                        ccollection: 'Products',
+                      );
           }));
         },
         child: const Icon(

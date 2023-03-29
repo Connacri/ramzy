@@ -11,9 +11,6 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
-
-import '../../main.dart';
-
 import 'AuthPage.dart';
 import 'Ogoogle/googleSignInProvider.dart';
 import 'SignUpWidget.dart';
@@ -374,6 +371,7 @@ Future setUserDoc(User userGoo) async {
     'coins': 0.0,
     'levelUser': 'begin',
     'stars': 0.0,
+    'userItemsNbr': 0,
   }, SetOptions(merge: true));
 }
 

@@ -29,7 +29,7 @@ import '../2/publicLoggedPage.dart';
 import '../Oauth/AuthPage.dart';
 import '../services/upload_random.dart';
 import 'Profile.dart';
-import 'addPost.dart';
+import 'addAnnonce.dart';
 import 'itemDetails.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 
