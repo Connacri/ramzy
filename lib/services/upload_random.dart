@@ -112,91 +112,6 @@ class _upload_randomState extends State<upload_random> {
     );
   }
 
-  // void uploadRandom() async {
-  //   final postCollection =
-  //       FirebaseFirestore.instance.collection('Products').withConverter<Post>(
-  //             fromFirestore: (snapshot, _) => Post.fromJson(snapshot.data()!),
-  //             toFirestore: (post, _) => post.toJson(),
-  //           );
-  //   final numbers = List.generate(900, (index) => index + 1);
-  //   for (final number in numbers) {
-  //     List<String> listCat = [
-  //       'Hotel',
-  //       'Residence',
-  //       'Agence',
-  //       'Autres',
-  //       'Sponsors',
-  //     ];
-  //     List<String> listItem = [
-  //       'Adams',
-  //       'Bakerti',
-  //       'Clark',
-  //       'Davisco',
-  //       'Evanessance',
-  //       'Frank',
-  //       'Ghoshock',
-  //       'Hills',
-  //       'Irwintaro',
-  //       'Jones',
-  //       'Kleinez',
-  //       'Lopez',
-  //       'Mufasa',
-  //       'Sarabi',
-  //       'Simba',
-  //       'Nala',
-  //       'Kiara',
-  //       'Kov',
-  //       'Timon',
-  //       'Pumbaama',
-  //       'Rafora',
-  //       'Shenzi',
-  //       'Masoulna',
-  //       'Naltyp',
-  //       'Ochoa',
-  //       'Patelroota',
-  //       'Quinncom',
-  //       'Reilyse',
-  //       'Smith',
-  //       'Trott',
-  //       'Usman',
-  //       'Valdorcomité',
-  //       'White',
-  //       'Xiangshemzhen',
-  //       'Yakub',
-  //       'Zafarta',
-  //     ];
-  //
-  //     List<String> listDesc = [
-  //       "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
-  //       "Le président français Emmanuel Macron a assuré mardi avoir «obtenu» lors de ses discussions avec Vladimir Poutine «qu'il n'y ait pas de dégradation ni d'escalade» dans la crise russo-occidentale liée à l'Ukraine.",
-  //       "L'organisation du Traité de l'Atlantique Nord (OTAN) est une alliance politique et militaire créée en 1949 dans le contexte de la guerre froide. Elle continue à jouer un rôle de premier plan dans le système de sécurité en Europe, même depuis la chute de l'URSS en 1991 et le délitement du Pacte de Varsovie (la contre-alliance du bloc soviétique). Ses extensions et sa relation privilégiée avec l'Ukraine sont au cœur des tensions actuelles avec la Russie. Explications en cartes.",
-  //       "Quentin Fillon-Maillet : «Avec deux fautes au tir, je n'imaginais pas pouvoir jouer la victoire»",
-  //       "ENQUÊTE - Faute d’avoir pu s’acquitter d’une traite faramineuse, le promoteur immobilier le plus fantasque de Los Angeles a perdu le contrôle de la gigantesque villa qu’il avait fait construire et dont il espérait tirer 500 millions de dollars. Son concepteur, ruiné, s’est exilé à Zurich.",
-  //     ];
-  //
-  //     var randomCat = (listCat..shuffle()).first;
-  //     var randomDesc = (listDesc..shuffle()).first;
-  //     var randomItem = (listItem..shuffle()).first;
-  //
-  //     var prix = Random().nextInt(5000);
-  //     var catego = listCat[0];
-  //     var items = listItem[0];
-  //     var desc = listDesc[0];
-  //
-  //     final post = Post(
-  //         userID: 'user$number' + randomItem,
-  //         item: randomItem,
-  //         code: 'invoice$number',
-  //         category: randomCat,
-  //         price: '$prix',
-  //         likes: '$number', //Random().nextInt(1000),
-  //         createdAt: DateTime.now(),
-  //         decription: randomDesc,
-  //         imageUrl: 'https://source.unsplash.com/random?sig=$number',
-  //         themb: 'https://source.unsplash.com/random?sig=$number');
-  //     postCollection.add(post);
-  //   }
-  // }
   void uploadRandom(int itemsNum) async {
     final postCollection =
         FirebaseFirestore.instance.collection('Products').withConverter<Post>(
@@ -354,6 +269,8 @@ class _upload_randomState extends State<upload_random> {
         levelUser: '',
         stars: randomStars,
         userItemsNbr: userItemsNbr,
+        views: 99,
+        viewed_by: listuserId,
       );
 
       //userCollection.add(user_a);
@@ -379,6 +296,8 @@ class _upload_randomState extends State<upload_random> {
         dateFin: DateTime.now().add(const Duration(days: 12)),
         levelItem: randomLevel,
         phone: randomPhone,
+        views: 99,
+        viewed_by: listuserId,
       );
 
       postCollection.add(post);
@@ -480,7 +399,7 @@ class _upload_randomState extends State<upload_random> {
         'black',
       ];
       List<String> listuserId = [
-        'QGAVoJBwh3PnXAoksXprwbOjC3L2',
+        'thGB7qmmapdrUW12DDM5TKjOGBv1',
         'oZknAZY63gT13DUTUvnx5NAz83B2',
         'GbrwkfGl0Zg6BO0YewKTBN7H0U02',
         'DA0uLaRQNnhebV6pJmX2ThsYmQe2',
@@ -512,25 +431,28 @@ class _upload_randomState extends State<upload_random> {
       GeoPoint ramdomPosition = GeoPoint(lat, long);
 
       final post = Post(
-          userID: randomUserId,
-          //'user$number' + randomItem,
-          item: randomItem,
-          //code: 'invoice$number',
-          category: randomCat,
-          price: prix,
-          //'$prix'
-          likes: Random().nextInt(1456),
-          // '$number',//number,
-          position: ramdomPosition,
-          createdAt: DateTime.now(),
-          decription: randomDesc,
-          imageUrls: ['https://source.unsplash.com/random?sig=$number+1'],
-          usersLike: ['sans'],
-          themb: 'https://source.unsplash.com/random?sig=$number+1',
-          dateDebut: DateTime.now().add(const Duration(days: 4)),
-          dateFin: DateTime.now().add(const Duration(days: 12)),
-          levelItem: randomLevel,
-          phone: randomPhones);
+        userID: randomUserId,
+        //'user$number' + randomItem,
+        item: randomItem,
+        //code: 'invoice$number',
+        category: randomCat,
+        price: prix,
+        //'$prix'
+        likes: Random().nextInt(1456),
+        // '$number',//number,
+        position: ramdomPosition,
+        createdAt: DateTime.now(),
+        decription: randomDesc,
+        imageUrls: ['https://source.unsplash.com/random?sig=$number+1'],
+        usersLike: ['sans'],
+        themb: 'https://source.unsplash.com/random?sig=$number+1',
+        dateDebut: DateTime.now().add(const Duration(days: 4)),
+        dateFin: DateTime.now().add(const Duration(days: 12)),
+        levelItem: randomLevel,
+        phone: randomPhones,
+        views: 10,
+        viewed_by: listuserId,
+      );
 
       postCollection
           .add(post)
@@ -633,16 +555,13 @@ class _upload_randomState extends State<upload_random> {
         'black',
       ];
       List<String> listuserId = [
-        'QGAVoJBwh3PnXAoksXprwbOjC3L2',
+        'thGB7qmmapdrUW12DDM5TKjOGBv1',
         'oZknAZY63gT13DUTUvnx5NAz83B2',
         'GbrwkfGl0Zg6BO0YewKTBN7H0U02',
         'DA0uLaRQNnhebV6pJmX2ThsYmQe2',
         'lqkshlkqshflkshf',
         '12354687976554654',
         '98764543121',
-        'ramzi',
-        'kenzi',
-        'danilselyane'
       ];
       List<int> listPhones = [
         0770852896,
@@ -688,6 +607,8 @@ class _upload_randomState extends State<upload_random> {
         dateFin: DateTime.now().add(const Duration(days: 12)),
         levelItem: randomLevel,
         phone: randomPhones,
+        views: 20,
+        viewed_by: listuserId,
       );
 
       postCollection
@@ -713,6 +634,8 @@ class Post {
   final GeoPoint position;
   final String levelItem;
   final int phone;
+  final int views;
+  final List viewed_by;
 
   const Post({
     required this.userID,
@@ -730,6 +653,8 @@ class Post {
     required this.position,
     required this.levelItem,
     required this.phone,
+    required this.views,
+    required this.viewed_by,
   });
   Post.fromJson(Map<String, Object?> json)
       : this(
@@ -748,6 +673,8 @@ class Post {
           position: json['position'] as GeoPoint,
           levelItem: json['levelItem']! as String,
           phone: json['phone'] as int,
+          views: json['views'] as int,
+          viewed_by: json['viewed_by']! as List,
         );
   Map<String, Object?> toJson() => {
         'userID': userID,
@@ -765,6 +692,8 @@ class Post {
         'position': position,
         'levelItem': levelItem,
         'phone': phone,
+        'viewed_by': viewed_by,
+        'views': views,
       };
 }
 
@@ -784,6 +713,8 @@ class UserClass {
   final String levelUser;
   final double stars;
   final int userItemsNbr;
+  final int views;
+  final List viewed_by;
   UserClass({
     required this.id,
     required this.phone,
@@ -800,6 +731,8 @@ class UserClass {
     required this.levelUser,
     required this.stars,
     required this.userItemsNbr,
+    required this.views,
+    required this.viewed_by,
   });
   UserClass.fromJson(Map<String, Object?> json)
       : this(
@@ -818,6 +751,8 @@ class UserClass {
           levelUser: json['levelUser']! as String,
           stars: json['stars'] as double,
           userItemsNbr: json['userItemsNbr'] as int,
+          views: json['views'] as int,
+          viewed_by: json['viewed_by']! as List,
         );
 
   Map<String, Object?> toJson() => {
@@ -836,5 +771,7 @@ class UserClass {
         'levelUser': levelUser,
         'stars': stars,
         'userItemsNbr': userItemsNbr,
+        'viewed_by': viewed_by,
+        'views': views,
       };
 }

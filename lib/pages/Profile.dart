@@ -703,6 +703,8 @@ class PostListOfMyProfil extends StatelessWidget {
                         child: SilverdetailItem(
                           data: data,
                           idDoc: document.id,
+                          isLiked:
+                              data['usersLike'].toString().contains(userm.uid),
                         ),
                       );
                     }));

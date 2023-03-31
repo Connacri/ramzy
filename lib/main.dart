@@ -49,7 +49,7 @@ class MyApp extends StatelessWidget {
         create: (context) => googleSignInProvider(),
         //lazy: true,
         child: MaterialApp(
-          locale: const Locale('fr', ''),
+          locale: const Locale('fr', 'CA'),
           //scaffoldMessengerKey: Utils.messengerKey,
           navigatorKey: navigatorKey,
           debugShowCheckedModeBanner: false,

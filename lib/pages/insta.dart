@@ -159,6 +159,9 @@ class _instaState extends State<insta> {
                           builder: (context) => SilverdetailItem(
                             data: data,
                             idDoc: itmCarous[index].id,
+                            isLiked: data['usersLike']
+                                .toString()
+                                .contains(user!.uid),
                           ),
                         )),
                         child: Stack(
@@ -343,6 +346,9 @@ class _instaState extends State<insta> {
                           builder: (context) => SilverdetailItem(
                             data: data,
                             idDoc: itm[index].id,
+                            isLiked: data['usersLike']
+                                .toString()
+                                .contains(user!.uid),
                           ),
                         )),
                         child: Card(
@@ -678,6 +684,9 @@ class _instaState extends State<insta> {
                                         builder: (context) => SilverdetailItem(
                                           data: data,
                                           idDoc: itmm[index].id,
+                                          isLiked: data['usersLike']
+                                              .toString()
+                                              .contains(user!.uid),
                                         ),
                                       )),
                                       child: Card(
@@ -731,43 +740,6 @@ class _instaState extends State<insta> {
                                                     ),
                                                   ),
                                                 ),
-                                                // Padding(
-                                                //   padding: const EdgeInsets
-                                                //           .symmetric(
-                                                //       horizontal: 8,
-                                                //       vertical: 4),
-                                                //   child: Row(
-                                                //     mainAxisAlignment:
-                                                //         MainAxisAlignment
-                                                //             .center,
-                                                //     crossAxisAlignment:
-                                                //         CrossAxisAlignment
-                                                //             .center,
-                                                //     children: [
-                                                //       Text(
-                                                //         NumberFormat.compact()
-                                                //             .format(
-                                                //           itm[index]['likes'],
-                                                //           // iitem.documents[index]['likes']
-                                                //         ),
-                                                //         textAlign:
-                                                //             TextAlign.end,
-                                                //         style: TextStyle(
-                                                //           color: Colors.white70,
-                                                //           fontSize: 10,
-                                                //         ),
-                                                //       ),
-                                                //       SizedBox(
-                                                //         width: 3,
-                                                //       ),
-                                                //       Icon(
-                                                //         FontAwesomeIcons.eye,
-                                                //         size: 9,
-                                                //         color: Colors.white70,
-                                                //       )
-                                                //     ],
-                                                //   ),
-                                                // ),
                                                 Padding(
                                                   padding: const EdgeInsets
                                                           .symmetric(

@@ -19,20 +19,40 @@ import 'ProfileOthers.dart';
 import 'ProvidersPublic.dart';
 import 'insta.dart';
 import 'package:timeago/timeago.dart' as timeago;
-import '../2/Hotel/global_rooms.dart';
-import '../2/Hotel/hotel_charts.dart';
-import '../2/ouedkniss.dart';
-import '../2/publicLoggedPage.dart';
 import '../Oauth/AuthPage.dart';
-import '../services/upload_random.dart';
-import 'Profile.dart';
 import 'addAnnonce.dart';
 import 'itemDetails.dart';
-import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 
 class homeList extends StatelessWidget {
   const homeList({Key? key, required this.userDoc}) : super(key: key);
   final userDoc;
+
+  Future<void> updateViewsAndUserList(
+      String collection, productId, String userId) async {
+    // Récupération du document du produit
+    DocumentReference productRef =
+        FirebaseFirestore.instance.collection(collection).doc(productId);
+    DocumentSnapshot productSnapshot = await productRef.get();
+
+    // Vérification si l'utilisateur a déjà vu le produit
+    List<dynamic> viewedByList = productSnapshot.get('viewed_by');
+    bool userHasViewed = viewedByList.contains(userId);
+
+    // Mise à jour des données du produit
+    if (userHasViewed) {
+      // L'utilisateur a déjà vu le produit
+      // await productRef.update({
+      //   'views': productSnapshot.get('views') + 1,
+      // });
+      return;
+    } else {
+      // L'utilisateur n'a pas encore vu le produit
+      await productRef.update({
+        'views': productSnapshot.get('views') + 1,
+        'viewed_by': viewedByList..add(userId),
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -62,15 +82,19 @@ class homeList extends StatelessWidget {
           Navigator.push(context, MaterialPageRoute(builder: (_) {
             return userDoc == null
                 ? unloggedPublicPage()
-                : userDoc['userItemsNbr'] >= 5
+                : userDoc['userItemsNbr'] == null
                     ? Scaffold(
-                        body:
-                            Center(child: Text('Vous Devez Acheter Du Credit')),
+                        body: Center(child: Text('userItemsNbr n\'exist pas')),
                       )
-                    : stepper_widget(
-                        userDoc: userDoc,
-                        ccollection: 'Products',
-                      );
+                    : userDoc['userItemsNbr'] >= 5
+                        ? Scaffold(
+                            body: Center(
+                                child: Text('Vous Devez Acheter Du Credit')),
+                          )
+                        : stepper_widget(
+                            userDoc: userDoc,
+                            ccollection: 'Products',
+                          );
           }));
         },
         child: const Icon(
@@ -162,6 +186,9 @@ class homeList extends StatelessWidget {
                                 builder: (context) => SilverdetailItem(
                                   data: data,
                                   idDoc: itmCarous[index].id,
+                                  isLiked: data['usersLike']
+                                      .toString()
+                                      .contains(user!.uid),
                                 ),
                               )),
                               child: Stack(
@@ -441,6 +468,9 @@ class homeList extends StatelessWidget {
                           builder: (context) => SilverdetailItem(
                             data: data,
                             idDoc: itm[index].id,
+                            isLiked: data['usersLike']
+                                .toString()
+                                .contains(user!.uid),
                           ),
                         )),
                         child: Card(
@@ -818,6 +848,9 @@ class homeList extends StatelessWidget {
                                         builder: (context) => SilverdetailItem(
                                           data: data,
                                           idDoc: itmm[index].id,
+                                          isLiked: data['usersLike']
+                                              .toString()
+                                              .contains(user!.uid),
                                         ),
                                       )),
                                       child: Card(
@@ -1115,14 +1148,21 @@ class homeList extends StatelessWidget {
                 ),
               );
             }
-
+            final bool isLiked =
+                data!['usersLike'].toString().contains(user!.uid);
             return GestureDetector(
-              onTap: () => Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) => SilverdetailItem(
-                  data: data,
-                  idDoc: dataid,
-                ),
-              )),
+              onTap: () {
+                updateViewsAndUserList(
+                  'Products',
+                  dataid,
+                  user.uid,
+                ).whenComplete(
+                  () => Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => SilverdetailItem(
+                        data: data, idDoc: dataid, isLiked: isLiked),
+                  )),
+                );
+              },
               child: Card(
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10)),
@@ -1145,7 +1185,7 @@ class homeList extends StatelessWidget {
                         decoration: BoxDecoration(
                           image: DecorationImage(
                             image: CachedNetworkImageProvider(
-                              data!['imageUrls'][0],
+                              data['imageUrls'][0],
                             ),
                             fit: BoxFit.cover,
                             alignment: Alignment.topCenter,
@@ -1179,6 +1219,35 @@ class homeList extends StatelessWidget {
                                         fontWeight: FontWeight.w500),
                                   ),
                                 ),
+                                Spacer(),
+                                Padding(
+                                  padding:
+                                      const EdgeInsets.symmetric(horizontal: 8),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        NumberFormat.compact()
+                                            .format(data['views']),
+                                        textAlign: TextAlign.end,
+                                        style: TextStyle(
+                                          color: Colors.white70,
+                                          fontSize: 12,
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        width: 3,
+                                      ),
+                                      Icon(
+                                        FontAwesomeIcons.eye,
+                                        size: 11,
+                                        color: Colors.white70,
+                                      )
+                                    ],
+                                  ),
+                                ),
                                 Padding(
                                   padding:
                                       const EdgeInsets.symmetric(horizontal: 8),
@@ -1192,7 +1261,9 @@ class homeList extends StatelessWidget {
                                             .format(data['likes']),
                                         textAlign: TextAlign.end,
                                         style: TextStyle(
-                                          color: Colors.white70,
+                                          color: isLiked
+                                              ? Colors.red
+                                              : Colors.white70,
                                           fontSize: 12,
                                         ),
                                       ),
@@ -1200,7 +1271,7 @@ class homeList extends StatelessWidget {
                                         width: 3,
                                       ),
                                       Icon(
-                                        FontAwesomeIcons.eye,
+                                        FontAwesomeIcons.heart,
                                         size: 11,
                                         color: Colors.white70,
                                       )
@@ -1267,97 +1338,6 @@ class homeList extends StatelessWidget {
                         ],
                       ),
                     ),
-                    // GridTile(
-                    //   header: Container(
-                    //     decoration: BoxDecoration(
-                    //         color: Colors.black54,
-                    //         borderRadius: BorderRadius.circular(8)),
-                    //     child: Row(
-                    //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    //       children: [
-                    //         Container(
-                    //           decoration: BoxDecoration(
-                    //               color: Colors.black54,
-                    //               borderRadius: BorderRadius.circular(8)),
-                    //           padding: const EdgeInsets.all(5.0),
-                    //           child: Text(
-                    //             data['category'],
-                    //             overflow: TextOverflow.fade,
-                    //             textAlign: TextAlign.center,
-                    //             style: TextStyle(
-                    //                 color: Colors.white,
-                    //                 fontSize: 11,
-                    //                 fontWeight: FontWeight.w500),
-                    //           ),
-                    //         ),
-                    //         Padding(
-                    //           padding: const EdgeInsets.symmetric(horizontal: 8),
-                    //           child: Row(
-                    //             mainAxisAlignment: MainAxisAlignment.center,
-                    //             crossAxisAlignment: CrossAxisAlignment.center,
-                    //             children: [
-                    //               Text(
-                    //                 NumberFormat.compact().format(data['likes']),
-                    //                 textAlign: TextAlign.end,
-                    //                 style: TextStyle(
-                    //                   color: Colors.white70,
-                    //                   fontSize: 12,
-                    //                 ),
-                    //               ),
-                    //               SizedBox(
-                    //                 width: 3,
-                    //               ),
-                    //               Icon(
-                    //                 FontAwesomeIcons.eye,
-                    //                 size: 11,
-                    //                 color: Colors.white70,
-                    //               )
-                    //             ],
-                    //           ),
-                    //         ),
-                    //       ],
-                    //     ),
-                    //   ),
-                    //   footer: Column(
-                    //     children: [
-                    //       Padding(
-                    //         padding: const EdgeInsets.symmetric(horizontal: 5),
-                    //         child: Text(
-                    //           data['item'],
-                    //           overflow: TextOverflow.ellipsis,
-                    //           style: TextStyle(
-                    //               color: Colors.white70,
-                    //               fontSize: 12,
-                    //               fontWeight: FontWeight.w500),
-                    //         ),
-                    //       ),
-                    //       Padding(
-                    //         padding: const EdgeInsets.only(bottom: 8.0),
-                    //         child: Center(
-                    //           child: Text(
-                    //             data['price'] >= 1000000.00
-                    //                 ? NumberFormat.compactCurrency(
-                    //                         symbol: 'DZD ', decimalDigits: 2)
-                    //                     .format(data['price'])
-                    //                 : NumberFormat.currency(
-                    //                         symbol: 'DZD ', decimalDigits: 2)
-                    //                     .format(data['price']),
-                    //             overflow: TextOverflow.ellipsis,
-                    //             style: TextStyle(
-                    //                 //backgroundColor: Colors.black45,
-                    //                 fontSize: 16,
-                    //                 fontWeight: FontWeight.w500,
-                    //                 color: Colors.white,
-                    //                 fontFamily: 'oswald'),
-                    //           ),
-                    //         ),
-                    //       ),
-                    //     ],
-                    //   ),
-                    //   child: Center(
-                    //     child: Container(),
-                    //   ),
-                    // ),
                   ],
                 ),
               ),
@@ -1404,8 +1384,7 @@ class UnsplashAvatarProvider extends StatelessWidget {
                     width: 20.0,
                     height: 20.0,
                     child: CachedNetworkImage(
-                      imageUrl:
-                          data!['avatar'] ?? Icon(Icons.account_circle_rounded),
+                      imageUrl: data!['avatar'],
                       imageBuilder: (context, imageProvider) => Container(
                         decoration: BoxDecoration(
                           border: Border.all(width: 2, color: Colors.white),
@@ -1510,803 +1489,3 @@ Future<void> moveStock(String productID, data, int amount, PUA) async {
     }
   });
 }
-
-// Container(
-//   width: MediaQuery.of(context).size.width,
-//   height: 200,
-//   child: StreamBuilder<List<UserX>>(
-//     stream: uusers.users,
-//     builder: (context, snapshot) {
-//       if (snapshot.hasData) {
-//         final users = snapshot.data;
-//         return CarouselSlider.builder(
-//           itemCount: users!.length,
-//           itemBuilder: (BuildContext context, int index,
-//                   int pageViewIndex) =>
-//               //   Card(
-//               // // margin: const EdgeInsets.all(5),
-//               // shape: RoundedRectangleBorder(
-//               //     borderRadius: BorderRadius.circular(10)),
-//               // clipBehavior: Clip.antiAliasWithSaveLayer,
-//               // elevation: 5,
-//               // child:
-//               Stack(
-//             alignment: Alignment.center,
-//             children: [
-//               ShaderMask(
-//                 shaderCallback: (rect) {
-//                   return const LinearGradient(
-//                     begin: Alignment.topCenter,
-//                     end: Alignment.bottomLeft,
-//                     colors: [Colors.transparent, Colors.black],
-//                   ).createShader(Rect.fromLTRB(
-//                       0, 0, rect.width, rect.height));
-//                 },
-//                 blendMode: BlendMode.darken,
-//                 child: Container(
-//                   decoration: BoxDecoration(
-//                     image: DecorationImage(
-//                       image: CachedNetworkImageProvider(
-//                         'https://firebasestorage.googleapis.com/v0/b/adventure-eb4ca.appspot.com/o/wall%2Fwall%20(${index}).jpg?alt=media&token=c5c01dca-4b32-4b9d-88fe-717e976ac2f5',
-//                       ),
-//                       fit: BoxFit.cover,
-//                       alignment: Alignment.topCenter,
-//                     ),
-//                   ),
-//                 ),
-//               ),
-//               Container(
-//                 height: 250,
-//                 width: 100,
-//                 // decoration: BoxDecoration(
-//                 //   image: DecorationImage(
-//                 //     image: NetworkImage(
-//                 //       'https://firebasestorage.googleapis.com/v0/b/adventure-eb4ca.appspot.com/o/carre%2Fcarre%20(${inte}).jpg?alt=media&token=fbcb6223-39c8-4ed7-9b62-13acac60fe94',
-//                 //     ),
-//                 //     fit: BoxFit.cover,
-//                 //   ),
-//                 // ),
-//                 child: ClipRRect(
-//                   // make sure we apply clip it properly
-//                   child: BackdropFilter(
-//                     filter:
-//                         ImageFilter.blur(sigmaX: 3, sigmaY: 3),
-//                     child: Container(
-//                       padding: EdgeInsets.all(15),
-//                       alignment: Alignment.center,
-//                       color: Colors.grey.withOpacity(0.1),
-//                     ),
-//                   ),
-//                 ),
-//               ),
-//               Padding(
-//                 padding: const EdgeInsets.only(top: 15.0),
-//                 child: Column(
-//                   mainAxisAlignment: MainAxisAlignment.center,
-//                   children: [
-//                     UnsplashAvatar(
-//                         UnsplashUrl: users[index].avatar),
-//                     // Container(
-//                     //   width: 90,
-//                     //   child: FittedBox(
-//                     //     child: RatingBar.builder(
-//                     //       initialRating: double.parse(
-//                     //           snapshot
-//                     //               .data!
-//                     //               .docs[index]
-//                     //                   ['userItemsNbr']
-//                     //               .toString()),
-//                     //       ignoreGestures: true,
-//                     //       minRating: 1,
-//                     //       direction: Axis.horizontal,
-//                     //       allowHalfRating: true,
-//                     //       itemCount: 5,
-//                     //       itemPadding:
-//                     //           EdgeInsets.symmetric(
-//                     //               horizontal: 4.0),
-//                     //       itemBuilder: (context, _) =>
-//                     //           Icon(
-//                     //         Icons.star,
-//                     //         color: Colors.amber,
-//                     //       ),
-//                     //       onRatingUpdate: (rating) {
-//                     //         print(rating);
-//                     //       },
-//                     //     ),
-//                     //   ),
-//                     // ),
-//                     Container(
-//                       width: 80,
-//                       height: 40,
-//                       child: FittedBox(
-//                         child: Text(
-//                           users[index]
-//                               .displayName
-//                               .toString()
-//                               .toUpperCase(),
-//                           style: TextStyle(
-//                               color: Colors.white70,
-//                               fontSize: 28,
-//                               fontWeight: FontWeight.bold),
-//                         ),
-//                       ),
-//                     ),
-//                     users[index].role == 'admin'
-//                         ? ShaderMask(
-//                             blendMode: BlendMode.srcIn,
-//                             shaderCallback: (Rect bounds) =>
-//                                 LinearGradient(
-//                                   colors: <Color>[
-//                                     Colors.red,
-//                                     Colors.yellowAccent,
-//                                     Color.fromRGBO(
-//                                         246, 132, 2, 1.0),
-//                                   ],
-//                                   begin: Alignment.topLeft,
-//                                   end: Alignment.bottomRight,
-//                                 ).createShader(bounds),
-//                             child: Text(
-//                               users[index]
-//                                   .role
-//                                   .toString()
-//                                   .toUpperCase(),
-//                               style: TextStyle(
-//                                   color: Colors.white,
-//                                   fontSize: 20,
-//                                   fontWeight: FontWeight.bold),
-//                             ))
-//                         : Text(
-//                             users[index]
-//                                 .role
-//                                 .toString()
-//                                 .toUpperCase(),
-//                             style: TextStyle(
-//                                 color: Colors.white,
-//                                 fontSize: 20,
-//                                 fontWeight: FontWeight.bold),
-//                           ),
-//                   ],
-//                 ),
-//               ),
-//             ],
-//           ),
-//           //  ),
-//           options: CarouselOptions(
-//             //height: 400,
-//
-//             aspectRatio: 16 / 9,
-//             viewportFraction: 1, //0.8,
-//             initialPage: 0,
-//             enableInfiniteScroll: true,
-//             reverse: false,
-//             autoPlay: true,
-//             autoPlayInterval: Duration(seconds: 5),
-//             autoPlayAnimationDuration:
-//                 Duration(milliseconds: 800),
-//             autoPlayCurve:
-//                 Curves.easeInToLinear, //.fastOutSlowIn,
-//             enlargeCenterPage: true,
-//             enlargeFactor: 0, // 0.3,
-//             //onPageChanged: callbackFunction,
-//             scrollDirection: Axis.horizontal,
-//           ),
-//         );
-//         //   ListView.builder(
-//         //   itemCount: users!.length,
-//         //   itemBuilder: (BuildContext context, int index) {
-//         //     return Text(users[index].name);
-//         //   },
-//         // );
-//       } else if (snapshot.hasError) {
-//         return Text('Error: ${snapshot.error}');
-//       }
-//       return Center(child: CircularProgressIndicator());
-//     },
-//   ),
-// ), // Caroussel
-
-// Container(
-//   padding: EdgeInsets.only(left: 6),
-//   width: MediaQuery.of(context).size.width,
-//   height: 200,
-//   child: StreamBuilder<List<UserX>>(
-//     stream: uusers.users,
-//     builder: (context, snapshot) {
-//       Random random = new Random();
-//       var i = random.nextInt(27);
-//       if (snapshot.hasData) {
-//         final users = snapshot.data;
-//         return ListView.builder(
-//           shrinkWrap: true,
-//           physics: BouncingScrollPhysics(),
-//           scrollDirection: Axis.horizontal,
-//           itemCount: users!.length,
-//           itemBuilder: (BuildContext context, int index) =>
-//               Card(
-//                 //  margin: const EdgeInsets.all(5),
-//                 shape: RoundedRectangleBorder(
-//                     borderRadius: BorderRadius.circular(50)),
-//                 clipBehavior: Clip.antiAliasWithSaveLayer,
-//                 elevation: 2,
-//                 child: Stack(
-//                   alignment: Alignment.center,
-//                   fit: StackFit.passthrough,
-//                   children: [
-//                     ShaderMask(
-//                       shaderCallback: (rect) {
-//                         return const LinearGradient(
-//                           begin: Alignment.topCenter,
-//                           end: Alignment.bottomLeft,
-//                           colors: [
-//                             Colors.transparent,
-//                             Colors.black
-//                           ],
-//                         ).createShader(Rect.fromLTRB(
-//                             0, 0, rect.width, rect.height));
-//                       },
-//                       blendMode: BlendMode.darken,
-//                       child: CachedNetworkImage(
-//                         width: 80,
-//                         height: 50,
-//                         fit: BoxFit.cover,
-//                         imageUrl:
-//                         'https://firebasestorage.googleapis.com/v0/b/adventure-eb4ca.appspot.com/o/carre%2Fcarre%20(${index + 1}).jpg?alt=media&token=68e384f1-bb64-47cf-a245-9f7f12202443',
-//                         errorWidget: (context, url, error) =>
-//                         const Icon(
-//                           Icons.error,
-//                           color: Colors.red,
-//                         ),
-//                       ),
-//                     ),
-//                     Padding(
-//                       padding: const EdgeInsets.only(top: 15.0),
-//                       child: Column(
-//                           mainAxisAlignment: MainAxisAlignment.end,
-//                           children: [
-//                             // Container(
-//                             //   width: 90,
-//                             //   child: FittedBox(
-//                             //     child: RatingBar.builder(
-//                             //       initialRating: double.parse(
-//                             //           snapshot
-//                             //               .data!
-//                             //               .docs[index]
-//                             //                   ['userItemsNbr']
-//                             //               .toString()),
-//                             //       ignoreGestures: true,
-//                             //       minRating: 1,
-//                             //       direction: Axis.horizontal,
-//                             //       allowHalfRating: true,
-//                             //       itemCount: 5,
-//                             //       itemPadding:
-//                             //           EdgeInsets.symmetric(
-//                             //               horizontal: 4.0),
-//                             //       itemBuilder: (context, _) =>
-//                             //           Icon(
-//                             //         Icons.star,
-//                             //         color: Colors.amber,
-//                             //       ),
-//                             //       onRatingUpdate: (rating) {
-//                             //         print(rating);
-//                             //       },
-//                             //     ),
-//                             //   ),
-//                             // ),
-//                             users[index].role == 'gold'
-//                                 ? ShaderMask(
-//                                 blendMode: BlendMode.srcIn,
-//                                 shaderCallback: (Rect bounds) =>
-//                                     LinearGradient(
-//                                       colors: <Color>[
-//                                         Colors.red,
-//                                         Colors.yellowAccent,
-//                                         Color.fromRGBO(
-//                                             246, 132, 2, 1.0),
-//                                       ],
-//                                       begin: Alignment.topLeft,
-//                                       end:
-//                                       Alignment.bottomRight,
-//                                     ).createShader(bounds),
-//                                 child: Text(
-//                                   users[index]
-//                                       .role
-//                                       .toString()
-//                                       .toUpperCase(),
-//                                   style: TextStyle(
-//                                       color: Colors.white,
-//                                       fontSize: 20,
-//                                       fontWeight:
-//                                       FontWeight.bold),
-//                                 ))
-//                                 : Text(
-//                               users[index]
-//                                   .role
-//                                   .toString()
-//                                   .toUpperCase(),
-//                               style: TextStyle(
-//                                   color: Colors.white,
-//                                   fontSize: 16,
-//                                   fontWeight:
-//                                   FontWeight.bold),
-//                             ),
-//                             Container(
-//                               width: 70,
-//                               height: 25,
-//                               child: FittedBox(
-//                                 child: Text(
-//                                   users[index]
-//                                       .displayName
-//                                       .toString()
-//                                       .toUpperCase(),
-//                                   style: TextStyle(
-//                                       color: Colors.white70,
-//                                       fontSize: 20,
-//                                       fontWeight: FontWeight.bold),
-//                                 ),
-//                               ),
-//                             ),
-//
-//                             Padding(
-//                               padding:
-//                               EdgeInsets.fromLTRB(0, 10, 0, 20),
-//                               child: Container(
-//                                 width: 50.0,
-//                                 height: 50.0,
-//                                 child: CachedNetworkImage(
-//                                   imageUrl: users[index].avatar,
-//                                   imageBuilder:
-//                                       (context, imageProvider) =>
-//                                       Container(
-//                                         decoration: BoxDecoration(
-//                                           shape: BoxShape.circle,
-//                                           image: DecorationImage(
-//                                               image: imageProvider,
-//                                               fit: BoxFit.cover),
-//                                         ),
-//                                       ),
-//                                   errorWidget:
-//                                       (context, url, error) => Icon(
-//                                       Icons
-//                                           .no_accounts_rounded),
-//                                 ),
-//                               ),
-//                             ),
-//                           ]),
-//                     )
-//                   ],
-//                 ),
-//               ),
-//           //     Padding(
-//           //   padding: const EdgeInsets.all(8.0),
-//           //   child: Card(
-//           //     //  margin: const EdgeInsets.all(5),
-//           //     shape: RoundedRectangleBorder(
-//           //         borderRadius: BorderRadius.circular(50)),
-//           //     clipBehavior: Clip.antiAliasWithSaveLayer,
-//           //     elevation: 2,
-//           //     child: Stack(
-//           //       alignment: Alignment.center,
-//           //       children: [
-//           //         ShaderMask(
-//           //           shaderCallback: (rect) {
-//           //             return const LinearGradient(
-//           //               begin: Alignment.topCenter,
-//           //               end: Alignment.bottomLeft,
-//           //               colors: [
-//           //                 Colors.transparent,
-//           //                 Colors.black
-//           //               ],
-//           //             ).createShader(Rect.fromLTRB(
-//           //                 0, 0, rect.width, rect.height));
-//           //           },
-//           //           blendMode: BlendMode.darken,
-//           //           child: Container(
-//           //             height: 100,
-//           //             width: 100,
-//           //             child: CachedNetworkImage(
-//           //               imageUrl:
-//           //                   'https://firebasestorage.googleapis.com/v0/b/wahrane-a42eb.appspot.com/o/pub%2Fpub(${i}).jpg?alt=media&token=7fef3fb5-7a06-4df9-9112-88aefa8cb1c1',
-//           //               fit: BoxFit.cover,
-//           //             ),
-//           //           ),
-//           //         ),
-//           //         // ClipRRect(
-//           //         //   // make sure we apply clip it properly
-//           //         //   child: BackdropFilter(
-//           //         //     filter: ImageFilter.blur(
-//           //         //         sigmaX: 3, sigmaY: 3),
-//           //         //     child: Container(
-//           //         //       padding: EdgeInsets.all(15),
-//           //         //       alignment: Alignment.center,
-//           //         //       color: Colors.grey.withOpacity(0.1),
-//           //         //     ),
-//           //         //   ),
-//           //         // ),
-//           //         Padding(
-//           //           padding: const EdgeInsets.only(top: 15.0),
-//           //           child: Column(
-//           //             mainAxisAlignment:
-//           //                 MainAxisAlignment.center,
-//           //             children: [
-//           //               UnsplashAvatar(
-//           //                   UnsplashUrl: users[index].avatar),
-//           //               // Container(
-//           //               //   width: 90,
-//           //               //   child: FittedBox(
-//           //               //     child: RatingBar.builder(
-//           //               //       initialRating: double.parse(
-//           //               //           snapshot
-//           //               //               .data!
-//           //               //               .docs[index]
-//           //               //                   ['userItemsNbr']
-//           //               //               .toString()),
-//           //               //       ignoreGestures: true,
-//           //               //       minRating: 1,
-//           //               //       direction: Axis.horizontal,
-//           //               //       allowHalfRating: true,
-//           //               //       itemCount: 5,
-//           //               //       itemPadding:
-//           //               //           EdgeInsets.symmetric(
-//           //               //               horizontal: 4.0),
-//           //               //       itemBuilder: (context, _) =>
-//           //               //           Icon(
-//           //               //         Icons.star,
-//           //               //         color: Colors.amber,
-//           //               //       ),
-//           //               //       onRatingUpdate: (rating) {
-//           //               //         print(rating);
-//           //               //       },
-//           //               //     ),
-//           //               //   ),
-//           //               // ),
-//           //               FittedBox(
-//           //                 child: Text(
-//           //                   users[index]
-//           //                       .name
-//           //                       .toString()
-//           //                       .toUpperCase(),
-//           //                   style: TextStyle(
-//           //                       color: Colors.white70,
-//           //                       fontSize: 20,
-//           //                       fontWeight: FontWeight.bold),
-//           //                 ),
-//           //               ),
-//           //
-//           //               users[index].role == 'admin'
-//           //                   ? ShaderMask(
-//           //                       blendMode: BlendMode.srcIn,
-//           //                       shaderCallback: (Rect bounds) =>
-//           //                           LinearGradient(
-//           //                             colors: <Color>[
-//           //                               Colors.red,
-//           //                               Colors.yellowAccent,
-//           //                               Color.fromRGBO(
-//           //                                   246, 132, 2, 1.0),
-//           //                             ],
-//           //                             begin: Alignment.topLeft,
-//           //                             end:
-//           //                                 Alignment.bottomRight,
-//           //                           ).createShader(bounds),
-//           //                       child: Text(
-//           //                         users[index]
-//           //                             .role
-//           //                             .toString()
-//           //                             .toUpperCase(),
-//           //                         style: TextStyle(
-//           //                             color: Colors.white,
-//           //                             fontSize: 16,
-//           //                             fontWeight:
-//           //                                 FontWeight.bold),
-//           //                       ))
-//           //                   : Text(
-//           //                       users[index]
-//           //                           .role
-//           //                           .toString()
-//           //                           .toUpperCase(),
-//           //                       style: TextStyle(
-//           //                           color: Colors.white,
-//           //                           fontSize: 16,
-//           //                           fontWeight:
-//           //                               FontWeight.bold),
-//           //                     ),
-//           //             ],
-//           //           ),
-//           //         ),
-//           //       ],
-//           //     ),
-//           //   ),
-//           // ),
-//         );
-//       } else if (snapshot.hasError) {
-//         return Text('Error: ${snapshot.error}');
-//       }
-//       return Center(child: CircularProgressIndicator());
-//     },
-//   ),
-// ),
-
-// Container(
-//     padding: EdgeInsets.only(left: 6),
-//     width: MediaQuery.of(context).size.width,
-//     height: 200,
-//     child: ListView.builder(
-//       shrinkWrap: true,
-//       physics: BouncingScrollPhysics(),
-//       scrollDirection: Axis.horizontal,
-//       itemCount: premiumUsers.length,
-//       itemBuilder: (BuildContext context, int index) => Card(
-//         shape: RoundedRectangleBorder(
-//             borderRadius: BorderRadius.circular(50)),
-//         clipBehavior: Clip.antiAliasWithSaveLayer,
-//         elevation: 2,
-//         child: Stack(
-//           alignment: Alignment.center,
-//           fit: StackFit.passthrough,
-//           children: [
-//             ShaderMask(
-//               shaderCallback: (rect) {
-//                 return const LinearGradient(
-//                   begin: Alignment.topCenter,
-//                   end: Alignment.bottomLeft,
-//                   colors: [Colors.transparent, Colors.black],
-//                 ).createShader(Rect.fromLTRB(
-//                     0, 0, rect.width, rect.height));
-//               },
-//               blendMode: BlendMode.darken,
-//               child: CachedNetworkImage(
-//                 width: 80,
-//                 height: 50,
-//                 fit: BoxFit.cover,
-//                 imageUrl: premiumUsers[index]['timeline'],
-//                 errorWidget: (context, url, error) =>
-//                     const Icon(
-//                   Icons.error,
-//                   color: Colors.red,
-//                 ),
-//               ),
-//             ),
-//             Padding(
-//               padding: const EdgeInsets.only(top: 15.0),
-//               child: Column(
-//                   mainAxisAlignment: MainAxisAlignment.end,
-//                   children: [
-//                     ShaderMask(
-//                         blendMode: BlendMode.srcIn,
-//                         shaderCallback: (Rect bounds) =>
-//                             LinearGradient(
-//                               colors: <Color>[
-//                                 Colors.red,
-//                                 Colors.yellowAccent,
-//                                 Color.fromRGBO(
-//                                     246, 132, 2, 1.0),
-//                               ],
-//                               begin: Alignment.topLeft,
-//                               end: Alignment.bottomRight,
-//                             ).createShader(bounds),
-//                         child: Text(
-//                           premiumUsers[index]['levelUser']
-//                               .toString()
-//                               .toUpperCase(),
-//                           style: TextStyle(
-//                               color: Colors.white,
-//                               fontSize: 20,
-//                               fontWeight: FontWeight.bold),
-//                         )),
-//                     Container(
-//                       width: 70,
-//                       child: FittedBox(
-//                         child: RatingBar.builder(
-//                           initialRating: premiumUsers[index]
-//                               ['stars'],
-//                           // double.parse(snapshot
-//                           //     .data!.docs[index]['stars']
-//                           //     .toString()),
-//                           ignoreGestures: true,
-//                           minRating: 1,
-//                           direction: Axis.horizontal,
-//                           allowHalfRating: true,
-//                           itemCount: 5,
-//                           itemPadding: EdgeInsets.symmetric(
-//                               horizontal: 4.0),
-//                           itemBuilder: (context, _) => Icon(
-//                             Icons.star,
-//                             color: Colors.amber,
-//                           ),
-//                           onRatingUpdate: (rating) {
-//                             print(rating);
-//                           },
-//                         ),
-//                       ),
-//                     ),
-//                     Container(
-//                       width: 70,
-//                       height: 25,
-//                       child: FittedBox(
-//                         child: Text(
-//                           premiumUsers[index]['displayName']
-//                               .toString()
-//                               .toUpperCase(),
-//                           style: TextStyle(
-//                               color: Colors.white70,
-//                               fontSize: 20,
-//                               fontWeight: FontWeight.bold),
-//                         ),
-//                       ),
-//                     ),
-//                     Padding(
-//                       padding:
-//                           EdgeInsets.fromLTRB(0, 10, 0, 20),
-//                       child: Container(
-//                         width: 50.0,
-//                         height: 50.0,
-//                         child: CachedNetworkImage(
-//                           imageUrl: premiumUsers[index]
-//                               ['avatar'],
-//                           imageBuilder:
-//                               (context, imageProvider) =>
-//                                   Container(
-//                             decoration: BoxDecoration(
-//                               border: Border.all(
-//                                   width: 2,
-//                                   color: Colors.white),
-//                               shape: BoxShape.circle,
-//                               image: DecorationImage(
-//                                   image: imageProvider,
-//                                   fit: BoxFit.cover),
-//                             ),
-//                           ),
-//                           errorWidget: (context, url, error) =>
-//                               Icon(Icons.no_accounts_rounded),
-//                         ),
-//                       ),
-//                     ),
-//                   ]),
-//             )
-//           ],
-//         ),
-//       ),
-//       //     Padding(
-//       //   padding: const EdgeInsets.all(8.0),
-//       //   child: Card(
-//       //     //  margin: const EdgeInsets.all(5),
-//       //     shape: RoundedRectangleBorder(
-//       //         borderRadius: BorderRadius.circular(50)),
-//       //     clipBehavior: Clip.antiAliasWithSaveLayer,
-//       //     elevation: 2,
-//       //     child: Stack(
-//       //       alignment: Alignment.center,
-//       //       children: [
-//       //         ShaderMask(
-//       //           shaderCallback: (rect) {
-//       //             return const LinearGradient(
-//       //               begin: Alignment.topCenter,
-//       //               end: Alignment.bottomLeft,
-//       //               colors: [
-//       //                 Colors.transparent,
-//       //                 Colors.black
-//       //               ],
-//       //             ).createShader(Rect.fromLTRB(
-//       //                 0, 0, rect.width, rect.height));
-//       //           },
-//       //           blendMode: BlendMode.darken,
-//       //           child: Container(
-//       //             height: 100,
-//       //             width: 100,
-//       //             child: CachedNetworkImage(
-//       //               imageUrl:
-//       //                   'https://firebasestorage.googleapis.com/v0/b/wahrane-a42eb.appspot.com/o/pub%2Fpub(${i}).jpg?alt=media&token=7fef3fb5-7a06-4df9-9112-88aefa8cb1c1',
-//       //               fit: BoxFit.cover,
-//       //             ),
-//       //           ),
-//       //         ),
-//       //         // ClipRRect(
-//       //         //   // make sure we apply clip it properly
-//       //         //   child: BackdropFilter(
-//       //         //     filter: ImageFilter.blur(
-//       //         //         sigmaX: 3, sigmaY: 3),
-//       //         //     child: Container(
-//       //         //       padding: EdgeInsets.all(15),
-//       //         //       alignment: Alignment.center,
-//       //         //       color: Colors.grey.withOpacity(0.1),
-//       //         //     ),
-//       //         //   ),
-//       //         // ),
-//       //         Padding(
-//       //           padding: const EdgeInsets.only(top: 15.0),
-//       //           child: Column(
-//       //             mainAxisAlignment:
-//       //                 MainAxisAlignment.center,
-//       //             children: [
-//       //               UnsplashAvatar(
-//       //                   UnsplashUrl: users[index].avatar),
-//       //               // Container(
-//       //               //   width: 90,
-//       //               //   child: FittedBox(
-//       //               //     child: RatingBar.builder(
-//       //               //       initialRating: double.parse(
-//       //               //           snapshot
-//       //               //               .data!
-//       //               //               .docs[index]
-//       //               //                   ['userItemsNbr']
-//       //               //               .toString()),
-//       //               //       ignoreGestures: true,
-//       //               //       minRating: 1,
-//       //               //       direction: Axis.horizontal,
-//       //               //       allowHalfRating: true,
-//       //               //       itemCount: 5,
-//       //               //       itemPadding:
-//       //               //           EdgeInsets.symmetric(
-//       //               //               horizontal: 4.0),
-//       //               //       itemBuilder: (context, _) =>
-//       //               //           Icon(
-//       //               //         Icons.star,
-//       //               //         color: Colors.amber,
-//       //               //       ),
-//       //               //       onRatingUpdate: (rating) {
-//       //               //         print(rating);
-//       //               //       },
-//       //               //     ),
-//       //               //   ),
-//       //               // ),
-//       //               FittedBox(
-//       //                 child: Text(
-//       //                   users[index]
-//       //                       .name
-//       //                       .toString()
-//       //                       .toUpperCase(),
-//       //                   style: TextStyle(
-//       //                       color: Colors.white70,
-//       //                       fontSize: 20,
-//       //                       fontWeight: FontWeight.bold),
-//       //                 ),
-//       //               ),
-//       //
-//       //               users[index].role == 'admin'
-//       //                   ? ShaderMask(
-//       //                       blendMode: BlendMode.srcIn,
-//       //                       shaderCallback: (Rect bounds) =>
-//       //                           LinearGradient(
-//       //                             colors: <Color>[
-//       //                               Colors.red,
-//       //                               Colors.yellowAccent,
-//       //                               Color.fromRGBO(
-//       //                                   246, 132, 2, 1.0),
-//       //                             ],
-//       //                             begin: Alignment.topLeft,
-//       //                             end:
-//       //                                 Alignment.bottomRight,
-//       //                           ).createShader(bounds),
-//       //                       child: Text(
-//       //                         users[index]
-//       //                             .role
-//       //                             .toString()
-//       //                             .toUpperCase(),
-//       //                         style: TextStyle(
-//       //                             color: Colors.white,
-//       //                             fontSize: 16,
-//       //                             fontWeight:
-//       //                                 FontWeight.bold),
-//       //                       ))
-//       //                   : Text(
-//       //                       users[index]
-//       //                           .role
-//       //                           .toString()
-//       //                           .toUpperCase(),
-//       //                       style: TextStyle(
-//       //                           color: Colors.white,
-//       //                           fontSize: 16,
-//       //                           fontWeight:
-//       //                               FontWeight.bold),
-//       //                     ),
-//       //             ],
-//       //           ),
-//       //         ),
-//       //       ],
-//       //     ),
-//       //   ),
-//       // ),
-//     )), //Users Premium
-// //
-// // '😀 😃 😄 😁 😆 😅 😂 🤣 🥲 ☺️ 😊 😇 🙂 🙃 😉 😌 😍 🥰 😘 😗 😙 😚 😋 😛 😝 😜 🤪 🤨',
-// //
-// // '🍅 🍑 🍒 🏄‍♂️ 🐻 💖 📙 ',

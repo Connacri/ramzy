@@ -44,7 +44,7 @@ class _ProfileOthersState extends State<ProfileOthers>
             clipBehavior: Clip.none,
             alignment: Alignment.center,
             children: [
-              BuildCoverImage(),
+              BuildCoverImage(widget.datauser),
               // Positioned(top: topPic, child: Container(child: BuildProfileImage())),
               Positioned(
                 top: topPic,
@@ -58,12 +58,11 @@ class _ProfileOthersState extends State<ProfileOthers>
                     children: [
                       CircleAvatar(
                           radius: profileHeight / 2,
-                          backgroundImage:
-                              widget.datauser!['userAvatar'] != null
-                                  ? NetworkImage(widget.datauser!['userAvatar'])
-                                  : const NetworkImage(
-                                      'https://source.unsplash.com/random/900×700/?fruit',
-                                    )
+                          backgroundImage: widget.datauser!['avatar'] != null
+                              ? NetworkImage(widget.datauser!['avatar'])
+                              : const NetworkImage(
+                                  'https://source.unsplash.com/random/900×700/?fruit',
+                                )
                           //'https://source.unsplash.com/random?sig=8'),
                           ),
                     ],
@@ -243,10 +242,12 @@ class _ProfileOthersState extends State<ProfileOthers>
     );
   }
 
-  Widget BuildCoverImage() => Container(
+  Widget BuildCoverImage(Map? datauser) => Container(
         color: Colors.grey,
         child: CachedNetworkImage(
-          imageUrl: 'https://source.unsplash.com/random/?city,night',
+          imageUrl: widget.datauser!['timeline'] == null
+              ? 'https://source.unsplash.com/random/?city,night'
+              : widget.datauser!['timeline'],
           //'https://source.unsplash.com/random',
           //'https://source.unsplash.com/random?sig=15',
           width: double.infinity,
@@ -387,6 +388,8 @@ class PostListOfUserProfile extends StatelessWidget {
                         child: SilverdetailItem(
                           data: data,
                           idDoc: document.id,
+                          isLiked:
+                              data['usersLike'].toString().contains(userm.uid),
                         ),
 
                         //
