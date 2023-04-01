@@ -1,5 +1,7 @@
 import 'dart:math';
 import 'dart:ui';
+import 'package:ramzy/pages/plans.dart';
+
 import '../pages/unloggerPublicPage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutterflow_paginate_firestore/widgets/bottom_loader.dart';
@@ -86,15 +88,21 @@ class homeList extends StatelessWidget {
                     ? Scaffold(
                         body: Center(child: Text('userItemsNbr n\'exist pas')),
                       )
-                    : userDoc['userItemsNbr'] >= 5
-                        ? Scaffold(
-                            body: Center(
-                                child: Text('Vous Devez Acheter Du Credit')),
-                          )
-                        : stepper_widget(
+                    : userDoc['plan'] == 'premium'
+                        ? stepper_widget(
                             userDoc: userDoc,
                             ccollection: 'Products',
-                          );
+                          )
+                        : userDoc['userItemsNbr'] >= 5
+                            ?
+                            // MyHom(
+                            //                     title: '',
+                            //                   )
+                            plans()
+                            : stepper_widget(
+                                userDoc: userDoc,
+                                ccollection: 'Products',
+                              );
           }));
         },
         child: const Icon(

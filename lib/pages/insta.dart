@@ -298,9 +298,6 @@ class _instaState extends State<insta> {
                   ),
                 ),
                 TopUsers(premiumUsers),
-
-                //Users Premium
-
                 Padding(
                   padding: const EdgeInsets.fromLTRB(18, 18, 18, 0),
                   child: Row(

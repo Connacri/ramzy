@@ -66,7 +66,7 @@ class _unloggedHomeListState extends State<unloggedHomeList> {
                       .snapshots(),
                   builder: (BuildContext context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
-                      return Center(child: CircularProgressIndicator());
+                      return Center(child: LinearProgressIndicator());
                     }
                     if (snapshot.hasError) {
                       // Handle error
@@ -181,7 +181,7 @@ class _unloggedHomeListState extends State<unloggedHomeList> {
                   future: getItems('Users'),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
-                      return CircularProgressIndicator();
+                      return LinearProgressIndicator();
                     }
                     final premiumUsers = snapshot.data!;
                     return Container(
@@ -519,7 +519,7 @@ class _unloggedHomeListState extends State<unloggedHomeList> {
                   future: getItems('Products'),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
-                      return CircularProgressIndicator();
+                      return LinearProgressIndicator();
                     }
                     final itm = snapshot.data!;
                     return Container(

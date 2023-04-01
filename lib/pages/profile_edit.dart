@@ -103,23 +103,23 @@ class _profile_editState extends State<profile_edit> {
                   decoration: const InputDecoration(
                     hintStyle: TextStyle(color: Colors.black38),
                     fillColor: Colors.white,
-                    hintText: '660 00 00 00',
+                    hintText: '696 41 09 53',
                     border: InputBorder.none,
                     filled: true,
                     contentPadding: EdgeInsets.all(15),
                   ),
                   invalidNumberMessage:
-                      'Entrer Que Ooreddo ou Djezzy ou Mobilis',
+                      'Entrer un numero de tel de votre operateur valide',
                   // disableLengthCheck: true,
                   onSaved: (phone) {
                     // save phone.number and phone.countryCode in Firestore
                   },
                   validator: (value) {
                     if (value == null) {
-                      return 'Entrer Ton Numero de Tel';
+                      return 'Entrer un numero de tel de votre operateur valide';
                     } else {
                       // validate against your regex pattern
-                      RegExp regex = new RegExp(r'^[678][0-9]{8}$');
+                      RegExp regex = new RegExp(r'^[1-9][0-9]{8}$');
                       if (!regex.hasMatch(value.number)) {
                         return 'Entrer Que Ooreddo ou Djezzy ou Mobilis';
                       }

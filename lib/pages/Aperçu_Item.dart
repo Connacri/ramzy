@@ -425,6 +425,8 @@ class _page_detailState extends State<page_detail> {
       'levelItem': 'free',
       'phone': phone,
       'position': geoPoint,
+      'viewed_by': [],
+      'views': 0,
     });
     userRef.doc(user!.uid).update(
       {

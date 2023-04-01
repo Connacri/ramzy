@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:math';
 import 'dart:ui';
+import 'package:calendar_timeline/calendar_timeline.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutterflow_paginate_firestore/widgets/bottom_loader.dart';
 import 'package:flutterflow_paginate_firestore/widgets/empty_display.dart';
@@ -161,130 +162,9 @@ class MyApp extends StatelessWidget {
       child: bottomNavigation(
         userDoc: userDoc,
       ),
-      // child: Scaffold(
-      //   body: SafeArea(
-      //     child: Consumer<Collection1Data>(
-      //       builder: (context, collection1Data, _) {
-      //         if (collection1Data == null) return CircularProgressIndicator();
-      //         return Consumer<Collection2Data>(
-      //           builder: (context, collection2Data, _) {
-      //             if (collection2Data == null)
-      //               return CircularProgressIndicator();
-      //             final combinedData = [
-      //               ...collection1Data.documents,
-      //               //...collection2Data.documents,
-      //             ];
-      //             return ListView.builder(
-      //               shrinkWrap: true,
-      //               itemCount: combinedData.length,
-      //               itemBuilder: (context, index) {
-      //                 final data = combinedData[index];
-      //                 return Center(
-      //                   child: ListTile(
-      //                     title: Text(data["item"]),
-      //                     // subtitle:
-      //                     //     Text(data["price"].toString() ?? data['email']),
-      //                   ),
-      //                 );
-      //               },
-      //             );
-      //           },
-      //         );
-      //       },
-      //     ),
-      //   ),
-      // ),
     );
   }
 }
-
-// class bottomNavigation extends StatefulWidget {
-//   bottomNavigation({Key? key, required this.userDoc}) : super(key: key);
-//   final userDoc;
-//
-//   @override
-//   _bottomNavigationState createState() {
-//     return _bottomNavigationState();
-//   }
-// }
-//
-// class _bottomNavigationState extends State<bottomNavigation>
-//     with AutomaticKeepAliveClientMixin {
-//   @override
-//   void initState() {
-//     super.initState();
-//   }
-//
-//   @override
-//   void dispose() {
-//     super.dispose();
-//   }
-//
-//   int currentPageIndex = 0;
-//   @override
-//   Widget build(BuildContext context) {
-//     super.build(context);
-//     final uusers = Provider.of<Collection2Data>(context);
-//     return Scaffold(
-//         floatingActionButton: FloatingActionButton(
-//           foregroundColor: Colors.transparent,
-//           onPressed: () {
-//             Navigator.push(context, MaterialPageRoute(builder: (_) {
-//               return stepper_widget();
-//             }));
-//           },
-//           child: const Icon(
-//             FontAwesomeIcons.add,
-//             color: Colors.black54,
-//           ),
-//         ),
-//         bottomNavigationBar: NavigationBar(
-//           height: 60,
-//           onDestinationSelected: (int index) {
-//             setState(() {
-//               currentPageIndex = index;
-//             });
-//           },
-//           selectedIndex: currentPageIndex,
-//           destinations: <Widget>[
-//             NavigationDestination(
-//               icon: Icon(FontAwesomeIcons.home),
-//               label: 'Home',
-//             ),
-//             NavigationDestination(
-//               icon: Icon(FontAwesomeIcons.list),
-//               label: 'Insta',
-//             ),
-//             NavigationDestination(
-//               icon: ClipRRect(
-//                   clipBehavior: Clip.hardEdge,
-//                   borderRadius: BorderRadius.circular(50),
-//                   child: CachedNetworkImage(
-//                     imageUrl: widget.userDoc['avatar'],
-//                     fit: BoxFit.cover,
-//                     height: 30,
-//                     width: 30,
-//                   )),
-//               label: widget.userDoc['displayName'],
-//             ),
-//           ],
-//         ),
-//         body: IndexedStack(
-//           index: currentPageIndex,
-//           children: [
-//             homeList(userDoc: widget.userDoc),
-//             //ouedkniss(),
-//             insta(
-//               userDoc: widget.userDoc,
-//             ),
-//             Profile(),
-//           ],
-//         ));
-//   }
-//
-//   @override
-//   bool get wantKeepAlive => true;
-// }
 
 class bottomNavigation extends StatefulWidget {
   bottomNavigation({Key? key, required this.userDoc}) : super(key: key);
@@ -312,20 +192,6 @@ class _bottomNavigationState extends State<bottomNavigation> {
   Widget build(BuildContext context) {
     final uusers = Provider.of<Collection2Data>(context);
     return Scaffold(
-      // floatingActionButton:
-      //      FloatingActionButton(
-      //         foregroundColor: Colors.transparent,
-      //         onPressed: () {
-      //           Navigator.push(context, MaterialPageRoute(builder: (_) {
-      //             return stepper_widget();
-      //           }));
-      //         },
-      //         child: const Icon(
-      //           FontAwesomeIcons.add,
-      //           color: Colors.black54,
-      //         ),
-      //       )
-
       bottomNavigationBar: NavigationBar(
         height: 60,
         onDestinationSelected: (int index) {
@@ -343,10 +209,6 @@ class _bottomNavigationState extends State<bottomNavigation> {
             icon: Icon(FontAwesomeIcons.list),
             label: 'Lives',
           ),
-          // NavigationDestination(
-          //   icon: Icon(FontAwesomeIcons.hotel),
-          //   label: 'hotel_charts',
-          // ),
           NavigationDestination(
             icon: ClipRRect(
                 clipBehavior: Clip.hardEdge,
@@ -357,7 +219,7 @@ class _bottomNavigationState extends State<bottomNavigation> {
                   height: 30,
                   width: 30,
                 )),
-            label: widget.userDoc['displayName'],
+            label: widget.userDoc['displayName'].toString().capitalize(),
           ),
         ],
       ),

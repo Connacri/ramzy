@@ -42,12 +42,6 @@ class CheckRole extends StatelessWidget {
             return MyApp(
               userDoc: data,
             );
-            // NavigationExample(
-            //   userDoc: data,
-            // );
-            //     publicLoggerPage(
-            //   datta: data,
-            // );
           }
         } else
           return Scaffold(
@@ -95,72 +89,5 @@ class CheckRole extends StatelessWidget {
           );
       },
     );
-
-    ;
-
-    // FutureBuilder<DocumentSnapshot>(
-    //   future: users.doc(documentId).get(),
-    //   builder:
-    //       (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
-    //     if (snapshot.hasError) {
-    //       return Text("Something went wrong");
-    //     }
-    //
-    //     if (snapshot.hasData && !snapshot.data!.exists) {
-    //       return Scaffold(
-    //         backgroundColor: Colors.white,
-    //         appBar: AppBar(
-    //           title: FittedBox(
-    //             child: Text('Bienvenue'),
-    //           ),
-    //           centerTitle: true,
-    //         ),
-    //         body: Center(
-    //           child: Padding(
-    //             padding:
-    //                 const EdgeInsets.symmetric(vertical: 8, horizontal: 38),
-    //             child: Column(
-    //               mainAxisAlignment: MainAxisAlignment.center,
-    //               crossAxisAlignment: CrossAxisAlignment.center,
-    //               children: [
-    //                 Padding(
-    //                   padding: const EdgeInsets.all(58.0),
-    //                   child: ElevatedButton(
-    //                     child: Text('Log Out'),
-    //                     onPressed: () {
-    //                       googleSignInProvider().logouta();
-    //                     },
-    //                   ),
-    //                 ),
-    //                 Padding(
-    //                   padding: const EdgeInsets.all(58.0),
-    //                   child: ElevatedButton(
-    //                     child: Text('Start'),
-    //                     onPressed: () {
-    //                       Navigator.of(context).pushNamedAndRemoveUntil(
-    //                           '/', (Route<dynamic> route) => false);
-    //                     },
-    //                   ),
-    //                 ),
-    //               ],
-    //             ),
-    //           ),
-    //         ),
-    //       );
-    //     }
-    //
-    //     if (snapshot.connectionState == ConnectionState.done) {
-    //       Map<String, dynamic> userRole =
-    //           snapshot.data!.data() as Map<String, dynamic>;
-    //       if (userRole['Role'] == 'admin') {
-    //         return adminLoggedPage();
-    //       } else {
-    //         return publicLoggerPage();
-    //       }
-    //     }
-    //
-    //     return Center(child: CircularProgressIndicator());
-    //   },
-    // );
   }
 }

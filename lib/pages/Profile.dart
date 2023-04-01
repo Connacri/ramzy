@@ -2,10 +2,12 @@ import 'dart:io';
 
 import 'package:avatar_glow/avatar_glow.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:calendar_timeline/calendar_timeline.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_islamic_icons/flutter_islamic_icons.dart';
 import 'package:flutterflow_paginate_firestore/paginate_firestore.dart';
 import 'package:flutterflow_paginate_firestore/widgets/bottom_loader.dart';
 import 'package:flutterflow_paginate_firestore/widgets/empty_display.dart';
@@ -20,6 +22,8 @@ import 'package:path/path.dart' as Path;
 import '../Oauth/Ogoogle/googleSignInProvider.dart';
 import '../Oauth/Privacy_Policy.dart';
 import '../services/upload_random.dart';
+import 'package:intl/intl.dart';
+
 import 'ProfileOthers.dart';
 import 'itemDetails.dart';
 import 'package:image_picker/image_picker.dart';
@@ -126,24 +130,43 @@ class _ProfileState extends State<Profile> with TickerProviderStateMixin {
                 elevation: 50,
                 backgroundColor: Colors.black38,
                 flexibleSpace: FlexibleSpaceBar(
+                  titlePadding: EdgeInsets.symmetric(vertical: 0),
                   centerTitle: true,
                   title: Row(
-                    crossAxisAlignment: CrossAxisAlignment.end,
+                    //crossAxisAlignment: CrossAxisAlignment.end,
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Padding(
-                        padding: const EdgeInsets.only(left: 15),
-                        child: Text(
-                          data['displayName'].toString().toUpperCase(),
-                          overflow: TextOverflow.fade,
-                          style: TextStyle(
-                              fontFamily: 'oswald',
-                              color: Colors.white,
-                              fontSize: 16,
-                              fontWeight: FontWeight.w500),
+                      data['plan'] == 'premium'
+                          ? Padding(
+                              padding: const EdgeInsets.only(left: 15),
+                              child: const Icon(
+                                Icons.workspace_premium,
+                                color: Colors.amber,
+                                size: 20,
+                              ))
+                          : Padding(
+                              padding: const EdgeInsets.only(left: 15),
+                              child: Icon(
+                                Icons.spa,
+                                size: 14,
+                                color: Colors.lightBlue,
+                              ),
+                            ),
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 5),
+                          child: Text(
+                            data['displayName'].toString().toUpperCase(),
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                                fontFamily: 'oswald',
+                                color: Colors.white,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500),
+                          ),
                         ),
                       ),
-                      //Spacer(),
+
                       IconButton(
                         icon: uploading == false
                             ? Icon(
@@ -198,14 +221,14 @@ class _ProfileState extends State<Profile> with TickerProviderStateMixin {
                         },
                       ),
 
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 10, vertical: 2),
-                        child: Text(
-                          data['email'],
-                          style: TextStyle(fontSize: 8),
-                        ),
-                      ),
+                      // Padding(
+                      //   padding: const EdgeInsets.symmetric(
+                      //       horizontal: 10, vertical: 2),
+                      //   child: Text(
+                      //     data['email'],
+                      //     style: TextStyle(fontSize: 8),
+                      //   ),
+                      // ),
                     ],
                   ),
                   background: ShaderMask(
@@ -228,75 +251,6 @@ class _ProfileState extends State<Profile> with TickerProviderStateMixin {
                       ),
                     ),
                   ),
-                  // Stack(
-                  //   fit: StackFit.expand,
-                  //   children: [
-                  //     ShaderMask(
-                  //       shaderCallback: (rect) {
-                  //         return const LinearGradient(
-                  //           begin: Alignment.topCenter,
-                  //           end: Alignment.bottomLeft,
-                  //           colors: [Colors.transparent, Colors.black],
-                  //         ).createShader(
-                  //             Rect.fromLTRB(0, 0, rect.width, rect.height));
-                  //       },
-                  //       blendMode: BlendMode.darken,
-                  //       child: CachedNetworkImage(
-                  //         fit: BoxFit.cover,
-                  //         imageUrl: data['timeline'] ??
-                  //             'https://source.unsplash.com/random?sig=20*3+1',
-                  //         errorWidget: (context, url, error) => const Icon(
-                  //           Icons.error,
-                  //           color: Colors.red,
-                  //         ),
-                  //       ),
-                  //     ),
-                  //     Positioned(
-                  //       right: 10,
-                  //       bottom: 30,
-                  //       child: IconButton(
-                  //         icon: Icon(Icons.add_a_photo),
-                  //         color: Colors.black,
-                  //         onPressed: () {
-                  //           showModalBottomSheet(
-                  //             context: context,
-                  //             builder: (BuildContext context) {
-                  //               return SafeArea(
-                  //                 child: Column(
-                  //                   mainAxisSize: MainAxisSize.min,
-                  //                   children: <Widget>[
-                  //                     ListTile(
-                  //                       leading: Icon(Icons.camera_alt),
-                  //                       title: Text('Camera'),
-                  //                       onTap: () {
-                  //                         pickImage(ImageSource.camera).then(
-                  //                           (value) =>
-                  //                               uploadOneImage('timeline'),
-                  //                         );
-                  //                         Navigator.of(context).pop();
-                  //                       },
-                  //                     ),
-                  //                     ListTile(
-                  //                       leading: Icon(Icons.photo_album),
-                  //                       title: Text('Gallery'),
-                  //                       onTap: () {
-                  //                         pickImage(ImageSource.gallery).then(
-                  //                           (value) =>
-                  //                               uploadOneImage('timeline'),
-                  //                         );
-                  //                         Navigator.of(context).pop();
-                  //                       },
-                  //                     ),
-                  //                   ],
-                  //                 ),
-                  //               );
-                  //             },
-                  //           );
-                  //         },
-                  //       ),
-                  //     ),
-                  //   ],
-                  // ),
                 ),
               ),
               SliverList(
@@ -374,66 +328,47 @@ class _ProfileState extends State<Profile> with TickerProviderStateMixin {
                         ),
                       ],
                     ),
-                    // Column(
-                    //   children: [
-                    //     if (_imageFile != null)
-                    //       Container(
-                    //         height: 200,
-                    //         child: Image.file(File(_imageFile!.path)),
-                    //       ),
-                    //     ElevatedButton(
-                    //       onPressed: () {
-                    //         showModalBottomSheet(
-                    //           context: context,
-                    //           builder: (BuildContext context) {
-                    //             return SafeArea(
-                    //               child: Column(
-                    //                 mainAxisSize: MainAxisSize.min,
-                    //                 children: <Widget>[
-                    //                   ListTile(
-                    //                     leading: Icon(Icons.camera_alt),
-                    //                     title: Text('Camera'),
-                    //                     onTap: () {
-                    //                       pickImage(ImageSource.camera);
-                    //                       Navigator.of(context).pop();
-                    //                     },
-                    //                   ),
-                    //                   ListTile(
-                    //                     leading: Icon(Icons.photo_album),
-                    //                     title: Text('Gallery'),
-                    //                     onTap: () {
-                    //                       pickImage(ImageSource.gallery);
-                    //                       Navigator.of(context).pop();
-                    //                     },
-                    //                   ),
-                    //                 ],
-                    //               ),
-                    //             );
-                    //           },
-                    //         );
-                    //       },
-                    //       child: Text('Choose Image'),
-                    //     ),
-                    //     ElevatedButton(
-                    //       onPressed: uploadOneImage,
-                    //       child: Text('Upload Image'),
-                    //     ),
-                    //     if (_imageUrl != null)
-                    //       Container(
-                    //         height: 200,
-                    //         child: Image.network(_imageUrl!),
-                    //       ),
-                    //     ElevatedButton(
-                    //       onPressed: saveImage,
-                    //       child: Text('Save Image'),
-                    //     ),
-                    //   ],
-                    // ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        IconButton(
-                            onPressed: () {
+                        Text(
+                          'Wallet',
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                              color: Colors.brown,
+                              fontSize: 20,
+                              fontWeight: FontWeight.w500),
+                        ),
+                        Text(
+                          'Coins : ',
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                              color: Colors.brown,
+                              fontSize: 20,
+                              fontWeight: FontWeight.w300),
+                        ),
+                        Text(
+                          NumberFormat.currency(symbol: '', decimalDigits: 2)
+                              .format(data['coins']),
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                              color: Colors.black54,
+                              fontSize: 20,
+                              fontWeight: FontWeight.w400),
+                        ),
+                      ],
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            data['displayName'].toUpperCase(),
+                            style: TextStyle(fontSize: 20),
+                          ),
+                          GestureDetector(
+                            onTap: () {
                               Navigator.of(context).push(MaterialPageRoute(
                                 builder: (context) => profile_edit(
                                   userDoc: data,
@@ -441,47 +376,59 @@ class _ProfileState extends State<Profile> with TickerProviderStateMixin {
                                 //  AuthPage(),
                               ));
                             },
-                            icon: Icon(
+                            child: Icon(
                               Icons.mode_edit,
                               size: 16,
-                            )),
-                        Text(data['displayName'].toUpperCase()),
-                      ],
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
-                        userGoo?.emailVerified == true
-                            ? Icon(
-                                Icons.check_circle,
-                                color: Colors.blue,
-                              )
-                            : Icon(
-                                Icons.not_interested_outlined,
-                                color: Colors.red,
-                              ),
-                        Text(userGoo!.email.toString().toUpperCase()),
+                        Text(
+                          'niveau : ${data['levelUser']}'.capitalize(),
+                          textAlign: TextAlign.justify,
+                          style: TextStyle(fontSize: 20),
+                        ),
+                        Text(
+                          'role : ${data['role']}'.capitalize(),
+                          textAlign: TextAlign.justify,
+                          style: TextStyle(fontSize: 20),
+                        ),
                       ],
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 16.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          userGoo?.emailVerified == true
+                              ? Icon(
+                                  Icons.check_circle,
+                                  color: Colors.blue,
+                                )
+                              : Icon(
+                                  Icons.not_interested_outlined,
+                                  color: Colors.red,
+                                ),
+                          Text(userGoo!.email.toString().toUpperCase()),
+                        ],
+                      ),
+                    ),
+                    Text(userGoo?.emailVerified != true
+                        ? 'Email Not Verified'
+                        : ''),
+                    Center(
+                      child: data['phone'] == null
+                          ? Text('${userGoo!.phoneNumber ?? ' '.toUpperCase()}',
+                              style: const TextStyle())
+                          : Text('+213 ${data['phone']}'),
                     ),
                   ],
                 ),
-                Padding(
-                  padding: const EdgeInsets.all(0.0),
-                  child: Text(userGoo?.emailVerified != true
-                      ? 'Email Not Verified'
-                      : ''),
-                ),
-                Center(
-                  child: data['phone'] == null
-                      ? Text('${userGoo!.phoneNumber ?? ' '.toUpperCase()}',
-                          style: const TextStyle())
-                      : Text('+213 ${data['phone']}'),
-                ),
-
-                // Text(userGoo.phoneNumber != null
-                //     ? userGoo.phoneNumber.toString()
-                //     : ' '.toUpperCase()),
                 Padding(
                   padding:
                       const EdgeInsets.symmetric(vertical: 20, horizontal: 100),
@@ -557,26 +504,26 @@ class _ProfileState extends State<Profile> with TickerProviderStateMixin {
                   ],
                 ),
               ),
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: const EdgeInsets.only(bottom: 20),
-                  child: Center(
-                    child: GestureDetector(
-                      onTap: () {
-                        Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) =>
-                              Privacy_Policy(), //MainPageAuth(),
-                          //  AuthPage(),
-                        ));
-                      },
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text('Privacy Policy'),
-                      ),
-                    ),
-                  ),
-                ),
-              )
+              // SliverToBoxAdapter(
+              //   child: Padding(
+              //     padding: const EdgeInsets.only(bottom: 20),
+              //     child: Center(
+              //       child: GestureDetector(
+              //         onTap: () {
+              //           Navigator.of(context).push(MaterialPageRoute(
+              //             builder: (context) =>
+              //                 Privacy_Policy(), //MainPageAuth(),
+              //             //  AuthPage(),
+              //           ));
+              //         },
+              //         child: Padding(
+              //           padding: const EdgeInsets.all(8.0),
+              //           child: Text('Privacy Policy'),
+              //         ),
+              //       ),
+              //     ),
+              //   ),
+              // )
             ]);
           }
 
@@ -672,29 +619,32 @@ class PostListOfMyProfil extends StatelessWidget {
                   dense: true,
                   trailing: userm!.uid != userID
                       ? Text('')
-                      : IconButton(
-                          icon: Icon(Icons.delete),
-                          // onPressed: () {
-                          //   FirebaseFirestore.instance
-                          //       .collection('Products')
-                          //       .doc(document.id)
-                          //       .delete();
-                          // },
-                          onPressed: () {
-                            FirebaseFirestore.instance
-                                .collection('Users')
-                                .doc(userID)
-                                .update({
-                              'userItemsNbr': FieldValue.increment(-1)
-                            }).whenComplete(() => FirebaseFirestore.instance
-                                    .collection(
-                                        'Products') //.collection('cart')
+                      : collection == 'Products'
+                          ? IconButton(
+                              icon: Icon(Icons.delete),
+                              onPressed: () {
+                                FirebaseFirestore.instance
+                                    .collection('Users')
+                                    .doc(userID)
+                                    .update({
+                                  'userItemsNbr': FieldValue.increment(-1)
+                                }).whenComplete(() => FirebaseFirestore.instance
+                                        .collection(collection)
+                                        .doc(document.id)
+                                        .delete());
+                                //Navigator.pop(context, true);
+                              },
+                            )
+                          : IconButton(
+                              icon: Icon(Icons.delete),
+                              onPressed: () {
+                                FirebaseFirestore.instance
+                                    .collection(collection)
                                     .doc(document.id)
-                                    .delete());
-
-                            //Navigator.pop(context, true);
-                          },
-                        ),
+                                    .delete();
+                                //Navigator.pop(context, true);
+                              },
+                            ),
                   onTap: () async {
                     await Navigator.push(context,
                         MaterialPageRoute(builder: (BuildContext) {

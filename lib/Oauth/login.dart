@@ -164,16 +164,18 @@ class _LoginWidgetState extends State<LoginWidget> {
                                 ),
                               ),
                               onPressed: () async {
-                                signIn().whenComplete(() =>
-                                        Navigator.of(context)
-                                            .push(MaterialPageRoute(
-                                          builder: (context) => verifi_auth(),
-                                        ))
+                                signIn().then((value) => Navigator.of(context)
+                                    .popUntil((route) => route.isFirst));
+                                // .whenComplete(() => Navigator.of(context)
+                                //             .push(MaterialPageRoute(
+                                //           builder: (context) =>
+                                //               verifi_auth(),
+                                //         ))
 
-                                    //     .whenComplete(
-                                    //   () => Navigator.of(context)
-                                    //       .popUntil((route) => route.isFirst),
-                                    );
+                                //     .whenComplete(
+                                //   () => Navigator.of(context)
+                                //       .popUntil((route) => route.isFirst),
+                                //  );
                               },
                             ), // Entrer
                             const SizedBox(height: 10),
