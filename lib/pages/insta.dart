@@ -11,6 +11,7 @@ import 'package:flutterflow_paginate_firestore/paginate_firestore.dart';
 import 'package:flutterflow_paginate_firestore/widgets/bottom_loader.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:ramzy/pages/Profil_premium.dart';
 import 'package:readmore/readmore.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import '../Oauth/AuthPage.dart';
@@ -1621,7 +1622,8 @@ Builder TopUsers(List<DocumentSnapshot<Object?>> premiumUsers) {
                 Map dataUser = premiumUsers[index].data() as Map;
                 await Navigator.push(context,
                     MaterialPageRoute(builder: (BuildContext context) {
-                  return ProfileOthers(data: dataUser);
+                  //return ProfileOthers(data: dataUser);
+                  return Profil_premium(data: dataUser);
                 }));
               },
             ),
