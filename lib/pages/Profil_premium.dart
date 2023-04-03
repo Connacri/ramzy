@@ -52,7 +52,7 @@ class Profil_premium extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
               Padding(
-                padding: const EdgeInsets.only(top: 30),
+                padding: const EdgeInsets.only(top: 40),
                 child: AvatarGlow(
                   glowColor: Colors.white,
                   endRadius: 80.0,
@@ -190,33 +190,33 @@ class Profil_premium extends StatelessWidget {
                       fontFamily: 'Oswald',
                     )),
               ),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(18, 18, 18, 0),
-                child: Row(
-                  children: [
-                    Text(
-                      'Ses ',
-                      textAlign: TextAlign.start,
-                      style: TextStyle(
-                        fontStyle: FontStyle.italic,
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.yellow, //Colors.yellow),
-                      ),
-                    ),
-                    Text(
-                      'Annonces',
-                      textAlign: TextAlign.start,
-                      style: TextStyle(
-                        fontStyle: FontStyle.italic,
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white70, //Colors.white70),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+              // Padding(
+              //   padding: const EdgeInsets.fromLTRB(18, 18, 18, 0),
+              //   child: Row(
+              //     children: [
+              //       Text(
+              //         'Ses ',
+              //         textAlign: TextAlign.start,
+              //         style: TextStyle(
+              //           fontStyle: FontStyle.italic,
+              //           fontSize: 20,
+              //           fontWeight: FontWeight.bold,
+              //           color: Colors.yellow, //Colors.yellow),
+              //         ),
+              //       ),
+              //       Text(
+              //         'Annonces',
+              //         textAlign: TextAlign.start,
+              //         style: TextStyle(
+              //           fontStyle: FontStyle.italic,
+              //           fontSize: 20,
+              //           fontWeight: FontWeight.bold,
+              //           color: Colors.white70, //Colors.white70),
+              //         ),
+              //       ),
+              //     ],
+              //   ),
+              // ),
               Expanded(
                 child: PostListOfUserPremium(
                   datauser: datauser,
@@ -228,33 +228,33 @@ class Profil_premium extends StatelessWidget {
                   color2: Colors.white70,
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(18, 18, 18, 0),
-                child: Row(
-                  children: [
-                    Text(
-                      'Ses ',
-                      textAlign: TextAlign.start,
-                      style: TextStyle(
-                        fontStyle: FontStyle.italic,
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white70, //Colors.yellow),
-                      ),
-                    ),
-                    Text(
-                      'Publications',
-                      textAlign: TextAlign.start,
-                      style: TextStyle(
-                        fontStyle: FontStyle.italic,
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.blue, //Colors.white70),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+              // Padding(
+              //   padding: const EdgeInsets.fromLTRB(18, 18, 18, 0),
+              //   child: Row(
+              //     children: [
+              //       Text(
+              //         'Ses ',
+              //         textAlign: TextAlign.start,
+              //         style: TextStyle(
+              //           fontStyle: FontStyle.italic,
+              //           fontSize: 20,
+              //           fontWeight: FontWeight.bold,
+              //           color: Colors.white70, //Colors.yellow),
+              //         ),
+              //       ),
+              //       Text(
+              //         'Publications',
+              //         textAlign: TextAlign.start,
+              //         style: TextStyle(
+              //           fontStyle: FontStyle.italic,
+              //           fontSize: 20,
+              //           fontWeight: FontWeight.bold,
+              //           color: Colors.blue, //Colors.white70),
+              //         ),
+              //       ),
+              //     ],
+              //   ),
+              // ),
               Expanded(
                 child: PostListOfUserPremium(
                   datauser: datauser,

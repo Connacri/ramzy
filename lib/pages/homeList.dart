@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'dart:ui';
-import 'package:ramzy/pages/plans.dart';
+import '../pages/booking.dart';
+import '../pages/plans.dart';
 
 import '../pages/unloggerPublicPage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -329,80 +330,84 @@ class homeList extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.symmetric(
                       horizontal: 20.0, vertical: 10),
-                  child: Card(
-                    // margin: const EdgeInsets.all(5),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(15)),
-                    clipBehavior: Clip.antiAliasWithSaveLayer,
-                    elevation: 2,
-                    child: Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        ShaderMask(
-                          shaderCallback: (rect) {
-                            return const LinearGradient(
-                              begin: Alignment.topCenter,
-                              end: Alignment.bottomLeft,
-                              colors: [Colors.transparent, Colors.black],
-                            ).createShader(
-                                Rect.fromLTRB(0, 0, rect.width, rect.height));
-                          },
-                          blendMode: BlendMode.darken,
-                          child: Container(
-                            height: 50,
-                            decoration: BoxDecoration(
-                              image: DecorationImage(
-                                image: CachedNetworkImageProvider(
-                                  'https://firebasestorage.googleapis.com/v0/b/adventure-eb4ca.appspot.com/o/wall%2Fwall%20(1).jpg?alt=media&token=c5c01dca-4b32-4b9d-88fe-717e976ac2f5',
+                  child: GestureDetector(
+                    onTap: () => Navigator.of(context).push(
+                        MaterialPageRoute(builder: (context) => gantt_chart())),
+                    child: Card(
+                      // margin: const EdgeInsets.all(5),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15)),
+                      clipBehavior: Clip.antiAliasWithSaveLayer,
+                      elevation: 2,
+                      child: Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          ShaderMask(
+                            shaderCallback: (rect) {
+                              return const LinearGradient(
+                                begin: Alignment.topCenter,
+                                end: Alignment.bottomLeft,
+                                colors: [Colors.transparent, Colors.black],
+                              ).createShader(
+                                  Rect.fromLTRB(0, 0, rect.width, rect.height));
+                            },
+                            blendMode: BlendMode.darken,
+                            child: Container(
+                              height: 50,
+                              decoration: BoxDecoration(
+                                image: DecorationImage(
+                                  image: CachedNetworkImageProvider(
+                                    'https://firebasestorage.googleapis.com/v0/b/adventure-eb4ca.appspot.com/o/wall%2Fwall%20(1).jpg?alt=media&token=c5c01dca-4b32-4b9d-88fe-717e976ac2f5',
+                                  ),
+                                  fit: BoxFit.cover,
+                                  alignment: Alignment.topCenter,
                                 ),
-                                fit: BoxFit.cover,
-                                alignment: Alignment.topCenter,
                               ),
                             ),
                           ),
-                        ),
-                        Center(
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                'Top',
-                                textAlign: TextAlign.start,
-                                style: TextStyle(
-                                    shadows: [
-                                      Shadow(
-                                        blurRadius: 10.0, // shadow blur
-                                        color: Colors.black54, // shadow color
-                                        offset: Offset(2.0,
-                                            2.0), // how much shadow will be shown
-                                      ),
-                                    ],
-                                    fontStyle: FontStyle.italic,
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.red),
-                              ),
-                              Text(
-                                'Dealer',
-                                textAlign: TextAlign.start,
-                                style: TextStyle(
-                                    shadows: [
-                                      Shadow(
-                                        blurRadius: 10.0, // shadow blur
-                                        color: Colors.black54, // shadow color
-                                        offset: Offset(2.0,
-                                            2.0), // how much shadow will be shown
-                                      ),
-                                    ],
-                                    fontStyle: FontStyle.italic,
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white),
-                              ),
-                            ],
+                          Center(
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  'Top',
+                                  textAlign: TextAlign.start,
+                                  style: TextStyle(
+                                      shadows: [
+                                        Shadow(
+                                          blurRadius: 10.0, // shadow blur
+                                          color: Colors.black54, // shadow color
+                                          offset: Offset(2.0,
+                                              2.0), // how much shadow will be shown
+                                        ),
+                                      ],
+                                      fontStyle: FontStyle.italic,
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.red),
+                                ),
+                                Text(
+                                  'Dealer',
+                                  textAlign: TextAlign.start,
+                                  style: TextStyle(
+                                      shadows: [
+                                        Shadow(
+                                          blurRadius: 10.0, // shadow blur
+                                          color: Colors.black54, // shadow color
+                                          offset: Offset(2.0,
+                                              2.0), // how much shadow will be shown
+                                        ),
+                                      ],
+                                      fontStyle: FontStyle.italic,
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white),
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                 ),
