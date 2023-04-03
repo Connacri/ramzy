@@ -1,8 +1,8 @@
 import 'dart:ui';
-import 'package:jiffy/jiffy.dart';
 import 'package:calendar_timeline/calendar_timeline.dart';
 import 'package:dart_date/dart_date.dart';
 import 'package:flutter/material.dart';
+import 'package:jiffy/jiffy.dart';
 import 'dart:math';
 
 class gantt_chart extends StatelessWidget {
@@ -25,8 +25,8 @@ class GranttChartScreenState extends State<GranttChartScreen>
     with TickerProviderStateMixin {
   late AnimationController animationController;
 
-  DateTime fromDate = DateTime(2023, 1, 1);
-  DateTime toDate = DateTime(2024, 1, 1);
+  DateTime fromDate = DateTime(2017, 1, 1);
+  DateTime toDate = DateTime(2023, 1, 1);
 
   late List<Floor> usersInChart;
   late List<UserBooker> projectsInChart;
@@ -238,6 +238,7 @@ class GanttChart extends StatelessWidget {
             Jiffy(tempDate).format("MMMM").toUpperCase(),
             textAlign: TextAlign.center,
             style: TextStyle(
+              fontFamily: 'Oswald',
               fontWeight: FontWeight.bold,
               color: Colors.white,
               fontSize: 12.0,
@@ -457,87 +458,84 @@ var floors = [
   Floor(id: 5, floor: '05'),
   Floor(id: 6, floor: '06'),
   Floor(id: 7, floor: '07'),
-  Floor(id: 8, floor: '08'),
-  Floor(id: 9, floor: '09'),
 ];
 
-var rooms = [
-  Room(id: 1, room: '01'),
-  Room(id: 2, room: '02'),
-  Room(id: 3, room: '03'),
-  Room(id: 4, room: '04'),
-  Room(id: 5, room: '05'),
-  Room(id: 6, room: '06'),
-  Room(id: 7, room: '07'),
-  Room(id: 5, room: '08'),
-  Room(id: 6, room: '09'),
-  Room(id: 7, room: '10'),
-  Room(id: 5, room: '11'),
-  Room(id: 6, room: '12'),
-  Room(id: 7, room: '14'),
-];
+// var rooms = [
+//   Room(id: 1, room: '01'),
+//   Room(id: 2, room: '02'),
+//   Room(id: 3, room: '03'),
+//   Room(id: 4, room: '04'),
+//   Room(id: 5, room: '05'),
+//   Room(id: 6, room: '06'),
+//   Room(id: 7, room: '07'),
+//   Room(id: 5, room: '08'),
+//   Room(id: 6, room: '09'),
+//   Room(id: 7, room: '10'),
+//   Room(id: 5, room: '11'),
+//   Room(id: 6, room: '12'),
+//   Room(id: 7, room: '14'),
+// ];
 
 var userbookers = [
   UserBooker(
-    id: 1,
-    name: 'Ramzi',
-    startTime: DateTime(2023, 1, 2),
-    endTime: DateTime(2023, 1, 5),
-    participants: [1, 2, 4, 3, 7],
-  ),
+      id: 1,
+      name: 'Ramzi',
+      startTime: DateTime(2017, 1, 2),
+      endTime: DateTime(2017, 1, 5),
+      participants: [1, 2, 4, 3, 7]),
   UserBooker(
       id: 2,
       name: 'Danil',
-      startTime: DateTime(2023, 1, 4),
-      endTime: DateTime(2023, 1, 8),
+      startTime: DateTime(2017, 1, 4),
+      endTime: DateTime(2017, 1, 8),
       participants: [1, 4, 2, 3]),
   UserBooker(
       id: 3,
       name: 'Selyane',
-      startTime: DateTime(2023, 1, 14),
-      endTime: DateTime(2023, 1, 25),
+      startTime: DateTime(2017, 1, 14),
+      endTime: DateTime(2017, 1, 25),
       participants: [1, 2, 7, 3]),
   UserBooker(
       id: 4,
       name: 'Samir',
-      startTime: DateTime(2023, 1, 30),
-      endTime: DateTime(2023, 1, 3),
+      startTime: DateTime(2017, 1, 30),
+      endTime: DateTime(2017, 1, 3),
       participants: [1, 2, 5, 3]),
   UserBooker(
       id: 5,
       name: 'Poutin',
-      startTime: DateTime(2023, 1, 28),
-      endTime: DateTime(2023, 2, 2),
+      startTime: DateTime(2017, 1, 28),
+      endTime: DateTime(2017, 2, 2),
       participants: [1, 4, 2, 3]),
   UserBooker(
       id: 6,
       name: 'KimJan',
-      startTime: DateTime(2023, 2, 26),
-      endTime: DateTime(2023, 3, 7),
+      startTime: DateTime(2017, 2, 26),
+      endTime: DateTime(2017, 3, 7),
       participants: [1, 4, 2, 3, 5, 6, 7]),
   UserBooker(
       id: 7,
       name: 'Bruclee',
-      startTime: DateTime(2023, 2, 31),
-      endTime: DateTime(2023, 3, 1),
+      startTime: DateTime(2017, 2, 31),
+      endTime: DateTime(2017, 3, 1),
       participants: [1, 2, 3, 4]),
   UserBooker(
       id: 7,
       name: 'Cordoba',
-      startTime: DateTime(2023, 1, 29),
-      endTime: DateTime(2023, 2, 12),
+      startTime: DateTime(2017, 1, 29),
+      endTime: DateTime(2017, 2, 12),
       participants: [1, 2, 3, 5]),
   UserBooker(
       id: 7,
       name: 'Kalite',
-      startTime: DateTime(2023, 1, 01),
-      endTime: DateTime(2023, 1, 04),
+      startTime: DateTime(2017, 1, 01),
+      endTime: DateTime(2017, 1, 04),
       participants: [1, 2, 3, 4, 6]),
   UserBooker(
       id: 7,
       name: 'Vinga',
-      startTime: DateTime(2023, 1, 27),
-      endTime: DateTime(2023, 3, 2),
+      startTime: DateTime(2017, 1, 27),
+      endTime: DateTime(2017, 3, 2),
       participants: [1, 2, 3, 4, 7]),
 ];
 
