@@ -1,3 +1,6 @@
+import 'package:ramzy/pages/booking.dart';
+import 'package:ramzy/pages/booking2.dart';
+
 import 'services/upload_random.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -66,6 +69,7 @@ class MyApp extends StatelessWidget {
             ),
           ),
           home: // upload_random(),
+              //gantt_chart(),
 
               verifi_auth(),
         ));

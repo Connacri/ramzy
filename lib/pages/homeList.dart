@@ -1,10 +1,12 @@
 import 'dart:math';
 import 'dart:ui';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:ramzy/pages/booking2.dart';
+
 import '../pages/booking.dart';
 import '../pages/plans.dart';
-
 import '../pages/unloggerPublicPage.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+
 import 'package:flutterflow_paginate_firestore/widgets/bottom_loader.dart';
 import 'package:flutterflow_paginate_firestore/widgets/empty_display.dart';
 import 'package:flutterflow_paginate_firestore/widgets/empty_separator.dart';
@@ -332,7 +334,11 @@ class homeList extends StatelessWidget {
                       horizontal: 20.0, vertical: 10),
                   child: GestureDetector(
                     onTap: () => Navigator.of(context).push(
-                        MaterialPageRoute(builder: (context) => gantt_chart())),
+                      MaterialPageRoute(
+                        builder: (context) => GranttChartScreen2(),
+                        //gantt_chart(),
+                      ),
+                    ),
                     child: Card(
                       // margin: const EdgeInsets.all(5),
                       shape: RoundedRectangleBorder(

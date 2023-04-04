@@ -28,8 +28,8 @@ class GranttChartScreenState extends State<GranttChartScreen>
   DateTime fromDate = DateTime(2017, 1, 1);
   DateTime toDate = DateTime(2023, 1, 1);
 
-  late List<Floor> usersInChart;
-  late List<UserBooker> projectsInChart;
+  late List<Room> usersInChart;
+  late List<UserGantt> projectsInChart;
 
   @override
   void initState() {
@@ -38,8 +38,8 @@ class GranttChartScreenState extends State<GranttChartScreen>
         duration: Duration(microseconds: 2000), vsync: this);
     animationController.forward();
 
-    projectsInChart = userbookers;
-    usersInChart = floors;
+    projectsInChart = UserGantts;
+    usersInChart = rooms;
   }
 
   @override
@@ -84,8 +84,8 @@ class GanttChart extends StatelessWidget {
   final AnimationController animationController;
   final DateTime fromDate;
   final DateTime toDate;
-  final List<UserBooker> data;
-  final List<Floor> usersInChart;
+  final List<UserGantt> data;
+  final List<Room> usersInChart;
 
   late int NombreJours;
   late int viewRange;
@@ -126,11 +126,16 @@ class GanttChart extends StatelessWidget {
   }
   /*************************************************************************************************/
 
-  int calculateDistanceToLeftBorder(DateTime projectStartedAt) {
+  int calculateDistanceToLeftBorder(
+    DateTime projectStartedAt,
+    /*int beforeUserG*/
+  ) {
     if (projectStartedAt.compareTo(fromDate) <= 0) {
       return 0;
     } else
-      return projectStartedAt.difference(fromDate).inDays; //-1;
+      return projectStartedAt
+          .difference(fromDate)
+          .inDays /*- beforeUserG*/; //-1;
     //calculateNumberOfMonthsBetween(fromDate, projectStartedAt) - 1;
   }
 
@@ -161,7 +166,7 @@ class GanttChart extends StatelessWidget {
   }
 
   List<Widget> buildChartBars(
-      List<UserBooker> data, double chartViewWidth, Color color) {
+      List<UserGantt> data, double chartViewWidth, Color color) {
     List<Widget> chartBars = [];
 
     for (int i = 0; i < data.length; i++) {
@@ -175,9 +180,9 @@ class GanttChart extends StatelessWidget {
           height: 25.0,
           width: remainingWidth * chartViewWidth / viewRangeToFitScreen,
           margin: EdgeInsets.only(
-              left: calculateDistanceToLeftBorder(data[i].startTime) *
+              left: (calculateDistanceToLeftBorder(data[i].startTime) *
                   chartViewWidth /
-                  viewRangeToFitScreen,
+                  viewRangeToFitScreen),
               top: i == 0 ? 4.0 : 2.0,
               bottom: i == data.length - 1 ? 4.0 : 2.0),
           alignment: Alignment.centerLeft,
@@ -317,7 +322,7 @@ class GanttChart extends StatelessWidget {
   }
 
   Widget buildChartForEachUser(
-      List<UserBooker> userData, double chartViewWidth, Floor user) {
+      List<UserGantt> userData, double chartViewWidth, Room roomA) {
     Color color = //Colors.teal;
         randomColorGenerator();
     var chartBars = buildChartBars(userData, chartViewWidth, color);
@@ -353,14 +358,14 @@ class GanttChart extends StatelessWidget {
                                             ? 0
                                             : 0,
                                     child: new Text(
-                                      user.floor.toUpperCase(),
+                                      roomA.name.toUpperCase(),
                                       textAlign: TextAlign.center,
                                       maxLines: 2,
                                       overflow: TextOverflow.ellipsis,
                                     ),
                                   ),
                                 )),
-                            Column(
+                            Row(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: chartBars,
                             ),
@@ -381,11 +386,10 @@ class GanttChart extends StatelessWidget {
     List<Widget> chartContent = [];
 
     usersInChart.forEach((user) {
-      List<UserBooker> projectsOfUser = [];
+      List<UserGantt> projectsOfUser = [];
 
-      projectsOfUser = userbookers
-          .where((userBooker) => userBooker.participants.indexOf(user.id) != -1)
-          .toList();
+      projectsOfUser = UserGantts.where(
+          (UserGantt) => UserGantt.rooms.indexOf(user.id) != -1).toList();
 
       if (projectsOfUser.length > 0) {
         chartContent
@@ -450,120 +454,103 @@ class GanttChart extends StatelessWidget {
   }
 }
 
-var floors = [
-  Floor(id: 1, floor: '01'),
-  Floor(id: 2, floor: '02'),
-  Floor(id: 3, floor: '03'),
-  Floor(id: 4, floor: '04'),
-  Floor(id: 5, floor: '05'),
-  Floor(id: 6, floor: '06'),
-  Floor(id: 7, floor: '07'),
+var rooms = [
+  Room(id: 1, name: '01'),
+  Room(id: 2, name: '02'),
+  Room(id: 3, name: '03'),
+  Room(id: 4, name: '04'),
+  Room(id: 5, name: '05'),
+  Room(id: 6, name: '06'),
+  Room(id: 7, name: '07'),
+  Room(id: 8, name: '08'),
+  Room(id: 9, name: '09'),
+  Room(id: 10, name: '10'),
+  Room(id: 11, name: '11'),
+  Room(id: 12, name: '12'),
+  Room(id: 13, name: '14'),
 ];
 
-// var rooms = [
-//   Room(id: 1, room: '01'),
-//   Room(id: 2, room: '02'),
-//   Room(id: 3, room: '03'),
-//   Room(id: 4, room: '04'),
-//   Room(id: 5, room: '05'),
-//   Room(id: 6, room: '06'),
-//   Room(id: 7, room: '07'),
-//   Room(id: 5, room: '08'),
-//   Room(id: 6, room: '09'),
-//   Room(id: 7, room: '10'),
-//   Room(id: 5, room: '11'),
-//   Room(id: 6, room: '12'),
-//   Room(id: 7, room: '14'),
-// ];
+class Room {
+  int id;
+  String name;
 
-var userbookers = [
-  UserBooker(
+  Room({required this.id, required this.name});
+}
+
+var UserGantts = [
+  UserGantt(
       id: 1,
       name: 'Ramzi',
-      startTime: DateTime(2017, 1, 2),
-      endTime: DateTime(2017, 1, 5),
-      participants: [1, 2, 4, 3, 7]),
-  UserBooker(
+      startTime: DateTime(2017, 1, 1),
+      endTime: DateTime(2017, 1, 3),
+      rooms: [1, 2, 4, 3, 7]),
+  UserGantt(
       id: 2,
       name: 'Danil',
-      startTime: DateTime(2017, 1, 4),
-      endTime: DateTime(2017, 1, 8),
-      participants: [1, 4, 2, 3]),
-  UserBooker(
+      startTime: DateTime(2017, 1, 3),
+      endTime: DateTime(2017, 1, 5),
+      rooms: [1, 4, 2, 3]),
+  UserGantt(
       id: 3,
       name: 'Selyane',
       startTime: DateTime(2017, 1, 14),
       endTime: DateTime(2017, 1, 25),
-      participants: [1, 2, 7, 3]),
-  UserBooker(
+      rooms: [1, 2, 7, 3]),
+  UserGantt(
       id: 4,
       name: 'Samir',
       startTime: DateTime(2017, 1, 30),
       endTime: DateTime(2017, 1, 3),
-      participants: [1, 2, 5, 3]),
-  UserBooker(
+      rooms: [1, 2, 5, 3]),
+  UserGantt(
       id: 5,
       name: 'Poutin',
       startTime: DateTime(2017, 1, 28),
       endTime: DateTime(2017, 2, 2),
-      participants: [1, 4, 2, 3]),
-  UserBooker(
+      rooms: [1, 4, 2, 3]),
+  UserGantt(
       id: 6,
       name: 'KimJan',
       startTime: DateTime(2017, 2, 26),
       endTime: DateTime(2017, 3, 7),
-      participants: [1, 4, 2, 3, 5, 6, 7]),
-  UserBooker(
+      rooms: [1, 4, 2, 3, 5, 6, 7]),
+  UserGantt(
       id: 7,
       name: 'Bruclee',
       startTime: DateTime(2017, 2, 31),
       endTime: DateTime(2017, 3, 1),
-      participants: [1, 2, 3, 4]),
-  UserBooker(
+      rooms: [1, 2, 3, 4]),
+  UserGantt(
       id: 7,
       name: 'Cordoba',
       startTime: DateTime(2017, 1, 29),
       endTime: DateTime(2017, 2, 12),
-      participants: [1, 2, 3, 5]),
-  UserBooker(
+      rooms: [1, 2, 3, 5]),
+  UserGantt(
       id: 7,
       name: 'Kalite',
       startTime: DateTime(2017, 1, 01),
       endTime: DateTime(2017, 1, 04),
-      participants: [1, 2, 3, 4, 6]),
-  UserBooker(
+      rooms: [1, 2, 3, 4, 6]),
+  UserGantt(
       id: 7,
       name: 'Vinga',
       startTime: DateTime(2017, 1, 27),
       endTime: DateTime(2017, 3, 2),
-      participants: [1, 2, 3, 4, 7]),
+      rooms: [1, 2, 3, 4, 7]),
 ];
 
-class Floor {
-  int id;
-  String floor;
-
-  Floor({required this.id, required this.floor});
-}
-
-class Room {
-  int id;
-  String room;
-
-  Room({required this.id, required this.room});
-}
-
-class UserBooker {
+class UserGantt {
   int id;
   String name;
   DateTime startTime;
   DateTime endTime;
-  List<int> participants;
+  List<int> rooms;
 
-  UserBooker(
+  UserGantt(
       {required this.id,
       required this.name,
       required this.startTime,
       required this.endTime,
-      required this.participants});
+      required this.rooms});
 }
