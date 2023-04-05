@@ -296,6 +296,32 @@ class PostListOfUserPremium extends StatelessWidget {
   final String text2;
   final Color color1;
   final Color color2;
+  Future<void> updateViewsAndUserList(
+      String collection, productId, String userId) async {
+    // Récupération du document du produit
+    DocumentReference productRef =
+        FirebaseFirestore.instance.collection(collection).doc(productId);
+    DocumentSnapshot productSnapshot = await productRef.get();
+
+    // Vérification si l'utilisateur a déjà vu le produit
+    List<dynamic> viewedByList = productSnapshot.get('viewed_by');
+    bool userHasViewed = viewedByList.contains(userId);
+
+    // Mise à jour des données du produit
+    if (userHasViewed) {
+      // L'utilisateur a déjà vu le produit
+      // await productRef.update({
+      //   'views': productSnapshot.get('views') + 1,
+      // });
+      return;
+    } else {
+      // L'utilisateur n'a pas encore vu le produit
+      await productRef.update({
+        'views': productSnapshot.get('views') + 1,
+        'viewed_by': viewedByList..add(userId),
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -332,149 +358,320 @@ class PostListOfUserPremium extends StatelessWidget {
                 print('vous devez acheter premium');
               }
 
-              final userm = FirebaseAuth.instance.currentUser;
+              final User? user = FirebaseAuth.instance.currentUser;
+
               return GestureDetector(
-                onTap: () => Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => SilverdetailItem(
-                    data: data,
-                    idDoc: dataid,
-                    isLiked: data['usersLike'].toString().contains(userm!.uid),
-                  ),
-                )),
+                onTap: () {
+                  updateViewsAndUserList(
+                    collection,
+                    dataid,
+                    user!.uid,
+                  ).whenComplete(
+                    () => Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => SilverdetailItem(
+                        data: data,
+                        idDoc: dataid,
+                        isLiked:
+                            data['usersLike'].toString().contains(user.uid),
+                      ),
+                    )),
+                  );
+                },
+                // onTap: () => Navigator.of(context).push(MaterialPageRoute(
+                //   builder: (context) => SilverdetailItem(
+                //     data: data,
+                //     idDoc: dataid,
+                //     isLiked: data['usersLike'].toString().contains(userm!.uid),
+                //   ),
+                // )),
                 child: Card(
                   //  margin: const EdgeInsets.all(5),
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10)),
                   clipBehavior: Clip.antiAliasWithSaveLayer,
                   elevation: 2,
-                  child: Column(
-                    children: [
-                      Stack(
-                        alignment: Alignment.bottomRight,
-                        children: [
-                          ShaderMask(
-                            shaderCallback: (rect) {
-                              return const LinearGradient(
-                                begin: Alignment.topCenter,
-                                end: Alignment.bottomLeft,
-                                colors: [Colors.transparent, Colors.black],
-                              ).createShader(
-                                  Rect.fromLTRB(0, 0, rect.width, rect.height));
-                            },
-                            blendMode: BlendMode.darken,
-                            child: CachedNetworkImage(
-                              alignment: Alignment.topCenter,
-                              fadeInDuration: Duration(seconds: 2),
-                              fit: BoxFit.cover,
-                              width: size,
-                              height: 80,
-                              imageUrl: data['themb'],
-                              //iitem.documents[index]['themb'],
-                              // 'https://firebasestorage.googleapis.com/v0/b/adventure-eb4ca.appspot.com/o/carre%2Fcarre%20(${index + 1}).jpg?alt=media&token=68e384f1-bb64-47cf-a245-9f7f12202443',
-                              errorWidget: (context, url, error) => const Icon(
-                                Icons.error,
-                                color: Colors.red,
+                  child: collection == 'Instalives'
+                      ? Stack(
+                          alignment: Alignment.bottomLeft,
+                          fit: StackFit.passthrough,
+                          children: [
+                            ShaderMask(
+                              shaderCallback: (rect) {
+                                return const LinearGradient(
+                                  begin: Alignment.topCenter,
+                                  end: Alignment.bottomLeft,
+                                  colors: [Colors.transparent, Colors.black],
+                                ).createShader(Rect.fromLTRB(
+                                    0, 0, rect.width, rect.height));
+                              },
+                              blendMode: BlendMode.darken,
+                              child: CachedNetworkImage(
+                                alignment: Alignment.topCenter,
+                                fadeInDuration: Duration(seconds: 2),
+                                fit: BoxFit.cover,
+                                width: size,
+                                // height: 80,
+                                imageUrl: data['themb'],
+                                //iitem.documents[index]['themb'],
+                                // 'https://firebasestorage.googleapis.com/v0/b/adventure-eb4ca.appspot.com/o/carre%2Fcarre%20(${index + 1}).jpg?alt=media&token=68e384f1-bb64-47cf-a245-9f7f12202443',
+                                errorWidget: (context, url, error) =>
+                                    const Icon(
+                                  Icons.error,
+                                  color: Colors.red,
+                                ),
                               ),
                             ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 8, vertical: 4),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
+                            Positioned(
+                              bottom: 5,
+                              child: Row(
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 8, vertical: 4),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: [
+                                        Text(
+                                          NumberFormat.compact().format(
+                                            data['views'] ?? 0.0,
+                                            // iitem.documents[index]['likes']
+                                          ),
+                                          textAlign: TextAlign.end,
+                                          style: TextStyle(
+                                            color: Colors.white70,
+                                            fontSize: 12,
+                                          ),
+                                        ),
+                                        SizedBox(
+                                          width: 3,
+                                        ),
+                                        Icon(
+                                          FontAwesomeIcons.eye,
+                                          size: 11,
+                                          color: Colors.white70,
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 8, vertical: 4),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: [
+                                        Text(
+                                          NumberFormat.compact().format(
+                                            data['likes'],
+                                            // iitem.documents[index]['likes']
+                                          ),
+                                          textAlign: TextAlign.end,
+                                          style: TextStyle(
+                                            color: Colors.white70,
+                                            fontSize: 12,
+                                          ),
+                                        ),
+                                        SizedBox(
+                                          width: 3,
+                                        ),
+                                        Icon(
+                                          FontAwesomeIcons.heart,
+                                          size: 11,
+                                          color: Colors.white70,
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        )
+                      : Column(
+                          children: [
+                            Stack(
+                              alignment: Alignment.bottomCenter,
                               children: [
-                                Text(
-                                  NumberFormat.compact().format(
-                                    data['likes'],
-                                    // iitem.documents[index]['likes']
-                                  ),
-                                  textAlign: TextAlign.end,
-                                  style: TextStyle(
-                                    color: Colors.white70,
-                                    fontSize: 10,
+                                ShaderMask(
+                                  shaderCallback: (rect) {
+                                    return const LinearGradient(
+                                      begin: Alignment.topCenter,
+                                      end: Alignment.bottomLeft,
+                                      colors: [
+                                        Colors.transparent,
+                                        Colors.black
+                                      ],
+                                    ).createShader(Rect.fromLTRB(
+                                        0, 0, rect.width, rect.height));
+                                  },
+                                  blendMode: BlendMode.darken,
+                                  child: CachedNetworkImage(
+                                    alignment: Alignment.topCenter,
+                                    fadeInDuration: Duration(seconds: 2),
+                                    fit: BoxFit.cover,
+                                    width: size,
+                                    height: 120,
+                                    imageUrl: data['themb'],
+                                    //iitem.documents[index]['themb'],
+                                    // 'https://firebasestorage.googleapis.com/v0/b/adventure-eb4ca.appspot.com/o/carre%2Fcarre%20(${index + 1}).jpg?alt=media&token=68e384f1-bb64-47cf-a245-9f7f12202443',
+                                    errorWidget: (context, url, error) =>
+                                        const Icon(
+                                      Icons.error,
+                                      color: Colors.red,
+                                    ),
                                   ),
                                 ),
-                                SizedBox(
-                                  width: 3,
+                                Container(
+                                  width: size,
+                                  color: Colors.cyan,
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 4, vertical: 4),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          children: [
+                                            Text(
+                                              NumberFormat.compact().format(
+                                                data['views'],
+                                                // iitem.documents[index]['likes']
+                                              ),
+                                              textAlign: TextAlign.end,
+                                              style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 12,
+                                              ),
+                                            ),
+                                            SizedBox(
+                                              width: 3,
+                                            ),
+                                            Icon(
+                                              FontAwesomeIcons.eye,
+                                              size: 11,
+                                              color: Colors.white,
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 4, vertical: 4),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          children: [
+                                            Text(
+                                              NumberFormat.compact().format(
+                                                data['likes'],
+                                                // iitem.documents[index]['likes']
+                                              ),
+                                              textAlign: TextAlign.end,
+                                              style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 12,
+                                              ),
+                                            ),
+                                            SizedBox(
+                                              width: 3,
+                                            ),
+                                            Icon(
+                                              FontAwesomeIcons.heart,
+                                              size: 11,
+                                              color: Colors.white,
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                 ),
-                                Icon(
-                                  FontAwesomeIcons.eye,
-                                  size: 9,
-                                  color: Colors.white70,
-                                )
                               ],
                             ),
-                          ),
-                        ],
-                      ),
-                      Container(
-                        width: size,
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 4.0),
-                          child: Text(
-                            data['item'],
-                            // iitem.documents[index]['item'],
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(fontSize: 12),
-                          ),
-                        ),
-                      ),
-                      Container(
-                        width: size,
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 4.0),
-                          child: data['price'] >= 1000
-
-                              //   iitem.documents[index]['price'] >= 1000
-                              ? Text(
-                                  NumberFormat.compactCurrency(
-                                          symbol: 'DZD ', decimalDigits: 2)
-                                      .format(data['price']
-                                          //iitem.documents[index]['price']
-                                          ),
+                            Container(
+                              width: size,
+                              child: Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 4.0),
+                                child: Text(
+                                  data['item'] ?? '',
+                                  // iitem.documents[index]['item'],
                                   overflow: TextOverflow.ellipsis,
-                                  style: TextStyle(fontSize: 14),
-                                )
-                              : Text(
-                                  NumberFormat.currency(
-                                          symbol: 'DZD ', decimalDigits: 2)
-                                      .format(data['price']
-                                          //iitem.documents[index]['price']
-                                          ),
-                                  overflow: TextOverflow.ellipsis,
-                                  style: TextStyle(fontSize: 14),
+                                  style: TextStyle(fontSize: 12),
                                 ),
+                              ),
+                            ),
+                            Container(
+                              width: size,
+                              child: Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 4.0),
+                                child: data['price'] >= 1000
+
+                                    //   iitem.documents[index]['price'] >= 1000
+                                    ? Text(
+                                        NumberFormat.compactCurrency(
+                                                symbol: 'DZD ',
+                                                decimalDigits: 2)
+                                            .format(data['price']
+                                                //iitem.documents[index]['price']
+                                                ),
+                                        overflow: TextOverflow.ellipsis,
+                                        style: TextStyle(fontSize: 14),
+                                      )
+                                    : Text(
+                                        NumberFormat.currency(
+                                                symbol: 'DZD ',
+                                                decimalDigits: 2)
+                                            .format(data['price']
+                                                //iitem.documents[index]['price']
+                                                ),
+                                        overflow: TextOverflow.ellipsis,
+                                        style: TextStyle(fontSize: 14),
+                                      ),
+                              ),
+                            ),
+                            Container(
+                              width: size,
+                              child: Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 4.0),
+                                child: Text(
+                                  '${data['category']}-${data['levelItem']}',
+                                  //   '${iitem.documents[index]['category']}  ${iitem.documents[index]['levelItem']}',
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(fontSize: 12),
+                                ),
+                              ),
+                            ),
+                            // Container(
+                            //   width: size,
+                            //   child: Padding(
+                            //     padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                            //     child: Text(
+                            //       data['createdAt']
+                            //           //iitem.documents[index]['createdAt']
+                            //           .toDate()
+                            //           .toString(),
+                            //       overflow: TextOverflow.ellipsis,
+                            //       style: TextStyle(fontSize: 9),
+                            //     ),
+                            //   ),
+                            // ),
+                          ],
                         ),
-                      ),
-                      Container(
-                        width: size,
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 4.0),
-                          child: Text(
-                            '${data['category']}-${data['levelItem']}',
-                            //   '${iitem.documents[index]['category']}  ${iitem.documents[index]['levelItem']}',
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(fontSize: 12),
-                          ),
-                        ),
-                      ),
-                      // Container(
-                      //   width: size,
-                      //   child: Padding(
-                      //     padding: const EdgeInsets.symmetric(horizontal: 4.0),
-                      //     child: Text(
-                      //       data['createdAt']
-                      //           //iitem.documents[index]['createdAt']
-                      //           .toDate()
-                      //           .toString(),
-                      //       overflow: TextOverflow.ellipsis,
-                      //       style: TextStyle(fontSize: 9),
-                      //     ),
-                      //   ),
-                      // ),
-                    ],
-                  ),
                 ),
               );
             }).toList(),

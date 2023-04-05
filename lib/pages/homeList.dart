@@ -333,12 +333,12 @@ class homeList extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(
                       horizontal: 20.0, vertical: 10),
                   child: GestureDetector(
-                    onTap: () => Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) => GranttChartScreen2(),
-                        //gantt_chart(),
-                      ),
-                    ),
+                    // onTap: () => Navigator.of(context).push(
+                    //   MaterialPageRoute(
+                    //     builder: (context) => GranttChartScreen2(),
+                    //     //gantt_chart(),
+                    //   ),
+                    // ),
                     child: Card(
                       // margin: const EdgeInsets.all(5),
                       shape: RoundedRectangleBorder(
@@ -1283,17 +1283,23 @@ class homeList extends StatelessWidget {
                                           color: isLiked
                                               ? Colors.red
                                               : Colors.white70,
-                                          fontSize: 12,
+                                          fontSize: 13,
                                         ),
                                       ),
                                       SizedBox(
                                         width: 3,
                                       ),
-                                      Icon(
-                                        FontAwesomeIcons.heart,
-                                        size: 11,
-                                        color: Colors.white70,
-                                      )
+                                      isLiked
+                                          ? Icon(
+                                              FontAwesomeIcons.heartCircleCheck,
+                                              size: 12,
+                                              color: Colors.red,
+                                            )
+                                          : Icon(
+                                              FontAwesomeIcons.heart,
+                                              size: 12,
+                                              color: Colors.white70,
+                                            )
                                     ],
                                   ),
                                 ),

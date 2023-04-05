@@ -223,82 +223,83 @@ class _stepper_widgetState extends State<stepper_widget> {
                       )),
                     _imagesList.isEmpty
                         ? Container()
-                        : widget.ccollection == 'Products'
-                            ? Expanded(
-                                child: ElevatedButton(
-                                  onPressed: isLastStep
-                                      ? () async {
-                                          await Navigator.push(context,
-                                              MaterialPageRoute(builder: (_) {
-                                            return page_detail(
-                                              //   code: _codeController.text,
-                                              geoLocation: notifier,
-                                              imagesList: _imagesList,
-                                              locationventeSelected:
-                                                  _locationventeSelected,
-                                              user: widget.userDoc,
-                                              typeSelected: _typeSelected,
-                                              itemController:
-                                                  _itemController.text,
-                                              priceController:
-                                                  _priceController.text,
-                                              telContactController:
-                                                  _telContactController.text,
-                                              // generaleController:
-                                              //     _generaleController.text,
-                                              descriptionController:
-                                                  _descriptionController.text,
-                                              phoneController: int.parse(
-                                                  _telContactController.text),
-                                            );
-                                          }));
-                                        }
-                                      : details.onStepContinue,
-                                  child: Text(
-                                    isLastStep ? 'Aperçu' : 'Suivant',
-                                    style: const TextStyle(
-                                        fontSize: 14,
-                                        fontFamily: 'oswald',
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                ),
-                              )
-                            : Expanded(
-                                child: ElevatedButton(
-                                  onPressed: isLastStep
-                                      ? () async {
-                                          await Navigator.push(context,
-                                              MaterialPageRoute(builder: (_) {
-                                            return page_detail_insta(
-                                              //   code: _codeController.text,
-                                              imagesList: _imagesList,
-                                              locationventeSelected:
-                                                  _locationventeSelected,
-                                              user: widget.userDoc,
-                                              typeSelected: _typeSelected,
-                                              itemController:
-                                                  _itemController.text,
-                                              priceController:
-                                                  _priceController.text,
-                                              telContactController:
-                                                  _telContactController.text,
-                                              // generaleController:
-                                              //     _generaleController.text,
-                                              descriptionController:
-                                                  _descriptionController.text,
-                                            );
-                                          }));
-                                        }
-                                      : details.onStepContinue,
-                                  child: Text(
-                                    isLastStep ? 'Aperçu' : 'Suivant',
-                                    style: const TextStyle(
-                                        fontSize: 14,
-                                        fontFamily: 'oswald',
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                ),
+                        :
+                        // widget.ccollection == 'Products'
+                        //         ?
+                        Expanded(
+                            child: ElevatedButton(
+                              onPressed: isLastStep
+                                  ? () async {
+                                      await Navigator.push(context,
+                                          MaterialPageRoute(builder: (_) {
+                                        return page_detail(
+                                          //   code: _codeController.text,
+                                          geoLocation: notifier,
+                                          imagesList: _imagesList,
+                                          locationventeSelected:
+                                              _locationventeSelected,
+                                          user: widget.userDoc,
+                                          typeSelected: _typeSelected,
+                                          itemController: _itemController.text,
+                                          priceController:
+                                              _priceController.text,
+                                          telContactController:
+                                              _telContactController.text,
+                                          // generaleController:
+                                          //     _generaleController.text,
+                                          descriptionController:
+                                              _descriptionController.text,
+                                          phoneController: int.parse(
+                                              _telContactController.text),
+                                        );
+                                      }));
+                                    }
+                                  : details.onStepContinue,
+                              child: Text(
+                                isLastStep ? 'Aperçu' : 'Suivant',
+                                style: const TextStyle(
+                                    fontSize: 14,
+                                    fontFamily: 'oswald',
+                                    fontWeight: FontWeight.bold),
                               ),
+                            ),
+                          )
+                    // : Expanded(
+                    //     child: ElevatedButton(
+                    //       onPressed: isLastStep
+                    //           ? () async {
+                    //               await Navigator.push(context,
+                    //                   MaterialPageRoute(builder: (_) {
+                    //                 return page_detail_insta(
+                    //                   //   code: _codeController.text,
+                    //                   imagesList: _imagesList,
+                    //                   locationventeSelected:
+                    //                       _locationventeSelected,
+                    //                   user: widget.userDoc,
+                    //                   typeSelected: _typeSelected,
+                    //                   itemController:
+                    //                       _itemController.text,
+                    //                   priceController:
+                    //                       _priceController.text,
+                    //                   telContactController:
+                    //                       _telContactController.text,
+                    //                   // generaleController:
+                    //                   //     _generaleController.text,
+                    //                   descriptionController:
+                    //                       _descriptionController.text,
+                    //                 );
+                    //               }));
+                    //             }
+                    //           : details.onStepContinue,
+                    //       child: Text(
+                    //         isLastStep ? 'Aperçu' : 'Suivant',
+                    //         style: const TextStyle(
+                    //             fontSize: 14,
+                    //             fontFamily: 'oswald',
+                    //             fontWeight: FontWeight.bold),
+                    //       ),
+                    //     ),
+                    //   ),
                   ],
                 ),
               );

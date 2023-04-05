@@ -25,8 +25,8 @@ class GranttChartScreenState extends State<GranttChartScreen>
     with TickerProviderStateMixin {
   late AnimationController animationController;
 
-  DateTime fromDate = DateTime(2017, 1, 1);
-  DateTime toDate = DateTime(2023, 1, 1);
+  DateTime fromDate = DateTime(2023, 1, 1);
+  DateTime toDate = DateTime(2023, 12, 31);
 
   late List<Room> usersInChart;
   late List<UserGantt> projectsInChart;
@@ -105,7 +105,7 @@ class GanttChart extends StatelessWidget {
     //viewdays = differenceInDays(fromDate, toDate);
     //calculateNumberOfMonthsBetween(fromDate, toDate);
     final NombreJours = toDate.difference(fromDate).inDays;
-    print(NombreJours);
+    print('NombreJours : $NombreJours');
   }
 
   Color randomColorGenerator() {
@@ -127,16 +127,13 @@ class GanttChart extends StatelessWidget {
   /*************************************************************************************************/
 
   int calculateDistanceToLeftBorder(
-    DateTime projectStartedAt,
-    /*int beforeUserG*/
-  ) {
+      DateTime projectStartedAt, int beforeChartGant) {
     if (projectStartedAt.compareTo(fromDate) <= 0) {
       return 0;
-    } else
-      return projectStartedAt
-          .difference(fromDate)
-          .inDays /*- beforeUserG*/; //-1;
-    //calculateNumberOfMonthsBetween(fromDate, projectStartedAt) - 1;
+    } else {
+      // print('NombreJours : {$projectStartedAt}');
+      return projectStartedAt.difference(fromDate).inDays - beforeChartGant;
+    }
   }
 
   int calculateRemainingWidth(
@@ -180,9 +177,16 @@ class GanttChart extends StatelessWidget {
           height: 25.0,
           width: remainingWidth * chartViewWidth / viewRangeToFitScreen,
           margin: EdgeInsets.only(
-              left: (calculateDistanceToLeftBorder(data[i].startTime) *
-                  chartViewWidth /
-                  viewRangeToFitScreen),
+              left: i == 0
+                  ? ((calculateDistanceToLeftBorder(data[i].startTime, 0) *
+                      chartViewWidth /
+                      viewRangeToFitScreen))
+                  : ((calculateDistanceToLeftBorder(
+                          data[i].startTime,
+                          calculateRemainingWidth(
+                              data[i - 1].startTime, data[i - 1].endTime)) *
+                      chartViewWidth /
+                      viewRangeToFitScreen)),
               top: i == 0 ? 4.0 : 2.0,
               bottom: i == data.length - 1 ? 4.0 : 2.0),
           alignment: Alignment.centerLeft,
@@ -481,62 +485,62 @@ var UserGantts = [
   UserGantt(
       id: 1,
       name: 'Ramzi',
-      startTime: DateTime(2017, 1, 1),
-      endTime: DateTime(2017, 1, 3),
+      startTime: DateTime(2023, 1, 1),
+      endTime: DateTime(2023, 1, 3),
       rooms: [1, 2, 4, 3, 7]),
   UserGantt(
       id: 2,
       name: 'Danil',
-      startTime: DateTime(2017, 1, 3),
-      endTime: DateTime(2017, 1, 5),
+      startTime: DateTime(2023, 1, 4),
+      endTime: DateTime(2023, 1, 5),
       rooms: [1, 4, 2, 3]),
   UserGantt(
       id: 3,
       name: 'Selyane',
-      startTime: DateTime(2017, 1, 14),
-      endTime: DateTime(2017, 1, 25),
+      startTime: DateTime(2023, 1, 14),
+      endTime: DateTime(2023, 1, 25),
       rooms: [1, 2, 7, 3]),
   UserGantt(
       id: 4,
       name: 'Samir',
-      startTime: DateTime(2017, 1, 30),
-      endTime: DateTime(2017, 1, 3),
+      startTime: DateTime(2023, 1, 30),
+      endTime: DateTime(2023, 1, 3),
       rooms: [1, 2, 5, 3]),
   UserGantt(
       id: 5,
       name: 'Poutin',
-      startTime: DateTime(2017, 1, 28),
-      endTime: DateTime(2017, 2, 2),
+      startTime: DateTime(2023, 1, 28),
+      endTime: DateTime(2023, 2, 2),
       rooms: [1, 4, 2, 3]),
   UserGantt(
       id: 6,
       name: 'KimJan',
-      startTime: DateTime(2017, 2, 26),
-      endTime: DateTime(2017, 3, 7),
+      startTime: DateTime(2023, 2, 26),
+      endTime: DateTime(2023, 3, 7),
       rooms: [1, 4, 2, 3, 5, 6, 7]),
   UserGantt(
       id: 7,
       name: 'Bruclee',
-      startTime: DateTime(2017, 2, 31),
-      endTime: DateTime(2017, 3, 1),
+      startTime: DateTime(2023, 2, 31),
+      endTime: DateTime(2023, 3, 1),
       rooms: [1, 2, 3, 4]),
   UserGantt(
       id: 7,
       name: 'Cordoba',
-      startTime: DateTime(2017, 1, 29),
-      endTime: DateTime(2017, 2, 12),
+      startTime: DateTime(2023, 1, 29),
+      endTime: DateTime(2023, 2, 12),
       rooms: [1, 2, 3, 5]),
   UserGantt(
       id: 7,
       name: 'Kalite',
-      startTime: DateTime(2017, 1, 01),
-      endTime: DateTime(2017, 1, 04),
+      startTime: DateTime(2023, 1, 06),
+      endTime: DateTime(2023, 1, 09),
       rooms: [1, 2, 3, 4, 6]),
   UserGantt(
       id: 7,
       name: 'Vinga',
-      startTime: DateTime(2017, 1, 27),
-      endTime: DateTime(2017, 3, 2),
+      startTime: DateTime(2023, 1, 27),
+      endTime: DateTime(2023, 3, 2),
       rooms: [1, 2, 3, 4, 7]),
 ];
 

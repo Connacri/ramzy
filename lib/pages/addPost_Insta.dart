@@ -396,7 +396,8 @@ class _stepper2_widgetState extends State<stepper2_widget> {
 
   Future uploadFile2() async {
     int i = 1;
-
+    cloud.GeoPoint geoPoint =
+        cloud.GeoPoint(notifier.value!.latitude, notifier.value!.longitude);
     String description = _descriptionController.text;
 
     List usersLike = ['sans'];
@@ -422,13 +423,29 @@ class _stepper2_widgetState extends State<stepper2_widget> {
     }
 
     imgRef.add({
+      // 'userID': FirebaseAuth.instance.currentUser!.uid,
+      // 'themb': imageFiles.first,
+      // 'imageUrls': imageFiles,
+      // 'createdAt': cloud.Timestamp.now(),
+      // 'Description': description,
+      // 'likes': 0,
+      // 'usersLike': usersLike,
+      // 'views': 0.0,
+      // 'viewed_by': [],
+
       'userID': FirebaseAuth.instance.currentUser!.uid,
       'themb': imageFiles.first,
       'imageUrls': imageFiles,
-      'createdAt': cloud.Timestamp.now(),
+      'createdAt': cloud.Timestamp.now(), //now.toString(),
       'Description': description,
-      'likes': 0,
+      'likes': 0, //likes,
       'usersLike': usersLike,
+      'dateDebut': DateTime.now().add(const Duration(days: 3)),
+      'dateFin': DateTime.now().add(const Duration(days: 11)),
+      'levelItem': 'free',
+      'position': geoPoint,
+      'viewed_by': [],
+      'views': 0,
     });
   }
 }

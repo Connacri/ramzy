@@ -421,12 +421,15 @@ class _ProfileState extends State<Profile> with TickerProviderStateMixin {
                     Text(userGoo?.emailVerified != true
                         ? 'Email Not Verified'
                         : ''),
-                    Center(
-                      child: data['phone'] == null
-                          ? Text('${userGoo!.phoneNumber ?? ' '.toUpperCase()}',
-                              style: const TextStyle())
-                          : Text('+213 ${data['phone']}'),
-                    ),
+                    data['phone'] == null || data['phone'] == 0
+                        ? Container()
+                        : Center(
+                            child: data['phone'] == null
+                                ? Text(
+                                    '${userGoo!.phoneNumber ?? ' '.toUpperCase()}',
+                                    style: const TextStyle())
+                                : Text('+213 ${data['phone']}'),
+                          ),
                   ],
                 ),
                 Padding(
@@ -580,6 +583,7 @@ class PostListOfMyProfil extends StatelessWidget {
                 clipBehavior: Clip.antiAlias,
                 elevation: 1,
                 child: ListTile(
+                  minVerticalPadding: 20.0,
                   minLeadingWidth: 0,
                   visualDensity: VisualDensity.compact,
                   //contentPadding: EdgeInsets.zero,
@@ -605,17 +609,19 @@ class PostListOfMyProfil extends StatelessWidget {
                       fontFamily: 'Oswald',
                     ),
                   ),
-                  subtitle: Text(
-                    '${data['price']}.00 DZD',
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                      color: Colors.green,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 15,
-                      fontFamily: 'Oswald',
-                    ),
-                  ),
-                  isThreeLine: true,
+                  subtitle: collection == 'Instalives'
+                      ? null
+                      : Text(
+                          '${data['price']}.00 DZD',
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                            color: Colors.green,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 15,
+                            fontFamily: 'Oswald',
+                          ),
+                        ),
+                  isThreeLine: collection == 'Instalives' ? false : true,
                   dense: true,
                   trailing: userm!.uid != userID
                       ? Text('')
