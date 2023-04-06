@@ -83,52 +83,16 @@ class Collection2Data {
   }
 }
 
-// class UserX {
-//   final String avatar;
-//   final double coins;
-//   final Timestamp createdAt;
-//   final String displayName;
-//   final String email;
-//   final String id;
-//   final Timestamp lastActive;
-//   final String levelUser;
-//   final String plan;
-//   final String role;
-//   final bool state;
-//   final String timeline;
-//
-//   UserX({
-//     required this.avatar,
-//     required this.coins,
-//     required this.createdAt,
-//     required this.displayName,
-//     required this.email,
-//     required this.id,
-//     required this.lastActive,
-//     required this.levelUser,
-//     required this.plan,
-//     required this.role,
-//     required this.state,
-//     required this.timeline,
-//   });
-//
-//   factory UserX.fromSnapshot(DocumentSnapshot snapshot) {
-//     return UserX(
-//       avatar: snapshot['avatar'],
-//       coins: snapshot['coins'] as double,
-//       createdAt: snapshot['createdAt'] as Timestamp,
-//       displayName: snapshot['displayName'],
-//       email: snapshot['email'],
-//       id: snapshot['id'],
-//       lastActive: snapshot['lastActive'] as Timestamp,
-//       levelUser: snapshot['levelUser'] as String,
-//       plan: snapshot['plan'] as String,
-//       role: snapshot['role'],
-//       state: snapshot['state'] as bool,
-//       timeline: snapshot['timeline'],
-//     );
-//   }
-// }
+class CollectionAlertData {
+  final List<DocumentSnapshot> documents;
+
+  CollectionAlertData(this.documents);
+  Query<Object?> fromListOfDocumentSnapshots(List<DocumentSnapshot> documents) {
+    return FirebaseFirestore.instance.collection('Alert').where(
+        FieldPath.documentId,
+        whereIn: documents.map((d) => d.id).toList());
+  }
+}
 
 class MyApp extends StatelessWidget {
   MyApp({Key? key, required this.userDoc}) : super(key: key);
@@ -157,6 +121,13 @@ class MyApp extends StatelessWidget {
               .snapshots()
               .map((querySnapshot) => Collection3Data(querySnapshot.docs)),
           initialData: Collection3Data([]),
+        ),
+        StreamProvider<CollectionAlertData>(
+          create: (_) => FirebaseFirestore.instance
+              .collection("Alert")
+              .snapshots()
+              .map((querySnapshot) => CollectionAlertData(querySnapshot.docs)),
+          initialData: CollectionAlertData([]),
         ),
       ],
       child: bottomNavigation(

@@ -1,6 +1,8 @@
 import 'dart:math';
 import 'dart:ui';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:marquee/marquee.dart';
+import 'package:ramzy/Oauth/getFCM.dart';
 import 'package:ramzy/pages/booking2.dart';
 
 import '../pages/booking.dart';
@@ -68,6 +70,8 @@ class homeList extends StatelessWidget {
 
     final carouss = Provider.of<Collection3Data>(context);
 
+    final alertItems = Provider.of<CollectionAlertData>(context);
+
     var premiumUsers = uusers.documents
         .where((element) => element['plan'] == 'premium')
         .toList();
@@ -80,6 +84,13 @@ class homeList extends StatelessWidget {
     var itmm = iitem.documents
         .where((element) => element['levelItem'] == 'silver')
         .toList();
+
+    var InfoAlert = alertItems.documents.toList();
+
+    List<String> fieldValues =
+        InfoAlert.map((map) => map['text'].toString() + '.').toList();
+    String marqueesList = fieldValues.join('     ');
+
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         foregroundColor: Colors.transparent,
@@ -292,6 +303,27 @@ class homeList extends StatelessWidget {
                           ),
                         ),
                       ), // Caroussel
+                InfoAlert.isEmpty
+                    ? Container()
+                    : Container(
+                        height: 20,
+                        color: Colors.cyan,
+                        child: Marquee(
+                          text: marqueesList.toUpperCase(),
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                          scrollAxis: Axis.horizontal,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          blankSpace: 20.0,
+                          velocity: 100.0,
+                          // pauseAfterRound: Duration(seconds: 1),
+                          startPadding: 10.0,
+                          //accelerationDuration: Duration(seconds: 1),
+                          accelerationCurve: Curves.linear,
+                          //decelerationDuration: Duration(milliseconds: 500),
+                          decelerationCurve: Curves.easeOut,
+                        ),
+                      ),
+
                 userDoc != null
                     ? Padding(
                         padding: const EdgeInsets.symmetric(
@@ -333,6 +365,7 @@ class homeList extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(
                       horizontal: 20.0, vertical: 10),
                   child: GestureDetector(
+                    onTap: () => getFcm(),
                     // onTap: () => Navigator.of(context).push(
                     //   MaterialPageRoute(
                     //     builder: (context) => GranttChartScreen2(),
@@ -1369,6 +1402,15 @@ class homeList extends StatelessWidget {
             );
           }),
     );
+  }
+
+  void getFcm() async {
+    String? fcmKey = await getFcmToken();
+    print('fcmKey : $fcmKey');
+    // sendNotification(
+    //     'daYiNgoeTqGL3tiZJXI4R-:APA91bFidQzX0ml2PmwWJZC_bWaauXQggw1TXQ-7V_j9EfHh0fBktjeY-p264z_hu1ReOXbTHBEjTgG-IhxP1elPtqrL8_IkYShY2zsYx19IQzWa1NC7h-uy9UQa-rVoo_HFX8Gv9OwX',
+    //     'Test Titre',
+    //     'Test body');
   }
 }
 
