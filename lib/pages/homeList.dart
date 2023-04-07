@@ -1,6 +1,8 @@
 import 'dart:math';
 import 'dart:ui';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:infinite_marquee/infinite_marquee.dart';
 import 'package:marquee/marquee.dart';
 import 'package:ramzy/Oauth/getFCM.dart';
 import 'package:ramzy/pages/booking2.dart';
@@ -31,7 +33,7 @@ import 'addAnnonce.dart';
 import 'itemDetails.dart';
 
 class homeList extends StatelessWidget {
-  const homeList({Key? key, required this.userDoc}) : super(key: key);
+  homeList({Key? key, required this.userDoc}) : super(key: key);
   final userDoc;
 
   Future<void> updateViewsAndUserList(
@@ -58,6 +60,57 @@ class homeList extends StatelessWidget {
         'views': productSnapshot.get('views') + 1,
         'viewed_by': viewedByList..add(userId),
       });
+    }
+  }
+
+// Assuming you have a reference to your Firestore instance
+  final CollectionReference locationsRef =
+      FirebaseFirestore.instance.collection('Products');
+
+  get query => locationsRef.orderBy('createdAt', descending: true);
+
+  Future<void> searchNearbyLocations() async {
+    // Get the current user's location
+    Position currentPosition = await Geolocator.getCurrentPosition();
+
+    // Define the radius you want to search within (in kilometers)
+    final double radiusInKm = 10.0;
+
+    // Create a geopoint object for the user's current position
+    final userLocation = GeoPoint(
+      currentPosition.latitude,
+      currentPosition.longitude,
+    );
+
+    // Query for locations near the user's current position
+    Query<Object?> query = locationsRef
+        .where('position',
+            isGreaterThan: GeoPoint(
+              userLocation.latitude -
+                  radiusInKm / 111.0, // latitude is roughly 111 km per degree
+              userLocation.longitude -
+                  radiusInKm / (111.0 * cos(userLocation.latitude)),
+            ))
+        .where('position',
+            isLessThan: GeoPoint(
+              userLocation.latitude + radiusInKm / 111.0,
+              userLocation.longitude +
+                  radiusInKm / (111.0 * cos(userLocation.latitude)),
+            ));
+
+    // You can specify the type of object you expect to retrieve from the query:
+    // Query<DocumentSnapshot<Map<String, dynamic>>>
+    Query<Object?> queryTyped = query;
+
+    // Or you can use Query<Object?> and cast the results to the appropriate type:
+    Query<Object?> queryDynamic = query;
+    QuerySnapshot<Object?> querySnapshot = await queryDynamic.get();
+    List<DocumentSnapshot<Map<String, dynamic>>> documents =
+        querySnapshot.docs.cast<DocumentSnapshot<Map<String, dynamic>>>();
+
+    // Iterate over the documents returned by the query
+    for (DocumentSnapshot<Map<String, dynamic>> documentSnapshot in documents) {
+      // Do something with the document data
     }
   }
 
@@ -306,13 +359,13 @@ class homeList extends StatelessWidget {
                 InfoAlert.isEmpty
                     ? Container()
                     : Container(
-                        height: 20,
+                        height: 30,
                         color: Colors.cyan,
                         child: Marquee(
                           text: marqueesList.toUpperCase(),
-                          style: TextStyle(fontWeight: FontWeight.bold),
+                          style: TextStyle(color: Colors.white),
                           scrollAxis: Axis.horizontal,
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.center,
                           blankSpace: 20.0,
                           velocity: 100.0,
                           // pauseAfterRound: Duration(seconds: 1),
@@ -323,7 +376,6 @@ class homeList extends StatelessWidget {
                           decelerationCurve: Curves.easeOut,
                         ),
                       ),
-
                 userDoc != null
                     ? Padding(
                         padding: const EdgeInsets.symmetric(
@@ -365,13 +417,13 @@ class homeList extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(
                       horizontal: 20.0, vertical: 10),
                   child: GestureDetector(
-                    onTap: () => getFcm(),
-                    // onTap: () => Navigator.of(context).push(
-                    //   MaterialPageRoute(
-                    //     builder: (context) => GranttChartScreen2(),
-                    //     //gantt_chart(),
-                    //   ),
-                    // ),
+                    //onTap: () => getFcm(),
+                    onTap: () => Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => //GranttChartScreen2(),
+                            gantt_chart(),
+                      ),
+                    ),
                     child: Card(
                       // margin: const EdgeInsets.all(5),
                       shape: RoundedRectangleBorder(
@@ -1143,9 +1195,7 @@ class homeList extends StatelessWidget {
           shrinkWrap: true,
           isLive: true,
           itemBuilderType: PaginateBuilderType.gridView,
-          query: FirebaseFirestore.instance
-              .collection('Products')
-              .orderBy('createdAt', descending: true),
+          query: query,
           itemBuilder: (BuildContext, DocumentSnapshot, int) {
             var data = DocumentSnapshot[int].data() as Map?;
             String dataid = DocumentSnapshot[int].id;

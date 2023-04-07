@@ -28,8 +28,8 @@ class GranttChartScreenState extends State<GranttChartScreen>
   DateTime fromDate = DateTime(2023, 1, 1);
   DateTime toDate = DateTime(2023, 12, 31);
 
-  late List<Room> usersInChart;
-  late List<UserGantt> projectsInChart;
+  late List<Room> roomsInChart;
+  late List<UserGantt> UsersGanttInChart;
 
   @override
   void initState() {
@@ -38,8 +38,8 @@ class GranttChartScreenState extends State<GranttChartScreen>
         duration: Duration(microseconds: 2000), vsync: this);
     animationController.forward();
 
-    projectsInChart = UserGantts;
-    usersInChart = rooms;
+    UsersGanttInChart = UsersGantt;
+    roomsInChart = rooms;
   }
 
   @override
@@ -51,7 +51,7 @@ class GranttChartScreenState extends State<GranttChartScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('GANTT CHART Hotel'),
+        title: Text('Rent Managment'),
       ),
       body:
           // GestureDetector(
@@ -68,8 +68,8 @@ class GranttChartScreenState extends State<GranttChartScreen>
               animationController: animationController,
               fromDate: fromDate,
               toDate: toDate,
-              data: projectsInChart,
-              usersInChart: usersInChart,
+              data: UsersGanttInChart,
+              roomsInChart: roomsInChart,
             ),
           ),
         ],
@@ -85,7 +85,7 @@ class GanttChart extends StatelessWidget {
   final DateTime fromDate;
   final DateTime toDate;
   final List<UserGantt> data;
-  final List<Room> usersInChart;
+  final List<Room> roomsInChart;
 
   late int NombreJours;
   late int viewRange;
@@ -98,7 +98,7 @@ class GanttChart extends StatelessWidget {
     required this.fromDate,
     required this.toDate,
     required this.data,
-    required this.usersInChart,
+    required this.roomsInChart,
   }) {
     viewRange = 365;
 
@@ -177,16 +177,9 @@ class GanttChart extends StatelessWidget {
           height: 25.0,
           width: remainingWidth * chartViewWidth / viewRangeToFitScreen,
           margin: EdgeInsets.only(
-              left: i == 0
-                  ? ((calculateDistanceToLeftBorder(data[i].startTime, 0) *
-                      chartViewWidth /
-                      viewRangeToFitScreen))
-                  : ((calculateDistanceToLeftBorder(
-                          data[i].startTime,
-                          calculateRemainingWidth(
-                              data[i - 1].startTime, data[i - 1].endTime)) *
-                      chartViewWidth /
-                      viewRangeToFitScreen)),
+              left: (calculateDistanceToLeftBorder(data[i].startTime, 0) *
+                  chartViewWidth /
+                  viewRangeToFitScreen),
               top: i == 0 ? 4.0 : 2.0,
               bottom: i == data.length - 1 ? 4.0 : 2.0),
           alignment: Alignment.centerLeft,
@@ -215,14 +208,17 @@ class GanttChart extends StatelessWidget {
 
     headerItems.add(Container(
       width: chartViewWidth / viewRangeToFitScreen,
-      child: new Text(
-        'Etage'.toUpperCase(),
-        textAlign: TextAlign.center,
-        style: TextStyle(
-          fontFamily: 'Oswald',
-          fontWeight: FontWeight.bold,
-          color: Colors.white,
-          fontSize: 16.0,
+      color: Colors.lightBlue,
+      child: Center(
+        child: new Text(
+          'Rooms'.toUpperCase(),
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            fontFamily: 'Oswald',
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+            fontSize: 16.0,
+          ),
         ),
       ),
     ));
@@ -331,7 +327,7 @@ class GanttChart extends StatelessWidget {
         randomColorGenerator();
     var chartBars = buildChartBars(userData, chartViewWidth, color);
     return Container(
-      height: chartBars.length * 29.0 + 25.0 + 4.0,
+      height: 35.0, // chartBars.length * 29.0 + 25.0 + 4.0,
       child: ListView(
         shrinkWrap: true,
         //physics: const NeverScrollableScrollPhysics(),
@@ -343,42 +339,38 @@ class GanttChart extends StatelessWidget {
             buildGrid(chartViewWidth),
             //buildHeader(chartViewWidth, color),
             Container(
-                margin: EdgeInsets.only(top: 25.0),
-                child: Container(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
-                      Container(
-                        child: Row(
-                          children: <Widget>[
-                            Container(
-                                width: chartViewWidth / viewRangeToFitScreen,
-                                height: chartBars.length * 29.0 + 4.0,
-                                color: color.withAlpha(100),
-                                child: Center(
-                                  child: new RotatedBox(
-                                    quarterTurns:
-                                        chartBars.length * 29.0 + 4.0 > 50
-                                            ? 0
-                                            : 0,
-                                    child: new Text(
-                                      roomA.name.toUpperCase(),
-                                      textAlign: TextAlign.center,
-                                      maxLines: 2,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  ),
-                                )),
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: chartBars,
-                            ),
-                          ],
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  Container(
+                    child: Row(
+                      children: <Widget>[
+                        Container(
+                            width: chartViewWidth / viewRangeToFitScreen,
+                            height: 23.0, //chartBars.length * 29.0 + 4.0,
+                            //color: color.withAlpha(100),
+                            child: Center(
+                              child: new RotatedBox(
+                                quarterTurns:
+                                    chartBars.length * 29.0 + 4.0 > 50 ? 0 : 0,
+                                child: new Text(
+                                  roomA.name.toUpperCase(),
+                                  textAlign: TextAlign.center,
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            )),
+                        Stack(
+                          // crossAxisAlignment: CrossAxisAlignment.start,
+                          children: chartBars,
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                )),
+                ],
+              ),
+            ),
           ]),
         ],
       ),
@@ -389,10 +381,10 @@ class GanttChart extends StatelessWidget {
     //************************** un seul bloc de user ou 01 avec ses charts
     List<Widget> chartContent = [];
 
-    usersInChart.forEach((user) {
+    roomsInChart.forEach((user) {
       List<UserGantt> projectsOfUser = [];
 
-      projectsOfUser = UserGantts.where(
+      projectsOfUser = UsersGantt.where(
           (UserGantt) => UserGantt.rooms.indexOf(user.id) != -1).toList();
 
       if (projectsOfUser.length > 0) {
@@ -415,7 +407,7 @@ class GanttChart extends StatelessWidget {
 
     return Container(
       child: MediaQuery.removePadding(
-        child: ListView(children: [
+        child: ListView(shrinkWrap: true, children: [
           // CalendarTimeline(
           //   initialDate: fromDate,
           //   firstDate: fromDate,
@@ -432,13 +424,13 @@ class GanttChart extends StatelessWidget {
           //   locale:
           //       'en_ISO', //********************************************en_ISO
           // ),
-          SizedBox(
-            height: 10.0,
-          ),
-          ElevatedButton(
-            onPressed: () => null,
-            child: Text('Select date'),
-          ),
+          // SizedBox(
+          //   height: 10.0,
+          // ),
+          // ElevatedButton(
+          //   onPressed: () => null,
+          //   child: Text('Select date'),
+          // ),
           SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             child: Column(
@@ -481,67 +473,80 @@ class Room {
   Room({required this.id, required this.name});
 }
 
-var UserGantts = [
+var UsersGantt = [
   UserGantt(
       id: 1,
       name: 'Ramzi',
       startTime: DateTime(2023, 1, 1),
       endTime: DateTime(2023, 1, 3),
-      rooms: [1, 2, 4, 3, 7]),
+      rooms: [1, 2, 4, 7]),
   UserGantt(
       id: 2,
       name: 'Danil',
       startTime: DateTime(2023, 1, 4),
       endTime: DateTime(2023, 1, 5),
-      rooms: [1, 4, 2, 3]),
+      rooms: [
+        1,
+        4,
+        2,
+      ]),
   UserGantt(
       id: 3,
       name: 'Selyane',
       startTime: DateTime(2023, 1, 14),
       endTime: DateTime(2023, 1, 25),
-      rooms: [1, 2, 7, 3]),
+      rooms: [
+        1,
+        7,
+      ]),
   UserGantt(
       id: 4,
       name: 'Samir',
-      startTime: DateTime(2023, 1, 30),
-      endTime: DateTime(2023, 1, 3),
-      rooms: [1, 2, 5, 3]),
+      startTime: DateTime(2023, 2, 28),
+      endTime: DateTime(2023, 3, 3),
+      rooms: [
+        1,
+        2,
+        5,
+      ]),
   UserGantt(
       id: 5,
       name: 'Poutin',
-      startTime: DateTime(2023, 1, 28),
-      endTime: DateTime(2023, 2, 2),
-      rooms: [1, 4, 2, 3]),
+      startTime: DateTime(2023, 1, 2),
+      endTime: DateTime(2023, 1, 6),
+      rooms: [
+        3,
+      ]),
   UserGantt(
       id: 6,
       name: 'KimJan',
-      startTime: DateTime(2023, 2, 26),
-      endTime: DateTime(2023, 3, 7),
-      rooms: [1, 4, 2, 3, 5, 6, 7]),
-  UserGantt(
-      id: 7,
-      name: 'Bruclee',
-      startTime: DateTime(2023, 2, 31),
-      endTime: DateTime(2023, 3, 1),
-      rooms: [1, 2, 3, 4]),
-  UserGantt(
-      id: 7,
-      name: 'Cordoba',
-      startTime: DateTime(2023, 1, 29),
-      endTime: DateTime(2023, 2, 12),
-      rooms: [1, 2, 3, 5]),
-  UserGantt(
-      id: 7,
-      name: 'Kalite',
-      startTime: DateTime(2023, 1, 06),
-      endTime: DateTime(2023, 1, 09),
-      rooms: [1, 2, 3, 4, 6]),
-  UserGantt(
-      id: 7,
-      name: 'Vinga',
-      startTime: DateTime(2023, 1, 27),
-      endTime: DateTime(2023, 3, 2),
-      rooms: [1, 2, 3, 4, 7]),
+      startTime: DateTime(2023, 1, 1),
+      endTime: DateTime(2023, 1, 7),
+      rooms: [5]),
+  // UserGantt(
+  //     id: 7,
+  //     name: 'Bruclee',
+  //     startTime: DateTime(2023, 2, 31),
+  //     endTime: DateTime(2023, 3, 1),
+  //     rooms: [1, 2, 3, 4]),
+  // UserGantt(
+  //     id: 7,
+  //     name: 'Cordoba',
+  //     startTime: DateTime(2023, 1, 29),
+  //     endTime: DateTime(2023, 2, 12),
+  //     rooms: [1, 2, 3, 5]),
+  // UserGantt(
+  //     id: 7,
+  //     name: 'Kalite',
+  //     startTime: DateTime(2023, 1, 06),
+  //     endTime: DateTime(2023, 1, 09),
+  //     rooms: [1, 2, 3, 4, 6]),
+  // UserGantt(
+  //     id: 7,
+  //     name: 'Vinga',
+  //     startTime: DateTime(2023, 1, 27),
+  //     endTime: DateTime(2023, 3, 2),
+  //     rooms: [1, 2, 3, 4, 7]),
 ];
 
 class UserGantt {

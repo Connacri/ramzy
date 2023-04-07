@@ -792,6 +792,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.6.3"
+  infinite_marquee:
+    dependency: "direct main"
+    description:
+      name: infinite_marquee
+      sha256: "019dc8990b4405ea07e1b177dd8836ba17890dee9a0691f7a7f72b89198a7df6"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.0.1"
   intl:
     dependency: transitive
     description:

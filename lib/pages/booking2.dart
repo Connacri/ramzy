@@ -103,7 +103,11 @@ class GanttChart extends StatelessWidget {
     if (UserGanttstartedAt.compareTo(fromDate) <= 0) {
       return 0;
     } else
-      return calculateNumberOfMonthsBetween(fromDate, UserGanttstartedAt) - 1;
+      print('/////////////////////////////////////');
+
+    print(calculateNumberOfMonthsBetween(fromDate, UserGanttstartedAt) - 1);
+
+    return calculateNumberOfMonthsBetween(fromDate, UserGanttstartedAt) - 1;
   }
 
   int calculateRemainingWidth(
@@ -134,21 +138,33 @@ class GanttChart extends StatelessWidget {
   List<Widget> buildChartBars(
       List<UserGantt> data, double chartViewWidth, Color color) {
     List<Widget> chartBars = [];
+    Color randomColor() {
+      var r = new Random();
+      return Color.fromRGBO(
+          r.nextInt(56), r.nextInt(156), r.nextInt(256), 0.75);
+    }
 
     for (int i = 0; i < data.length; i++) {
       var remainingWidth =
           calculateRemainingWidth(data[i].startTime, data[i].endTime);
+      var calc = calculateDistanceToLeftBorder(data[i].startTime);
+      var rest = calc - remainingWidth;
+      print(data[i].name +
+          '  Width : $remainingWidth' +
+          '  Left : $calc' +
+          ' Distance : $rest');
+      // print('Width : $remainingWidth');
+      // print('Left : $calc');
+      // print(calc - remainingWidth);
       if (remainingWidth > 0) {
         chartBars.add(Container(
           decoration: BoxDecoration(
-              color: color.withAlpha(100),
+              color: randomColor().withAlpha(100),
               borderRadius: BorderRadius.circular(10.0)),
           height: 25.0,
           width: remainingWidth * chartViewWidth / viewRangeToFitScreen,
           margin: EdgeInsets.only(
-            left: calculateDistanceToLeftBorder(data[i].startTime) *
-                chartViewWidth /
-                viewRangeToFitScreen,
+            left: calc * chartViewWidth / viewRangeToFitScreen,
             top: i == 0 ? 4.0 : 2.0,
             bottom: i == data.length - 1 ? 4.0 : 2.0,
           ),
@@ -268,8 +284,8 @@ class GanttChart extends StatelessWidget {
                                     ),
                                   ),
                                 )),
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                            Stack(
+                              //crossAxisAlignment: CrossAxisAlignment.start,
                               children: chartBars,
                             ),
                           ],
@@ -340,54 +356,47 @@ var rooms = [
 var UsersGantt = [
   UserGantt(
       id: 1,
-      name: 'Basetax',
+      name: 'Basetax janvier',
       startTime: DateTime(2023, 1, 1),
       endTime: DateTime(2023, 2, 2),
-      rooms: [
-        1,
-      ]),
+      rooms: [1, 3, 5, 7]),
   UserGantt(
       id: 2,
-      name: '2_Basetax',
+      name: '2_Basetax mars',
       startTime: DateTime(2023, 3, 3),
       endTime: DateTime(2023, 4, 4),
-      rooms: [1, 2]),
-  // UserGantt(
-  //     id: 2,
-  //     name: 'CENTTO',
-  //     startTime: DateTime(2023, 4, 1),
-  //     endTime: DateTime(2023, 6, 1),
-  //     rooms: [2, 3, 5, 6]),
+      rooms: [1, 2, 4]),
+
   UserGantt(
       id: 3,
-      name: 'Uber',
+      name: 'Uber juillet',
       startTime: DateTime(2023, 7, 1),
-      endTime: DateTime(2023, 10, 1),
+      endTime: DateTime(2023, 8, 1),
       rooms: [1, 2, 4, 5, 7]),
   UserGantt(
       id: 4,
-      name: 'Grab',
-      startTime: DateTime(2023, 6, 1),
+      name: 'Grab september',
+      startTime: DateTime(2023, 9, 1),
       endTime: DateTime(2023, 10, 1),
       rooms: [1, 4, 3, 6, 8]),
   UserGantt(
       id: 5,
-      name: 'GO-JEK',
-      startTime: DateTime(2023, 3, 1),
-      endTime: DateTime(2023, 11, 1),
-      rooms: [4, 2, 3, 9]),
-  UserGantt(
-      id: 6,
-      name: 'Lyft',
-      startTime: DateTime(2023, 4, 1),
-      endTime: DateTime(2023, 7, 1),
-      rooms: [4, 2, 3, 10]),
-  UserGantt(
-      id: 7,
-      name: 'San Jose',
-      startTime: DateTime(2023, 5, 1),
+      name: 'GO-JEK november',
+      startTime: DateTime(2023, 11, 1),
       endTime: DateTime(2023, 12, 1),
-      rooms: [1, 2, 4]),
+      rooms: [4, 2, 3, 9]),
+  // UserGantt(
+  //     id: 6,
+  //     name: 'Lyft',
+  //     startTime: DateTime(2023, 4, 1),
+  //     endTime: DateTime(2023, 7, 1),
+  //     rooms: [4, 2, 3, 10]),
+  // UserGantt(
+  //     id: 7,
+  //     name: 'San Jose',
+  //     startTime: DateTime(2023, 5, 1),
+  //     endTime: DateTime(2023, 12, 1),
+  //     rooms: [1, 2, 4]),
 ];
 
 class Room {
