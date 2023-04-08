@@ -100,7 +100,7 @@ class GanttChart extends StatelessWidget {
     required this.data,
     required this.roomsInChart,
   }) {
-    viewRange = 365;
+    viewRange = 365; //365;
 
     //viewdays = differenceInDays(fromDate, toDate);
     //calculateNumberOfMonthsBetween(fromDate, toDate);
@@ -214,7 +214,6 @@ class GanttChart extends StatelessWidget {
           'Rooms'.toUpperCase(),
           textAlign: TextAlign.center,
           style: TextStyle(
-            fontFamily: 'Oswald',
             fontWeight: FontWeight.bold,
             color: Colors.white,
             fontSize: 16.0,
@@ -232,7 +231,6 @@ class GanttChart extends StatelessWidget {
             Jiffy(tempDate).format("yyyy").toUpperCase(),
             textAlign: TextAlign.center,
             style: TextStyle(
-              fontFamily: 'Oswald',
               fontWeight: FontWeight.bold,
               color: Colors.white,
               fontSize: 16.0,
@@ -243,7 +241,6 @@ class GanttChart extends StatelessWidget {
             Jiffy(tempDate).format("MMMM").toUpperCase(),
             textAlign: TextAlign.center,
             style: TextStyle(
-              fontFamily: 'Oswald',
               fontWeight: FontWeight.bold,
               color: Colors.white,
               fontSize: 12.0,
@@ -273,7 +270,6 @@ class GanttChart extends StatelessWidget {
             /********EEEE AFFICHE JOUR COMPLETE SAMEDI AU LIEU DE SAM.*/
             textAlign: TextAlign.center,
             style: TextStyle(
-              fontFamily: 'Oswald',
               fontWeight: FontWeight.bold,
               color: Colors.white,
               fontSize: 10.0,
@@ -291,14 +287,21 @@ class GanttChart extends StatelessWidget {
       //padding: EdgeInsets.all(8),
       height: 100, //25.0,
       //color: color.withAlpha(100),
-
-      child: ListView(
-        // au debut elle a été simple Row et je les changer on listview
-        physics: PageScrollPhysics(),
-        shrinkWrap: true,
-        scrollDirection: Axis.horizontal,
-        children: headerItems,
-      ),
+      child: ListView.builder(
+          physics: PageScrollPhysics(),
+          shrinkWrap: true,
+          scrollDirection: Axis.horizontal,
+          itemCount: headerItems.length,
+          itemBuilder: (BuildContext context, int index) {
+            if (index == 0) {
+              tempDate = tempDate;
+              // return headerItems.first;
+            } else {
+              tempDate = tempDate.nextDay;
+            }
+            ;
+            return headerItems[index];
+          }),
     );
   }
 
@@ -326,13 +329,13 @@ class GanttChart extends StatelessWidget {
     Color color = //Colors.teal;
         randomColorGenerator();
     var chartBars = buildChartBars(userData, chartViewWidth, color);
+
     return Container(
       height: 35.0, // chartBars.length * 29.0 + 25.0 + 4.0,
       child: ListView(
         shrinkWrap: true,
         //physics: const NeverScrollableScrollPhysics(),
         //new ClampingScrollPhysics(),
-
         scrollDirection: Axis.horizontal,
         children: <Widget>[
           Stack(fit: StackFit.loose, children: <Widget>[
@@ -381,16 +384,16 @@ class GanttChart extends StatelessWidget {
     //************************** un seul bloc de user ou 01 avec ses charts
     List<Widget> chartContent = [];
 
-    roomsInChart.forEach((user) {
-      List<UserGantt> projectsOfUser = [];
+    roomsInChart.forEach((room) {
+      List<UserGantt> roomsOfUser = [];
 
-      projectsOfUser = UsersGantt.where(
-          (UserGantt) => UserGantt.rooms.indexOf(user.id) != -1).toList();
+      roomsOfUser = UsersGantt.where(
+          (UserGantt) => UserGantt.rooms.indexOf(room.id) != -1).toList();
 
-      if (projectsOfUser.length > 0) {
-        chartContent
-            .add(buildChartForEachUser(projectsOfUser, chartViewWidth, user));
-      }
+      //if (roomsOfUser.length > 0) {
+      chartContent
+          .add(buildChartForEachUser(roomsOfUser, chartViewWidth, room));
+      //}
     });
 
     return chartContent;
@@ -404,47 +407,63 @@ class GanttChart extends StatelessWidget {
     screenOrientation == Orientation.landscape
         ? viewRangeToFitScreen = 12
         : viewRangeToFitScreen = 6;
+    // Create a ScrollController
+    final ScrollController _scrollController = ScrollController();
 
-    return Container(
-      child: MediaQuery.removePadding(
-        child: ListView(shrinkWrap: true, children: [
-          // CalendarTimeline(
-          //   initialDate: fromDate,
-          //   firstDate: fromDate,
-          //   lastDate: toDate,
-          //   onDateSelected: (DateTime) {},
-          //   showYears: true,
-          //   leftMargin: 60,
-          //   monthColor: Colors.blueGrey,
-          //   dayColor: Colors.teal[200],
-          //   activeDayColor: Colors.white,
-          //   activeBackgroundDayColor: Colors.redAccent[100],
-          //   dotsColor: Color(0xFF333A47),
-          //   selectableDayPredicate: (date) => date.day != 23,
-          //   locale:
-          //       'en_ISO', //********************************************en_ISO
-          // ),
-          // SizedBox(
-          //   height: 10.0,
-          // ),
-          // ElevatedButton(
-          //   onPressed: () => null,
-          //   child: Text('Select date'),
-          // ),
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Column(
-              children: [
-                buildHeader(chartViewWidth, Colors.indigo),
-                Column(
-                  children: buildChartContent(chartViewWidth),
-                ),
-              ],
+// Calculate the index of today's date
+    final int todayIndex = DateTime.now().difference(fromDate).inDays;
+    print('today index $todayIndex');
+
+    return GestureDetector(
+      onDoubleTap: () {
+        _scrollController.jumpTo(
+          todayIndex * (chartViewWidth / viewRangeToFitScreen),
+        );
+
+        print('onouletap');
+      },
+      child: Container(
+        child: MediaQuery.removePadding(
+          child: ListView(shrinkWrap: true, children: [
+            // CalendarTimeline(
+            //   initialDate: fromDate,
+            //   firstDate: fromDate,
+            //   lastDate: toDate,
+            //   onDateSelected: (DateTime) {},
+            //   showYears: true,
+            //   leftMargin: 60,
+            //   monthColor: Colors.blueGrey,
+            //   dayColor: Colors.teal[200],
+            //   activeDayColor: Colors.white,
+            //   activeBackgroundDayColor: Colors.redAccent[100],
+            //   dotsColor: Color(0xFF333A47),
+            //   selectableDayPredicate: (date) => date.day != 23,
+            //   locale:
+            //       'en_ISO', //********************************************en_ISO
+            // ),
+            // SizedBox(
+            //   height: 10.0,
+            // ),
+            // ElevatedButton(
+            //   onPressed: () => null,
+            //   child: Text('Select date'),
+            // ),
+            SingleChildScrollView(
+              controller: _scrollController,
+              scrollDirection: Axis.horizontal,
+              child: Column(
+                children: [
+                  buildHeader(chartViewWidth, Colors.indigo),
+                  Column(
+                    children: buildChartContent(chartViewWidth),
+                  ),
+                ],
+              ),
             ),
-          ),
-        ]),
-        removeTop: true,
-        context: context,
+          ]),
+          removeTop: true,
+          context: context,
+        ),
       ),
     );
   }
@@ -464,6 +483,19 @@ var rooms = [
   Room(id: 11, name: '11'),
   Room(id: 12, name: '12'),
   Room(id: 13, name: '14'),
+  Room(id: 101, name: '101'),
+  Room(id: 102, name: '102'),
+  Room(id: 103, name: '103'),
+  Room(id: 104, name: '104'),
+  Room(id: 105, name: '105'),
+  Room(id: 106, name: '106'),
+  Room(id: 107, name: '107'),
+  Room(id: 108, name: '108'),
+  Room(id: 109, name: '109'),
+  Room(id: 110, name: '110'),
+  Room(id: 111, name: '111'),
+  Room(id: 112, name: '112'),
+  Room(id: 113, name: '114'),
 ];
 
 class Room {
@@ -495,20 +527,13 @@ var UsersGantt = [
       name: 'Selyane',
       startTime: DateTime(2023, 1, 14),
       endTime: DateTime(2023, 1, 25),
-      rooms: [
-        1,
-        7,
-      ]),
+      rooms: [1, 7, 106]),
   UserGantt(
       id: 4,
       name: 'Samir',
       startTime: DateTime(2023, 2, 28),
       endTime: DateTime(2023, 3, 3),
-      rooms: [
-        1,
-        2,
-        5,
-      ]),
+      rooms: [1, 2, 5, 13]),
   UserGantt(
       id: 5,
       name: 'Poutin',
@@ -523,30 +548,32 @@ var UsersGantt = [
       startTime: DateTime(2023, 1, 1),
       endTime: DateTime(2023, 1, 7),
       rooms: [5]),
-  // UserGantt(
-  //     id: 7,
-  //     name: 'Bruclee',
-  //     startTime: DateTime(2023, 2, 31),
-  //     endTime: DateTime(2023, 3, 1),
-  //     rooms: [1, 2, 3, 4]),
-  // UserGantt(
-  //     id: 7,
-  //     name: 'Cordoba',
-  //     startTime: DateTime(2023, 1, 29),
-  //     endTime: DateTime(2023, 2, 12),
-  //     rooms: [1, 2, 3, 5]),
-  // UserGantt(
-  //     id: 7,
-  //     name: 'Kalite',
-  //     startTime: DateTime(2023, 1, 06),
-  //     endTime: DateTime(2023, 1, 09),
-  //     rooms: [1, 2, 3, 4, 6]),
-  // UserGantt(
-  //     id: 7,
-  //     name: 'Vinga',
-  //     startTime: DateTime(2023, 1, 27),
-  //     endTime: DateTime(2023, 3, 2),
-  //     rooms: [1, 2, 3, 4, 7]),
+  UserGantt(
+      id: 7,
+      name: 'Bruclee',
+      startTime: DateTime(2023, 3, 31),
+      endTime: DateTime(2023, 4, 1),
+      rooms: [
+        7,
+      ]),
+  UserGantt(
+      id: 8,
+      name: 'Cordoba',
+      startTime: DateTime(2023, 4, 6),
+      endTime: DateTime(2023, 4, 12),
+      rooms: [2, 11]),
+  UserGantt(
+      id: 9,
+      name: 'Kalite',
+      startTime: DateTime(2023, 4, 5),
+      endTime: DateTime(2023, 4, 09),
+      rooms: [3, 12]),
+  UserGantt(
+      id: 10,
+      name: 'Vinga',
+      startTime: DateTime(2023, 3, 27),
+      endTime: DateTime(2023, 4, 2),
+      rooms: [4, 6]),
 ];
 
 class UserGantt {

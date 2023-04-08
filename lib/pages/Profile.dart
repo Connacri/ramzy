@@ -17,6 +17,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
+import 'package:ramzy/pages/booking.dart';
 import 'package:ramzy/pages/profile_edit.dart';
 import 'package:path/path.dart' as Path;
 import '../Oauth/Ogoogle/googleSignInProvider.dart';
@@ -474,6 +475,102 @@ class _ProfileState extends State<Profile> with TickerProviderStateMixin {
                             Navigator.of(context).push(MaterialPageRoute(
                                 builder: (context) => upload_random()));
                           },
+                        ),
+                      )
+                    : Container(),
+                data['email'] == 'forslog@gmail.com'
+                    ? Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 20.0, vertical: 10),
+                        child: GestureDetector(
+                          //onTap: () => getFcm(),
+                          onTap: () => Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => //GranttChartScreen2(),
+                                  gantt_chart(),
+                            ),
+                          ),
+                          child: Card(
+                            // margin: const EdgeInsets.all(5),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(15)),
+                            clipBehavior: Clip.antiAliasWithSaveLayer,
+                            elevation: 2,
+                            child: Stack(
+                              alignment: Alignment.center,
+                              children: [
+                                ShaderMask(
+                                  shaderCallback: (rect) {
+                                    return const LinearGradient(
+                                      begin: Alignment.topCenter,
+                                      end: Alignment.bottomLeft,
+                                      colors: [
+                                        Colors.transparent,
+                                        Colors.black
+                                      ],
+                                    ).createShader(Rect.fromLTRB(
+                                        0, 0, rect.width, rect.height));
+                                  },
+                                  blendMode: BlendMode.darken,
+                                  child: Container(
+                                    height: 50,
+                                    decoration: BoxDecoration(
+                                      image: DecorationImage(
+                                        image: CachedNetworkImageProvider(
+                                          'https://firebasestorage.googleapis.com/v0/b/adventure-eb4ca.appspot.com/o/wall%2Fwall%20(3).jpg?alt=media&token=c5c01dca-4b32-4b9d-88fe-717e976ac2f5',
+                                        ),
+                                        fit: BoxFit.cover,
+                                        alignment: Alignment.topCenter,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                Center(
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        'Go To ',
+                                        textAlign: TextAlign.start,
+                                        style: TextStyle(
+                                            shadows: [
+                                              Shadow(
+                                                blurRadius: 10.0, // shadow blur
+                                                color: Colors
+                                                    .black54, // shadow color
+                                                offset: Offset(2.0,
+                                                    2.0), // how much shadow will be shown
+                                              ),
+                                            ],
+                                            fontStyle: FontStyle.italic,
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.red),
+                                      ),
+                                      Text(
+                                        'Gantt Chart Hotel',
+                                        textAlign: TextAlign.start,
+                                        style: TextStyle(
+                                            shadows: [
+                                              Shadow(
+                                                blurRadius: 10.0, // shadow blur
+                                                color: Colors
+                                                    .black54, // shadow color
+                                                offset: Offset(2.0,
+                                                    2.0), // how much shadow will be shown
+                                              ),
+                                            ],
+                                            fontStyle: FontStyle.italic,
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.white),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
                         ),
                       )
                     : Container(),

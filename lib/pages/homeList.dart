@@ -417,13 +417,13 @@ class homeList extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(
                       horizontal: 20.0, vertical: 10),
                   child: GestureDetector(
-                    //onTap: () => getFcm(),
-                    onTap: () => Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) => //GranttChartScreen2(),
-                            gantt_chart(),
-                      ),
-                    ),
+                    // //onTap: () => getFcm(),
+                    // onTap: () => Navigator.of(context).push(
+                    //   MaterialPageRoute(
+                    //     builder: (context) => //GranttChartScreen2(),
+                    //         gantt_chart(),
+                    //   ),
+                    // ),
                     child: Card(
                       // margin: const EdgeInsets.all(5),
                       shape: RoundedRectangleBorder(
