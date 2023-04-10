@@ -1,38 +1,14 @@
-import 'dart:convert';
-import 'dart:math';
 import 'dart:ui';
 import 'package:calendar_timeline/calendar_timeline.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutterflow_paginate_firestore/widgets/bottom_loader.dart';
-import 'package:flutterflow_paginate_firestore/widgets/empty_display.dart';
-import 'package:flutterflow_paginate_firestore/widgets/empty_separator.dart';
-import 'package:flutterflow_paginate_firestore/widgets/initial_loader.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutterflow_paginate_firestore/paginate_firestore.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
-import 'package:intl/intl.dart';
-import '../2/Hotel/new/globalrooms.dart';
-import '../map/MainExample.dart';
-import '../map/mapPicker.dart';
-import '../map/SimpleExample.dart';
-import 'ProfileOthers.dart';
 import 'homeList.dart';
 import 'insta.dart';
-import 'package:timeago/timeago.dart' as timeago;
-import '../2/Hotel/global_rooms.dart';
-import '../2/Hotel/hotel_charts.dart';
-import '../2/ouedkniss.dart';
-import '../2/publicLoggedPage.dart';
-import '../Oauth/AuthPage.dart';
 import '../services/upload_random.dart';
 import 'Profile.dart';
-import 'addAnnonce.dart';
-import 'itemDetails.dart';
-import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 
 class Collection1Data {
   final List<DocumentSnapshot> documents;
