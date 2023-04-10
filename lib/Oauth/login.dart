@@ -59,11 +59,13 @@ class _LoginWidgetState extends State<LoginWidget> {
     }
   }
 
+  bool _obscureText = true;
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
 
     return Scaffold(
+      backgroundColor: Colors.white,
       body: Padding(
         padding: const EdgeInsets.all(18.0),
         child: ListView(
@@ -79,17 +81,26 @@ class _LoginWidgetState extends State<LoginWidget> {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
+                            Image.asset(
+                              'assets/images/ic_launcher/1024.png',
+                              // #Image Url: https://unsplash.com/photos/bOBM8CB4ZC4
+                              fit: BoxFit.fitHeight,
+                              height: 150, width: 100,
+                            ),
                             Lottie.asset(
-                              'assets/lotties/127878-avatar-creation (2).json',
+                              'assets/lotties/59152-time-to-break-the-fast-in-the-month-of-ramadan-2021-animation.json',
                               repeat: true,
                               // reverse: true,
                               animate: true,
-                              height: 300,
+                              height: 130,
                               width: 200,
                             ),
+
                             const SizedBox(height: 10),
                             Text(
-                              'S\'Identifier'.toUpperCase(),
+                              'Connexion'
+                                  // 'J\'ai Déja un Compte' //S\'Identifier'
+                                  .toUpperCase(),
                               textAlign: TextAlign.center,
                               style: const TextStyle(
                                   color: Colors.black45,
@@ -99,6 +110,7 @@ class _LoginWidgetState extends State<LoginWidget> {
                             ),
                             const SizedBox(height: 10),
                             TextFormField(
+                              showCursor: true,
                               textAlign: TextAlign.center,
                               style: const TextStyle(
                                 fontSize: 25,
@@ -106,12 +118,13 @@ class _LoginWidgetState extends State<LoginWidget> {
                               keyboardType: TextInputType.emailAddress,
                               controller: emailController,
                               textInputAction: TextInputAction.next,
-                              decoration: const InputDecoration(
-                                fillColor: Colors.white,
+                              decoration: InputDecoration(
+                                fillColor: Colors.blue.shade50,
                                 hintText: 'Email',
                                 border: InputBorder.none,
                                 filled: true,
                                 contentPadding: EdgeInsets.all(15),
+                                hintStyle: TextStyle(color: Colors.black12),
                               ),
                               autovalidateMode:
                                   AutovalidateMode.onUserInteraction,
@@ -120,21 +133,34 @@ class _LoginWidgetState extends State<LoginWidget> {
                                   ? 'Entrer a Valide E-Mail'
                                   : null,
                             ),
-                            const SizedBox(height: 4), // ti
+                            const SizedBox(height: 12), // ti
                             TextFormField(
                               textAlign: TextAlign.center,
                               style: const TextStyle(
                                 fontSize: 25,
                               ),
                               controller: passwordController,
-                              obscureText: true,
                               textInputAction: TextInputAction.next,
-                              decoration: const InputDecoration(
-                                fillColor: Colors.white,
+                              obscureText: _obscureText,
+                              decoration: InputDecoration(
+                                fillColor: Colors.blue.shade50,
                                 hintText: 'Mot De Passe',
+                                suffixIcon: IconButton(
+                                  icon: Icon(
+                                    _obscureText
+                                        ? Icons.visibility_off
+                                        : Icons.visibility,
+                                  ),
+                                  onPressed: () {
+                                    setState(() {
+                                      _obscureText = !_obscureText;
+                                    });
+                                  },
+                                ),
                                 border: InputBorder.none,
                                 filled: true,
                                 contentPadding: EdgeInsets.all(15),
+                                hintStyle: TextStyle(color: Colors.black12),
                               ),
                               autovalidateMode:
                                   AutovalidateMode.onUserInteraction,
@@ -146,22 +172,17 @@ class _LoginWidgetState extends State<LoginWidget> {
                             const SizedBox(height: 20),
                             ElevatedButton.icon(
                               style: ElevatedButton.styleFrom(
-                                  primary: Colors.black54,
+                                  primary: Colors.blue,
                                   shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(15)),
                                   elevation: 4.0,
                                   minimumSize: const Size.fromHeight(50)),
-                              icon: const Icon(
-                                Icons.lock_open,
-                                size: 32,
-                                color: Colors.tealAccent,
-                              ),
+                              icon: const Icon(Icons.lock_open,
+                                  size: 32, color: Colors.white),
                               label: const Text(
                                 'Entrer',
                                 style: TextStyle(
-                                  fontSize: 24,
-                                  color: Colors.tealAccent,
-                                ),
+                                    fontSize: 24, color: Colors.white),
                               ),
                               onPressed: () async {
                                 signIn().then((value) => Navigator.of(context)
@@ -247,7 +268,7 @@ class _LoginWidgetState extends State<LoginWidget> {
                                           //     .colorScheme
                                           //     .secondary,
                                           fontFamily: 'Oswald',
-                                          color: Colors.teal,
+                                          color: Colors.blue,
                                           fontWeight: FontWeight.bold))
                                 ])), // J'ai pas Encore de Compte? / S'Enregistrer
                           ],

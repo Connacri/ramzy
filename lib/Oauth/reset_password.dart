@@ -4,8 +4,9 @@ import 'package:email_validator/email_validator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:lottie/lottie.dart';
 
-import '../../main.dart';
+import '../main.dart';
 
 class reset_password extends StatefulWidget {
   const reset_password({Key? key}) : super(key: key);
@@ -28,17 +29,17 @@ class _reset_passwordState extends State<reset_password> {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
+      backgroundColor: Colors.white,
       body: SingleChildScrollView(
         child: Stack(
+          alignment: Alignment.center,
           children: [
             SizedBox(
-              //height: size.height,
+              height: size.height,
               width: size.width,
-              // child: Image.network('https://images.unsplash.com/face-springmorning.jpg',fit: BoxFit.fill,),
-              child: Image.asset(
-                'assets/images/ic_launcher/1024.png',
-                // #Image Url: https://unsplash.com/photos/bOBM8CB4ZC4
-                fit: BoxFit.fitHeight,
+              child: Image.network(
+                'https://firebasestorage.googleapis.com/v0/b/oran-894b7.appspot.com/o/images%2Fscaled_190a1b437f2e6581eb704b8c18e1e72f.jpg?alt=media&token=642c7e54-a2c3-4031-8f61-4c360fa65005',
+                fit: BoxFit.cover,
               ),
             ),
             Padding(
@@ -63,12 +64,19 @@ class _reset_passwordState extends State<reset_password> {
                                   child: Column(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
-                                      const SizedBox(height: 20),
-                                      SizedBox(
-                                          height: 100,
-                                          width: 100,
-                                          child: Image.asset(
-                                              'assets/images/ic_launcher/1024.png')),
+                                      // SizedBox(
+                                      //     height: 100,
+                                      //     width: 100,
+                                      //     child: Image.asset(
+                                      //         'assets/images/ic_launcher/1024.png')),
+                                      Lottie.asset(
+                                        'assets/lotties/59266-pray-in-the-month-of-ramadan.json',
+                                        repeat: true,
+                                        // reverse: true,
+                                        animate: true,
+                                        height: 150,
+                                        width: 200,
+                                      ),
                                       const SizedBox(height: 20),
                                       const Text(
                                           'Recever un E-mail de \n Réinitialision Mot de Passe',
@@ -88,8 +96,7 @@ class _reset_passwordState extends State<reset_password> {
                                         decoration: const InputDecoration(
                                             labelText: 'Votre E-mail',
                                             labelStyle: TextStyle(
-                                                fontFamily: 'Oswald',
-                                                color: Colors.black54)),
+                                                color: Colors.white70)),
                                         autovalidateMode:
                                             AutovalidateMode.onUserInteraction,
                                         validator: (email) => email != null &&

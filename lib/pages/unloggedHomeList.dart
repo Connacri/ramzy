@@ -153,6 +153,95 @@ class _unloggedHomeListState extends State<unloggedHomeList> {
                   },
                 ),
                 Padding(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 20.0, vertical: 10),
+                  child: GestureDetector(
+                    // //onTap: () => getFcm(),
+                    onTap: () {
+                      Navigator.push(context, MaterialPageRoute(builder: (_) {
+                        return AuthPage();
+                      }));
+                    },
+                    child: Card(
+                      // margin: const EdgeInsets.all(5),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15)),
+                      clipBehavior: Clip.antiAliasWithSaveLayer,
+                      elevation: 2,
+                      child: Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          ShaderMask(
+                            shaderCallback: (rect) {
+                              return const LinearGradient(
+                                begin: Alignment.topCenter,
+                                end: Alignment.bottomLeft,
+                                colors: [Colors.transparent, Colors.black],
+                              ).createShader(
+                                  Rect.fromLTRB(0, 0, rect.width, rect.height));
+                            },
+                            blendMode: BlendMode.darken,
+                            child: Container(
+                              height: 50,
+                              decoration: BoxDecoration(
+                                image: DecorationImage(
+                                  image: CachedNetworkImageProvider(
+                                    'https://firebasestorage.googleapis.com/v0/b/adventure-eb4ca.appspot.com/o/wall%2Fwall%20(2).jpg?alt=media&token=c5c01dca-4b32-4b9d-88fe-717e976ac2f5',
+                                  ),
+                                  fit: BoxFit.cover,
+                                  alignment: Alignment.topCenter,
+                                ),
+                              ),
+                            ),
+                          ),
+                          Center(
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  'Aya',
+                                  textAlign: TextAlign.start,
+                                  style: TextStyle(
+                                      shadows: [
+                                        Shadow(
+                                          blurRadius: 10.0, // shadow blur
+                                          color: Colors.black54, // shadow color
+                                          offset: Offset(2.0,
+                                              2.0), // how much shadow will be shown
+                                        ),
+                                      ],
+                                      fontStyle: FontStyle.italic,
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.red),
+                                ),
+                                Text(
+                                  ' Bismillah',
+                                  textAlign: TextAlign.start,
+                                  style: TextStyle(
+                                      shadows: [
+                                        Shadow(
+                                          blurRadius: 10.0, // shadow blur
+                                          color: Colors.black54, // shadow color
+                                          offset: Offset(2.0,
+                                              2.0), // how much shadow will be shown
+                                        ),
+                                      ],
+                                      fontStyle: FontStyle.italic,
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+
+                Padding(
                   padding: const EdgeInsets.fromLTRB(18, 5, 18, 0),
                   child: Row(
                     children: [
@@ -971,6 +1060,11 @@ class _unloggedHomeListState extends State<unloggedHomeList> {
               ],
             ),
           ),
+          footer: SliverToBoxAdapter(
+            child: SizedBox(
+              height: 100,
+            ),
+          ),
           itemsPerPage: 10000,
           onEmpty: const EmptyDisplay(),
           separator: const EmptySeparator(),
@@ -1276,72 +1370,3 @@ class _unloggedHomeListState extends State<unloggedHomeList> {
     );
   }
 }
-
-// class UnsplashAvatarProvider extends StatelessWidget {
-//   const UnsplashAvatarProvider({
-//     Key? key,
-//     required this.userID,
-//   }) : super(key: key);
-//
-//   final String userID;
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     final docRef = FirebaseFirestore.instance.collection('Users').doc(userID);
-//     return FutureBuilder<DocumentSnapshot<Map<String, dynamic>>>(
-//         future: docRef.get(),
-//         builder: (context, snapshot) {
-//           if (!snapshot.hasData) {
-//             return Center(
-//               child: Text('Loading..'),
-//             );
-//           }
-//           var data = snapshot.data?.data();
-//           return InkWell(
-//             onTap: () async {
-//               Map dataUser = data as Map;
-//               await Navigator.push(context,
-//                   MaterialPageRoute(builder: (BuildContext context) {
-//                 return ProfileOthers(data: dataUser);
-//               }));
-//             },
-//             child: Padding(
-//               padding: const EdgeInsets.symmetric(horizontal: 15.0),
-//               child: Row(
-//                 crossAxisAlignment: CrossAxisAlignment.center,
-//                 children: [
-//                   Container(
-//                     width: 20.0,
-//                     height: 20.0,
-//                     child: CachedNetworkImage(
-//                       imageUrl:
-//                           data!['avatar'] ?? Icon(Icons.account_circle_rounded),
-//                       imageBuilder: (context, imageProvider) => Container(
-//                         decoration: BoxDecoration(
-//                           border: Border.all(width: 2, color: Colors.white),
-//                           // borderRadius: BorderRadius.circular(100),
-//                           shape: BoxShape.circle,
-//                           image: DecorationImage(
-//                               image: imageProvider, fit: BoxFit.cover),
-//                         ),
-//                       ),
-//                       errorWidget: (context, url, error) =>
-//                           Icon(Icons.no_accounts_rounded),
-//                     ),
-//                   ),
-//                   Padding(
-//                     padding: const EdgeInsets.symmetric(horizontal: 4.0),
-//                     child: SizedBox(
-//                       child: Text(
-//                         data['displayName'] ?? 'Unknow',
-//                         style: TextStyle(fontSize: 16, color: Colors.cyan),
-//                       ),
-//                     ),
-//                   ),
-//                 ],
-//               ),
-//             ),
-//           );
-//         });
-//   }
-// }

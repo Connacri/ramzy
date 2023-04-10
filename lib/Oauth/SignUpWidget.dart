@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:lottie/lottie.dart';
 
 import '../main.dart';
 import 'VerifyEmailPage.dart';
@@ -40,10 +41,11 @@ class _SignUpWidgetState extends State<SignUpWidget> {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
+      backgroundColor: Colors.white,
       body: ListView(
         children: [
           Padding(
-            padding: EdgeInsets.only(top: 20, left: 20, right: 20),
+            padding: EdgeInsets.only(top: 0, left: 20, right: 20),
             child: Form(
               key: formKey,
               child: ClipRRect(
@@ -53,17 +55,32 @@ class _SignUpWidgetState extends State<SignUpWidget> {
                   child: SizedBox(
                     width: size.width * .9,
                     child: Padding(
-                      padding: const EdgeInsets.all(16.0),
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 0.0, horizontal: 16),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          const SizedBox(height: 20),
                           SizedBox(
                               height: 100,
                               width: 100,
                               child: Image.asset(
                                   'assets/images/ic_launcher/1024.png')),
-                          const SizedBox(height: 20),
+                          const Text(
+                            'Hey Toi, Bienvenue',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                                fontSize: 32,
+                                fontWeight: FontWeight.bold,
+                                fontFamily: 'Oswald'),
+                          ),
+                          Lottie.asset(
+                            'assets/lotties/27637-welcome.json',
+                            repeat: true,
+                            // reverse: true,
+                            animate: true,
+                            height: 200,
+                            width: 200,
+                          ),
                           Text(
                             'S\'enregistrer'.toUpperCase(),
                             textAlign: TextAlign.center,
@@ -73,16 +90,7 @@ class _SignUpWidgetState extends State<SignUpWidget> {
                                 fontWeight: FontWeight.w500,
                                 fontFamily: 'Oswald'),
                           ),
-                          const SizedBox(height: 20),
-                          const Text(
-                            'Hey Toi, Bienvenue',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                                fontSize: 32,
-                                fontWeight: FontWeight.bold,
-                                fontFamily: 'Oswald'),
-                          ),
-                          const SizedBox(height: 20),
+                          const SizedBox(height: 12),
                           TextFormField(
                             textAlign: TextAlign.center,
                             style: const TextStyle(
@@ -92,12 +100,13 @@ class _SignUpWidgetState extends State<SignUpWidget> {
                                 TextInputType.emailAddress, //.emailAddress,
                             controller: emailController,
                             textInputAction: TextInputAction.next,
-                            decoration: const InputDecoration(
-                              fillColor: Colors.white,
+                            decoration: InputDecoration(
+                              fillColor: Colors.blue.shade50,
                               hintText: 'Email',
                               border: InputBorder.none,
                               filled: true,
                               contentPadding: EdgeInsets.all(15),
+                              hintStyle: TextStyle(color: Colors.black12),
                             ),
                             autovalidateMode:
                                 AutovalidateMode.onUserInteraction,
@@ -106,7 +115,7 @@ class _SignUpWidgetState extends State<SignUpWidget> {
                             //         ? 'Entrer a Valide E-Mail'
                             //         : null,
                           ),
-                          const SizedBox(height: 4),
+                          const SizedBox(height: 12),
                           TextFormField(
                             textAlign: TextAlign.center,
                             style: const TextStyle(
@@ -115,12 +124,13 @@ class _SignUpWidgetState extends State<SignUpWidget> {
                             controller: passwordController,
                             obscureText: true,
                             textInputAction: TextInputAction.next,
-                            decoration: const InputDecoration(
-                              fillColor: Colors.white,
+                            decoration: InputDecoration(
+                              fillColor: Colors.blue.shade50,
                               hintText: 'Mot De Passe',
                               border: InputBorder.none,
                               filled: true,
                               contentPadding: EdgeInsets.all(15),
+                              hintStyle: TextStyle(color: Colors.black12),
                             ),
                             autovalidateMode:
                                 AutovalidateMode.onUserInteraction,
@@ -132,7 +142,7 @@ class _SignUpWidgetState extends State<SignUpWidget> {
                             //   onEditingComplete :
                           ),
                           const SizedBox(
-                            height: 4,
+                            height: 12,
                           ),
                           TextFormField(
                             textAlign: TextAlign.center,
@@ -142,12 +152,13 @@ class _SignUpWidgetState extends State<SignUpWidget> {
                             controller: confirmpasswordController,
                             obscureText: true,
                             textInputAction: TextInputAction.next,
-                            decoration: const InputDecoration(
-                              fillColor: Colors.white,
+                            decoration: InputDecoration(
+                              fillColor: Colors.blue.shade50,
                               hintText: 'Confirmé Mot De Passe',
                               border: InputBorder.none,
                               filled: true,
                               contentPadding: EdgeInsets.all(15),
+                              hintStyle: TextStyle(color: Colors.black12),
                             ),
                             autovalidateMode:
                                 AutovalidateMode.onUserInteraction,
@@ -157,7 +168,7 @@ class _SignUpWidgetState extends State<SignUpWidget> {
                                 ? 'Mot de Passe de Confimation n\'est Pas le Même.'
                                 : null,
                           ),
-                          const SizedBox(height: 20),
+                          const SizedBox(height: 12),
                           ElevatedButton.icon(
                             style: ElevatedButton.styleFrom(
                                 primary: Colors.black54,
@@ -179,7 +190,7 @@ class _SignUpWidgetState extends State<SignUpWidget> {
                                 () => Navigator.of(context).pop()),
                           ),
                           const SizedBox(
-                            height: 24,
+                            height: 12,
                           ),
                           RichText(
                               text: TextSpan(
@@ -218,6 +229,7 @@ class _SignUpWidgetState extends State<SignUpWidget> {
                                     builder: (context) =>
                                         const reset_password())),
                           ),
+                          const SizedBox(height: 24),
                         ],
                       ),
                     ),

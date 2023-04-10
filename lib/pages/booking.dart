@@ -326,55 +326,53 @@ class GanttChart extends StatelessWidget {
 
   Widget buildChartForEachUser(
       List<UserGantt> userData, double chartViewWidth, Room roomA) {
+    //************************************
     Color color = //Colors.teal;
         randomColorGenerator();
     var chartBars = buildChartBars(userData, chartViewWidth, color);
 
     return Container(
       height: 35.0, // chartBars.length * 29.0 + 25.0 + 4.0,
-      child: ListView(
-        shrinkWrap: true,
-        //physics: const NeverScrollableScrollPhysics(),
-        //new ClampingScrollPhysics(),
-        scrollDirection: Axis.horizontal,
-        children: <Widget>[
-          Stack(fit: StackFit.loose, children: <Widget>[
-            buildGrid(chartViewWidth),
-            //buildHeader(chartViewWidth, color),
-            Container(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  Container(
-                    child: Row(
-                      children: <Widget>[
-                        Container(
-                            width: chartViewWidth / viewRangeToFitScreen,
-                            height: 23.0, //chartBars.length * 29.0 + 4.0,
-                            //color: color.withAlpha(100),
-                            child: Center(
-                              child: new RotatedBox(
-                                quarterTurns:
-                                    chartBars.length * 29.0 + 4.0 > 50 ? 0 : 0,
-                                child: new Text(
-                                  roomA.name.toUpperCase(),
-                                  textAlign: TextAlign.center,
-                                  maxLines: 2,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
+      child: Row(
+        children: [
+          ListView(
+            shrinkWrap: true,
+            //physics: const NeverScrollableScrollPhysics(),
+            //new ClampingScrollPhysics(),
+            scrollDirection: Axis.horizontal,
+            children: <Widget>[
+              Stack(fit: StackFit.loose, children: <Widget>[
+                buildGrid(chartViewWidth),
+                //buildHeader(chartViewWidth, color),
+                Container(
+                  child: Row(
+                    children: <Widget>[
+                      Container(
+                          width: chartViewWidth / viewRangeToFitScreen,
+                          height: 23.0, //chartBars.length * 29.0 + 4.0,
+                          //color: color.withAlpha(100),
+                          child: Center(
+                            child: new RotatedBox(
+                              quarterTurns:
+                                  chartBars.length * 29.0 + 4.0 > 50 ? 0 : 0,
+                              child: new Text(
+                                roomA.name.toUpperCase(),
+                                textAlign: TextAlign.center,
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
                               ),
-                            )),
-                        Stack(
-                          // crossAxisAlignment: CrossAxisAlignment.start,
-                          children: chartBars,
-                        ),
-                      ],
-                    ),
+                            ),
+                          )),
+                      Stack(
+                        // crossAxisAlignment: CrossAxisAlignment.start,
+                        children: chartBars,
+                      ),
+                    ],
                   ),
-                ],
-              ),
-            ),
-          ]),
+                ),
+              ]),
+            ],
+          ),
         ],
       ),
     );
