@@ -109,61 +109,61 @@ class ItemsA {
 //       );
 // }
 
-class UserDetail {
-  Timestamp UcreatedAt;
-  int userAge;
-  String userAvatar;
-  String userDisplayName;
-  String userEmail;
-  String userID;
-  int userItemsNbr;
-  int userPhone;
-  String userSex;
-  bool userState;
-  String userRole;
-
-  UserDetail(
-      this.UcreatedAt,
-      this.userAge,
-      this.userAvatar,
-      this.userDisplayName,
-      this.userEmail,
-      this.userID,
-      this.userItemsNbr,
-      this.userPhone,
-      this.userSex,
-      this.userState,
-      this.userRole);
-
-  Map<String, dynamic> createMap() {
-    return {
-      'UcreatedAt': UcreatedAt,
-      'userAge': userAge,
-      'userAvatar': userAvatar,
-      'userDisplayName': userDisplayName,
-      'userEmail': userEmail,
-      'userID': userID,
-      'userItemsNbr': userItemsNbr,
-      'userPhone': userPhone,
-      'userSex': userSex,
-      'userState': userState,
-      'userRole': userRole,
-    };
-  }
-
-  UserDetail.fromFirestore(Map<String, dynamic> parsedJSON)
-      : UcreatedAt = parsedJSON['UcreatedAt'],
-        userAge = parsedJSON['userAge'],
-        userAvatar = parsedJSON['userAvatar'],
-        userDisplayName = parsedJSON['userDisplayName'],
-        userEmail = parsedJSON['userEmail'],
-        userID = parsedJSON['userID'],
-        userItemsNbr = parsedJSON['userItemsNbr'],
-        userPhone = parsedJSON['userPhone'],
-        userSex = parsedJSON['userSex'],
-        userState = parsedJSON['userState'],
-        userRole = parsedJSON['userRole'];
-}
+// class UserDetail {
+//   Timestamp UcreatedAt;
+//   int userAge;
+//   String userAvatar;
+//   String userDisplayName;
+//   String userEmail;
+//   String userID;
+//   int userItemsNbr;
+//   int userPhone;
+//   String userSex;
+//   bool userState;
+//   String userRole;
+//
+//   UserDetail(
+//       this.UcreatedAt,
+//       this.userAge,
+//       this.userAvatar,
+//       this.userDisplayName,
+//       this.userEmail,
+//       this.userID,
+//       this.userItemsNbr,
+//       this.userPhone,
+//       this.userSex,
+//       this.userState,
+//       this.userRole);
+//
+//   Map<String, dynamic> createMap() {
+//     return {
+//       'UcreatedAt': UcreatedAt,
+//       'userAge': userAge,
+//       'userAvatar': userAvatar,
+//       'userDisplayName': userDisplayName,
+//       'userEmail': userEmail,
+//       'userID': userID,
+//       'userItemsNbr': userItemsNbr,
+//       'userPhone': userPhone,
+//       'userSex': userSex,
+//       'userState': userState,
+//       'userRole': userRole,
+//     };
+//   }
+//
+//   UserDetail.fromFirestore(Map<String, dynamic> parsedJSON)
+//       : UcreatedAt = parsedJSON['UcreatedAt'],
+//         userAge = parsedJSON['userAge'],
+//         userAvatar = parsedJSON['userAvatar'],
+//         userDisplayName = parsedJSON['userDisplayName'],
+//         userEmail = parsedJSON['userEmail'],
+//         userID = parsedJSON['userID'],
+//         userItemsNbr = parsedJSON['userItemsNbr'],
+//         userPhone = parsedJSON['userPhone'],
+//         userSex = parsedJSON['userSex'],
+//         userState = parsedJSON['userState'],
+//         userRole = parsedJSON['userRole'];
+// }
 
 // class UserPro {
 //   Timestamp UcreatedAt;
@@ -254,4 +254,162 @@ class SuperHero {
         userDisplayName: json['userDisplayName'] ?? '',
         userAvatar: json['userAvatar'] ?? '',
       );
+}
+
+class Post {
+  final String userID;
+  final String item;
+  final String category;
+  final int likes;
+  final int price;
+  final DateTime createdAt;
+  final List imageUrls;
+  final String themb;
+  final String decription;
+  final List usersLike;
+  final DateTime dateDebut;
+  final DateTime dateFin;
+  final GeoPoint position;
+  final String levelItem;
+  final int phone;
+  final int views;
+  final List viewed_by;
+
+  const Post({
+    required this.userID,
+    required this.item,
+    required this.price,
+    required this.category,
+    required this.likes,
+    required this.createdAt,
+    required this.imageUrls,
+    required this.themb,
+    required this.decription,
+    required this.usersLike,
+    required this.dateDebut,
+    required this.dateFin,
+    required this.position,
+    required this.levelItem,
+    required this.phone,
+    required this.views,
+    required this.viewed_by,
+  });
+  Post.fromJson(Map<String, Object?> json)
+      : this(
+          userID: json['userID']! as String,
+          item: json['item']! as String,
+          category: json['category']! as String,
+          likes: json['likes']! as int,
+          price: json['price']! as int,
+          createdAt: (json['createdAt']! as Timestamp).toDate(),
+          decription: json['Description']! as String,
+          imageUrls: json['imageUrls']! as List,
+          themb: json['themb']! as String,
+          usersLike: json['usersLike'] as List,
+          dateDebut: (json['dateDebut']! as Timestamp).toDate(),
+          dateFin: (json['dateFin']! as Timestamp).toDate(),
+          position: json['position'] as GeoPoint,
+          levelItem: json['levelItem']! as String,
+          phone: json['phone'] as int,
+          views: json['views'] as int,
+          viewed_by: json['viewed_by']! as List,
+        );
+  Map<String, Object?> toJson() => {
+        'userID': userID,
+        'likes': likes,
+        'createdAt': createdAt,
+        'imageUrls': imageUrls,
+        'themb': themb,
+        "item": item,
+        'price': price, // + '.00 dzd ',
+        'category': category,
+        'Description': decription,
+        'usersLike': usersLike,
+        'dateDebut': dateDebut,
+        'dateFin': dateFin,
+        'position': position,
+        'levelItem': levelItem,
+        'phone': phone,
+        'viewed_by': viewed_by,
+        'views': views,
+      };
+}
+
+class UserClass {
+  final String id;
+  final int phone;
+  final String email;
+  final DateTime createdAt;
+  final String avatar;
+  final String timeline;
+  final String displayName;
+  final DateTime lastActive;
+  final bool state;
+  final String role;
+  final String plan;
+  final double coins;
+  final String levelUser;
+  final double stars;
+  final int userItemsNbr;
+  final int views;
+  final List viewed_by;
+  UserClass({
+    required this.id,
+    required this.phone,
+    required this.email,
+    required this.createdAt,
+    required this.avatar,
+    required this.timeline,
+    required this.displayName,
+    required this.lastActive,
+    required this.role,
+    required this.state,
+    required this.plan,
+    required this.coins,
+    required this.levelUser,
+    required this.stars,
+    required this.userItemsNbr,
+    required this.views,
+    required this.viewed_by,
+  });
+  UserClass.fromJson(Map<String, Object?> json)
+      : this(
+          id: json['id']! as String,
+          phone: json['phone'] as int,
+          email: json['email']! as String,
+          avatar: json['avatar']! as String,
+          timeline: json['timeline']! as String,
+          createdAt: (json['createdAt']! as Timestamp).toDate(),
+          displayName: json['displayName']! as String,
+          role: json['role']! as String,
+          lastActive: (json['lastActive']! as Timestamp).toDate(),
+          state: json['state']! as bool,
+          plan: json['plan']! as String,
+          coins: json['coins'] as double,
+          levelUser: json['levelUser']! as String,
+          stars: json['stars'] as double,
+          userItemsNbr: json['userItemsNbr'] as int,
+          views: json['views'] as int,
+          viewed_by: json['viewed_by']! as List,
+        );
+
+  Map<String, Object?> toJson() => {
+        'id': id,
+        'email': email,
+        'phone': phone,
+        'createdAt': createdAt,
+        'avatar': avatar,
+        'timeline': timeline,
+        'displayName': displayName,
+        'lastActive': lastActive,
+        'role': role,
+        'state': state,
+        'plan': plan,
+        'coins': coins,
+        'levelUser': levelUser,
+        'stars': stars,
+        'userItemsNbr': userItemsNbr,
+        'viewed_by': viewed_by,
+        'views': views,
+      };
 }

@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:ramzy/pages/classes.dart';
 import 'homeList.dart';
 import 'insta.dart';
 import '../services/upload_random.dart';

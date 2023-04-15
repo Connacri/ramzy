@@ -502,7 +502,15 @@ class homeList extends StatelessWidget {
                     ),
                   ),
                 ),
-
+                Center(
+                  child: Text(
+                    "كيف حالك يا أخ العرب؟",
+                    style: new TextStyle(
+                      fontFamily: 'NizarBBCKurdish-Bold',
+                      fontSize: 25.0,
+                    ),
+                  ),
+                ),
                 Padding(
                   padding: const EdgeInsets.fromLTRB(18, 18, 18, 0),
                   child: Row(
@@ -1322,70 +1330,77 @@ class homeList extends StatelessWidget {
                                   ),
                                 ),
                                 Spacer(),
-                                Padding(
-                                  padding:
-                                      const EdgeInsets.symmetric(horizontal: 8),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: [
-                                      Text(
-                                        NumberFormat.compact()
-                                            .format(data['views']),
-                                        textAlign: TextAlign.end,
-                                        style: TextStyle(
+                                Builder(builder: (context) {
+                                  return Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 8),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: [
+                                        Text(
+                                          NumberFormat.compact()
+                                              .format(data['views']),
+                                          textAlign: TextAlign.end,
+                                          style: TextStyle(
+                                            color: Colors.white70,
+                                            fontSize: 12,
+                                          ),
+                                        ),
+                                        SizedBox(
+                                          width: 3,
+                                        ),
+                                        Icon(
+                                          FontAwesomeIcons.eye,
+                                          size: 11,
                                           color: Colors.white70,
-                                          fontSize: 12,
+                                        )
+                                      ],
+                                    ),
+                                  );
+                                }),
+                                Builder(builder: (context) {
+                                  return Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 8),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: [
+                                        Text(
+                                          NumberFormat.compact()
+                                              .format(data['likes']),
+                                          textAlign: TextAlign.end,
+                                          style: TextStyle(
+                                            color: isLiked
+                                                ? Colors.red
+                                                : Colors.white70,
+                                            fontSize: 13,
+                                          ),
                                         ),
-                                      ),
-                                      SizedBox(
-                                        width: 3,
-                                      ),
-                                      Icon(
-                                        FontAwesomeIcons.eye,
-                                        size: 11,
-                                        color: Colors.white70,
-                                      )
-                                    ],
-                                  ),
-                                ),
-                                Padding(
-                                  padding:
-                                      const EdgeInsets.symmetric(horizontal: 8),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: [
-                                      Text(
-                                        NumberFormat.compact()
-                                            .format(data['likes']),
-                                        textAlign: TextAlign.end,
-                                        style: TextStyle(
-                                          color: isLiked
-                                              ? Colors.red
-                                              : Colors.white70,
-                                          fontSize: 13,
+                                        SizedBox(
+                                          width: 3,
                                         ),
-                                      ),
-                                      SizedBox(
-                                        width: 3,
-                                      ),
-                                      isLiked
-                                          ? Icon(
-                                              FontAwesomeIcons.heartCircleCheck,
-                                              size: 12,
-                                              color: Colors.red,
-                                            )
-                                          : Icon(
-                                              FontAwesomeIcons.heart,
-                                              size: 12,
-                                              color: Colors.white70,
-                                            )
-                                    ],
-                                  ),
-                                ),
+                                        isLiked
+                                            ? Icon(
+                                                FontAwesomeIcons
+                                                    .heartCircleCheck,
+                                                size: 12,
+                                                color: Colors.red,
+                                              )
+                                            : Icon(
+                                                FontAwesomeIcons.heart,
+                                                size: 12,
+                                                color: Colors.white70,
+                                              )
+                                      ],
+                                    ),
+                                  );
+                                }),
                               ],
                             ),
                           ),

@@ -21,13 +21,12 @@ class page_detail extends StatefulWidget {
     Key? key,
     required var imagesList,
     required this.locationventeSelected,
-    //  required this.user,
     required this.typeSelected,
     required this.itemController,
     required this.priceController,
-    required this.telContactController,
-    required this.descriptionController,
+    required this.phoneCodeController,
     required this.phoneController,
+    required this.descriptionController,
     required this.user,
     required this.geoLocation,
   })  : _imagesList = imagesList,
@@ -41,9 +40,9 @@ class page_detail extends StatefulWidget {
   String typeSelected;
   String itemController;
   String priceController;
-  String telContactController;
+  String phoneCodeController;
+  String phoneController;
   String descriptionController;
-  int phoneController;
   ValueNotifier<GeoPoint?> geoLocation;
   @override
   State<page_detail> createState() => _page_detailState();
@@ -264,7 +263,8 @@ class _page_detailState extends State<page_detail> {
                           typeSelected: widget.typeSelected,
                           itemController: widget.itemController,
                           priceController: widget.priceController,
-                          telContactController: widget.telContactController,
+                          telContactController: widget.phoneController,
+                          phoneCodeController: widget.phoneCodeController,
                           descriptionController: widget.descriptionController)),
                 ),
               ),
@@ -279,10 +279,9 @@ class _page_detailState extends State<page_detail> {
                     textAlign: TextAlign.justify,
                     trimCollapsedText: 'Plus',
                     trimExpandedText: '  Moins',
-                    moreStyle: const TextStyle(
-                        fontSize: 14, fontFamily: 'oswald', color: Colors.blue),
-                    lessStyle: const TextStyle(
-                        fontSize: 14, fontFamily: 'oswald', color: Colors.red),
+                    moreStyle:
+                        const TextStyle(fontSize: 14, color: Colors.blue),
+                    lessStyle: const TextStyle(fontSize: 14, color: Colors.red),
                     style: const TextStyle(
                         fontSize: 14,
                         fontFamily: 'oswald',
@@ -367,7 +366,7 @@ class _page_detailState extends State<page_detail> {
     String userID = widget.user!['id']; //widget.user!.uid;
     String item = widget.itemController;
     int price = int.parse(widget.priceController);
-    String telContact = widget.telContactController;
+    String telContact = widget.phoneController;
     String description = widget.descriptionController;
     int likes = int.parse(widget.priceController);
     // String? userEmail = widget.user?.email;
@@ -376,7 +375,8 @@ class _page_detailState extends State<page_detail> {
     List usersLike = ['sans'];
     int userAge = 20;
     int userItemsNbr = 0;
-    int phone = widget.phoneController; //0687451524;
+    String phone = widget.phoneCodeController.toString();
+    //    +         widget.phoneController.toString(); //0687451524;
     String userSex = 'mal';
     bool userState = true;
     //  Position? position = widget.geoLocation.value! as Position?;
@@ -444,6 +444,7 @@ class TicketData extends StatelessWidget {
     required this.typeSelected,
     required this.itemController,
     required this.priceController,
+    required this.phoneCodeController,
     required this.telContactController,
     required this.descriptionController,
   }) :
@@ -456,6 +457,7 @@ class TicketData extends StatelessWidget {
   String typeSelected;
   String itemController;
   String priceController;
+  String phoneCodeController;
   String telContactController;
   String descriptionController;
 
@@ -581,7 +583,7 @@ class TicketData extends StatelessWidget {
         ),
         Center(
           child: Text(
-            '+213 ${telContactController.toUpperCase()}',
+            '${phoneCodeController.toUpperCase()} ${telContactController.toUpperCase()}',
             style: const TextStyle(color: Colors.black, fontFamily: 'oswald'),
           ),
         ),
@@ -845,9 +847,9 @@ Widget ticketDetailsWidget(String firstTitle, String firstDesc,
 //                     trimCollapsedText: 'Plus',
 //                     trimExpandedText: '  Moins',
 //                     moreStyle: const TextStyle(
-//                         fontSize: 14, fontFamily: 'oswald', color: Colors.blue),
+//                         fontSize: 14, color: Colors.blue),
 //                     lessStyle: const TextStyle(
-//                         fontSize: 14, fontFamily: 'oswald', color: Colors.red),
+//                         fontSize: 14, color: Colors.red),
 //                     style: const TextStyle(
 //                         fontSize: 14,
 //                         fontFamily: 'oswald',

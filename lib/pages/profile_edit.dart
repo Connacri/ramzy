@@ -60,13 +60,13 @@ class _profile_editState extends State<profile_edit> {
                 child: Text(
                   widget.userDoc['displayName'].toString().toUpperCase(),
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(fontFamily: 'oswald', fontSize: 22),
+                  style: const TextStyle(fontSize: 22),
                 ),
               ),
               const Text(
                 ' Va Publier Une Annonce',
                 overflow: TextOverflow.ellipsis,
-                style: TextStyle(fontFamily: 'oswald', fontSize: 17),
+                style: TextStyle(fontSize: 17),
               ),
             ],
           )),

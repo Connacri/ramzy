@@ -1045,7 +1045,6 @@ class _like_instagramState extends State<like_instagram> {
                           color: Colors.black54,
                           fontWeight: FontWeight.normal,
                           fontSize: 14,
-                          fontFamily: 'Oswald',
                         ),
                       ),
                     ), // Likes Number
@@ -1063,12 +1062,9 @@ class _like_instagramState extends State<like_instagram> {
                 textAlign: TextAlign.justify,
                 trimCollapsedText: 'Plus',
                 trimExpandedText: '  Moins',
-                moreStyle: const TextStyle(
-                    fontSize: 14, fontFamily: 'oswald', color: Colors.blue),
-                lessStyle: const TextStyle(
-                    fontSize: 14, fontFamily: 'oswald', color: Colors.red),
-                style: const TextStyle(
-                    fontSize: 14, fontFamily: 'oswald', color: Colors.black87),
+                moreStyle: const TextStyle(fontSize: 14, color: Colors.blue),
+                lessStyle: const TextStyle(fontSize: 14, color: Colors.red),
+                style: const TextStyle(fontSize: 14, color: Colors.black87),
               ),
             ),
             Divider()
@@ -1190,43 +1186,6 @@ class _like_instagramState extends State<like_instagram> {
                             },
                           ),
                         ),
-                        // Container(
-                        //   width: 150,
-                        //   child: SizedBox(
-                        //     child: ListView(
-                        //         scrollDirection: Axis.horizontal,
-                        //         shrinkWrap: true,
-                        //         children: [
-                        //           Icon(
-                        //             Icons.do_not_disturb_on_total_silence,
-                        //             color: Colors.cyanAccent,
-                        //           ),
-                        //           Icon(
-                        //             Icons.do_not_disturb_on_total_silence,
-                        //             color: Colors.cyanAccent,
-                        //           ),
-                        //           Icon(
-                        //             Icons.do_not_disturb_on_total_silence,
-                        //             color: Colors.cyanAccent,
-                        //           ),
-                        //           Icon(
-                        //             Icons.do_not_disturb_on_total_silence,
-                        //             color: Colors.cyanAccent,
-                        //           ),
-                        //         ]),
-                        //     // child: ListView.builder(
-                        //     //     scrollDirection: Axis.horizontal,
-                        //     //     itemCount: widget.datam!['imageUrls'].length,
-                        //     //     shrinkWrap: true,
-                        //     //     itemBuilder: (BuildContext, int) => Icon(
-                        //     //         Icons.do_not_disturb_on_total_silence)),
-                        //   ),
-                        // ),
-                        // Center(
-                        //     child: Text(
-                        //   _current.toString(),
-                        //   style: TextStyle(fontSize: 100),
-                        // )),
                       ],
                     ),
             ),
@@ -1293,7 +1252,6 @@ class _like_instagramState extends State<like_instagram> {
                                 snapshot.data['displayName'],
                                 style: const TextStyle(
                                     fontSize: 15,
-                                    fontFamily: 'Oswald',
                                     fontWeight: FontWeight.normal,
                                     color: Colors.white),
                               ),
@@ -1325,7 +1283,6 @@ class _like_instagramState extends State<like_instagram> {
                                 'NADA',
                                 style: TextStyle(
                                     fontSize: 15,
-                                    fontFamily: 'Oswald',
                                     fontWeight: FontWeight.normal,
                                     color: Colors.white),
                               ),
@@ -1374,7 +1331,6 @@ class _like_instagramState extends State<like_instagram> {
                     color: Colors.white70,
                     fontWeight: FontWeight.normal,
                     fontSize: 12,
-                    fontFamily: 'Oswald',
                   )),
             ),
           ],

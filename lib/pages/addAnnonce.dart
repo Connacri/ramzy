@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart' as cloud;
@@ -10,9 +11,12 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:intl_phone_field/intl_phone_field.dart';
+import 'package:intl_phone_field/phone_number.dart';
 import 'package:path/path.dart' as Path;
 
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:ramzy/2/Hotel/Book.dart';
+import 'package:ramzy/pages/classes.dart';
 
 import '../pages/Aperçu_Item.dart';
 
@@ -21,7 +25,6 @@ class stepper_widget extends StatefulWidget {
       : super(key: key);
   String ccollection;
   final userDoc;
-
   @override
   State<stepper_widget> createState() => _stepper_widgetState();
 }
@@ -35,7 +38,7 @@ class _stepper_widgetState extends State<stepper_widget> {
   final multiPicker = ImagePicker();
   final TextEditingController _itemController = TextEditingController();
   final TextEditingController _priceController = TextEditingController();
-  final TextEditingController _codeController = TextEditingController();
+  final TextEditingController _phoneCodeController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _likesController = TextEditingController();
   final TextEditingController _telContactController = TextEditingController();
@@ -92,11 +95,61 @@ class _stepper_widgetState extends State<stepper_widget> {
         locavente,
         style: const TextStyle(
           fontSize: 18,
-          fontFamily: 'oswald',
         ),
       ),
     );
   }
+
+  int _currentTimeValue = 1;
+
+  final _buttonOptions = [
+    TimeValue(
+      1,
+      'Ses points forts',
+    ),
+    TimeValue(
+      2,
+      'Piscine extérieure',
+    ),
+    TimeValue(
+      3,
+      'Connexion Wi-Fi gratuite',
+    ),
+    TimeValue(
+      4,
+      'Navette aéroport (gratuite)',
+    ),
+    TimeValue(
+      5,
+      'Le Cliff',
+    ),
+    TimeValue(
+      6,
+      'Centre de remise en forme',
+    ),
+    TimeValue(
+      7,
+      'Chambres non-fumeurs',
+    ),
+    TimeValue(
+      8,
+      'Service d\'étage',
+    ),
+    TimeValue(
+      9,
+      'Plateau/bouilloire dans tous les hébergements',
+    ),
+    TimeValue(
+      10,
+      'Bar',
+    ),
+    TimeValue(
+      11,
+      'Petit-déjeuner',
+    ),
+  ];
+
+  String dropdownValue = 'Dog';
 
   @override
   Widget _buildType(String catego) {
@@ -114,7 +167,9 @@ class _stepper_widgetState extends State<stepper_widget> {
           child: Text(
             catego,
             style: const TextStyle(
-                fontSize: 18, color: Colors.white, fontFamily: 'oswald'),
+              fontSize: 18,
+              color: Colors.white,
+            ),
           ),
         ),
       ),
@@ -155,13 +210,13 @@ class _stepper_widgetState extends State<stepper_widget> {
                 child: Text(
                   widget.userDoc['displayName'].toString().toUpperCase(),
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(fontFamily: 'oswald', fontSize: 22),
+                  style: const TextStyle(fontSize: 22),
                 ),
               ),
               const Text(
                 ' Va Publier Une Annonce',
                 overflow: TextOverflow.ellipsis,
-                style: TextStyle(fontFamily: 'oswald', fontSize: 17),
+                style: TextStyle(fontSize: 17),
               ),
             ],
           )),
@@ -233,7 +288,6 @@ class _stepper_widgetState extends State<stepper_widget> {
                                       await Navigator.push(context,
                                           MaterialPageRoute(builder: (_) {
                                         return page_detail(
-                                          //   code: _codeController.text,
                                           geoLocation: notifier,
                                           imagesList: _imagesList,
                                           locationventeSelected:
@@ -243,14 +297,12 @@ class _stepper_widgetState extends State<stepper_widget> {
                                           itemController: _itemController.text,
                                           priceController:
                                               _priceController.text,
-                                          telContactController:
-                                              _telContactController.text,
-                                          // generaleController:
-                                          //     _generaleController.text,
+                                          phoneCodeController:
+                                              _phoneCodeController.text,
                                           descriptionController:
                                               _descriptionController.text,
-                                          phoneController: int.parse(
-                                              _telContactController.text),
+                                          phoneController:
+                                              _telContactController.text,
                                         );
                                       }));
                                     }
@@ -264,42 +316,6 @@ class _stepper_widgetState extends State<stepper_widget> {
                               ),
                             ),
                           )
-                    // : Expanded(
-                    //     child: ElevatedButton(
-                    //       onPressed: isLastStep
-                    //           ? () async {
-                    //               await Navigator.push(context,
-                    //                   MaterialPageRoute(builder: (_) {
-                    //                 return page_detail_insta(
-                    //                   //   code: _codeController.text,
-                    //                   imagesList: _imagesList,
-                    //                   locationventeSelected:
-                    //                       _locationventeSelected,
-                    //                   user: widget.userDoc,
-                    //                   typeSelected: _typeSelected,
-                    //                   itemController:
-                    //                       _itemController.text,
-                    //                   priceController:
-                    //                       _priceController.text,
-                    //                   telContactController:
-                    //                       _telContactController.text,
-                    //                   // generaleController:
-                    //                   //     _generaleController.text,
-                    //                   descriptionController:
-                    //                       _descriptionController.text,
-                    //                 );
-                    //               }));
-                    //             }
-                    //           : details.onStepContinue,
-                    //       child: Text(
-                    //         isLastStep ? 'Aperçu' : 'Suivant',
-                    //         style: const TextStyle(
-                    //             fontSize: 14,
-                    //             fontFamily: 'oswald',
-                    //             fontWeight: FontWeight.bold),
-                    //       ),
-                    //     ),
-                    //   ),
                   ],
                 ),
               );
@@ -310,7 +326,7 @@ class _stepper_widgetState extends State<stepper_widget> {
                 isActive: currentStep >= 0,
                 title: const Text(
                   'Photo(s)',
-                  style: TextStyle(fontFamily: 'oswald', fontSize: 14),
+                  style: TextStyle(fontSize: 14),
                 ),
                 content: Column(
                   children: [
@@ -327,8 +343,7 @@ class _stepper_widgetState extends State<stepper_widget> {
                                 child: Text(
                                   'Ajouter Moins de ${4 - _imagesList.length} Photos',
                                   textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                      fontFamily: 'oswald', fontSize: 14),
+                                  style: TextStyle(fontSize: 14),
                                 ),
                               ),
                               _imagesList.length == 0
@@ -476,175 +491,16 @@ class _stepper_widgetState extends State<stepper_widget> {
                 isActive: currentStep >= 1,
                 title: const Text(
                   'Details',
-                  style: TextStyle(fontFamily: 'oswald', fontSize: 14),
+                  style: TextStyle(fontSize: 14),
                 ),
-                content: Column(
-                  children: <Widget>[
-                    Form(
-                      key: _formStepperKey,
-                      child: Column(
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: [
-                              Expanded(
-                                  child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: _buildLocationVente('Location'),
-                              )),
-                              // const SizedBox(width: 10),
-                              Expanded(
-                                  child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: _buildLocationVente('Vente'),
-                              )),
-                            ],
-                          ), // location ou vente
-                          // Padding(
-                          //   padding: const EdgeInsets.fromLTRB(0, 15, 0, 10),
-                          //   child: SizedBox(
-                          //     height: 35,
-                          //     child: ListView(
-                          //       scrollDirection: Axis.horizontal,
-                          //       children: [
-                          //         _buildType('Hotel'),
-                          //         const SizedBox(width: 5),
-                          //         _buildType('Residence'),
-                          //         const SizedBox(width: 5),
-                          //         _buildType('Agence'),
-                          //         const SizedBox(width: 5),
-                          //         _buildType('Autres'),
-                          //         const SizedBox(width: 5),
-                          //       ],
-                          //     ),
-                          //   ),
-                          // ), // categorie
-                          TextFormField(
-                            textAlign: TextAlign.center,
-                            style: const TextStyle(
-                              fontSize: 25,
-                            ),
-                            keyboardType: TextInputType.text,
-                            controller: _itemController,
-                            decoration: const InputDecoration(
-                              hintStyle: TextStyle(color: Colors.black38),
-                              fillColor: Colors.white,
-                              hintText: 'Titre',
-                              border: InputBorder.none,
-                              filled: true,
-                              contentPadding: EdgeInsets.all(15),
-                            ),
-                            validator: (value) =>
-                                value != null && value.length < 3
-                                    ? 'Entrer min 3 characteres.'
-                                    : null,
-                          ), // titre du produit
-                          SizedBox(
-                            height: 10,
-                          ),
-                          TextFormField(
-                            textAlign: TextAlign.center,
-                            style: const TextStyle(
-                              fontSize: 25,
-                            ),
-                            keyboardType: TextInputType.number,
-                            controller: _priceController,
-                            decoration: const InputDecoration(
-                              hintStyle: TextStyle(color: Colors.black38),
-                              fillColor: Colors.white,
-                              hintText: 'Prix En Dinar Sans Virgule',
-                              border: InputBorder.none,
-                              filled: true,
-                              contentPadding: EdgeInsets.all(15),
-                            ),
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Prix Réel Jour';
-                              }
-                              return null;
-                            },
-                          ), // prix
-                          SizedBox(
-                            height: 10,
-                          ),
-                          IntlPhoneField(
-                            controller: _telContactController,
-                            decoration: const InputDecoration(
-                              hintStyle: TextStyle(color: Colors.black38),
-                              fillColor: Colors.white,
-                              hintText: '660 00 00 00',
-                              border: InputBorder.none,
-                              filled: true,
-                              contentPadding: EdgeInsets.all(15),
-                            ),
-                            invalidNumberMessage:
-                                'Entrer Que Ooreddo ou Djezzy ou Mobilis',
-                            // disableLengthCheck: true,
-
-                            validator: (value) {
-                              if (value == null) {
-                                return 'Entrer Ton Numero de Tel';
-                              } else {
-                                // validate against your regex pattern
-                                RegExp regex = new RegExp(r'^[678][0-9]{8}$');
-                                if (!regex.hasMatch(value.number)) {
-                                  return 'Entrer Que Ooreddo ou Djezzy ou Mobilis';
-                                }
-                                return null;
-                              }
-                            },
-
-                            showDropdownIcon: false,
-                            initialCountryCode: 'DZ',
-
-                            onChanged: (phone) {
-                              print(phone.completeNumber);
-                            },
-                            flagsButtonMargin: EdgeInsets.zero,
-                            flagsButtonPadding: const EdgeInsets.only(left: 15),
-                          ),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          TextFormField(
-                            keyboardType: TextInputType.multiline,
-                            maxLines: 5,
-                            textAlign: TextAlign.center,
-                            style: const TextStyle(
-                              fontSize: 25,
-                            ),
-                            controller: _descriptionController,
-                            decoration: const InputDecoration(
-                              hintStyle: TextStyle(color: Colors.black38),
-                              fillColor: Colors.white,
-                              hintText: 'Ecrire Une Description',
-                              border: InputBorder.none,
-                              filled: true,
-                              contentPadding: EdgeInsets.all(15),
-                            ),
-                            textInputAction: TextInputAction.next,
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Vous Devez Ecrire Une Description';
-                              } else if (isSelected == false) {
-                                return 'Vous Devez Choisir Location ou Vente';
-                              }
-                              return null;
-                            },
-                          ), // description
-                        ],
-                      ),
-                    ),
-                    //CATEGORIES**********************************************************
-                  ],
-                ),
+                content: buildStep2(),
               ),
               Step(
                 state: currentStep > 2 ? StepState.complete : StepState.indexed,
                 isActive: currentStep >= 2,
                 title: const Text(
                   'Localisation',
-                  style: TextStyle(fontFamily: 'oswald', fontSize: 14),
+                  style: TextStyle(fontSize: 14),
                 ),
                 content: Center(
                   child: Column(
@@ -822,6 +678,224 @@ class _stepper_widgetState extends State<stepper_widget> {
         return print('PAS PLUS QUE 4');
       }
     });
+  }
+
+  Widget buildStep2() {
+    return Column(
+      children: <Widget>[
+        Form(
+          key: _formStepperKey,
+          child: Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  Expanded(
+                      child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: _buildLocationVente('Location'),
+                  )),
+                  // const SizedBox(width: 10),
+                  Expanded(
+                      child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: _buildLocationVente('Vente'),
+                  )),
+                ],
+              ),
+
+              DropdownButton<String>(
+                // Step 3.
+                value: dropdownValue,
+                // Step 4.
+                items: <String>['Dog', 'Cat', 'Tiger', 'Lion']
+                    .map<DropdownMenuItem<String>>((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(
+                      value,
+                      style: TextStyle(fontSize: 30),
+                    ),
+                  );
+                }).toList(),
+                // Step 5.
+                onChanged: (String? newValue) {
+                  setState(() {
+                    dropdownValue = newValue!;
+                  });
+                },
+              ),
+              Text(dropdownValue),
+              Container(
+                height: 200,
+                child: ListView.builder(
+                  // shrinkWrap: true,
+                  // physics: NeverScrollableScrollPhysics(),
+                  scrollDirection: Axis.vertical,
+                  padding: EdgeInsets.all(8.0),
+                  itemCount: _buttonOptions.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    final timeValue = _buttonOptions[index];
+                    return RadioListTile<int>(
+                      groupValue: _currentTimeValue,
+                      title: Text(timeValue._value.toString()),
+                      value: timeValue._key,
+                      dense: true,
+                      onChanged: (val) {
+                        setState(() {
+                          debugPrint('VAL = $val');
+                          _currentTimeValue = val!;
+                        });
+                      },
+                    );
+                  },
+                ),
+              ),
+              SizedBox(height: 20),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(0, 15, 0, 10),
+                child: SizedBox(
+                  height: 35,
+                  child: ListView(
+                    scrollDirection: Axis.horizontal,
+                    children: [
+                      _buildType('Hotel'),
+                      const SizedBox(width: 5),
+                      _buildType('Residence'),
+                      const SizedBox(width: 5),
+                      _buildType('Agence'),
+                      const SizedBox(width: 5),
+                      _buildType('Autres'),
+                      const SizedBox(width: 5),
+                    ],
+                  ),
+                ),
+              ),
+              TextFormField(
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  fontSize: 25,
+                ),
+                keyboardType: TextInputType.text,
+                controller: _itemController,
+                decoration: const InputDecoration(
+                  hintStyle: TextStyle(color: Colors.black26),
+                  fillColor: Colors.white,
+                  hintText: 'Titre',
+                  border: InputBorder.none,
+                  filled: true,
+                  contentPadding: EdgeInsets.all(15),
+                ),
+                validator: (value) => value != null && value.length < 3
+                    ? 'Entrer min 3 characteres.'
+                    : null,
+              ), // titre du produit
+              SizedBox(
+                height: 10,
+              ),
+              TextFormField(
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  fontSize: 25,
+                ),
+                keyboardType: TextInputType.number,
+                controller: _priceController,
+                decoration: const InputDecoration(
+                  hintStyle: TextStyle(color: Colors.black26),
+                  fillColor: Colors.white,
+                  hintText: 'Prix En Dinar Sans Virgule',
+                  border: InputBorder.none,
+                  filled: true,
+                  contentPadding: EdgeInsets.all(15),
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Prix Réel du Jour';
+                  }
+                  return null;
+                },
+              ), // prix
+              SizedBox(
+                height: 10,
+              ),
+              IntlPhoneField(
+                controller: _telContactController,
+                decoration: const InputDecoration(
+                  hintStyle: TextStyle(color: Colors.black26),
+                  fillColor: Colors.white,
+                  hintText: '660 00 00 00',
+                  border: InputBorder.none,
+                  filled: true,
+                  contentPadding: EdgeInsets.all(15),
+                ),
+                // invalidNumberMessage:
+                //     'Entrer Que Ooreddo ou Djezzy ou Mobilis',
+                disableLengthCheck: true,
+                validator: (value) {
+                  if (value == null) {
+                    return 'Entrer Ton Numero de Tel';
+                  } else {
+                    //   // validate against your regex pattern
+                    //   RegExp regex = new RegExp(r'^[567][0-9]{8}$');
+                    //   if (!regex.hasMatch(value.number)) {
+                    //     return 'Entrer Que Ooreddo, Djezzy ou Mobilis';
+                    //   }
+                    return null;
+                  }
+                },
+                showDropdownIcon: false,
+                initialCountryCode: 'DZ',
+                // onChanged: (phone) {
+                //   setState(() {
+                //     _telContactController.text =
+                //         phone.completeNumber;
+                //     print(_telContactController.text);
+                //   });
+                // },
+                flagsButtonMargin: EdgeInsets.zero,
+                flagsButtonPadding: const EdgeInsets.only(left: 15),
+                onSaved: (phoneNumber) async {
+                  setState(() {
+                    _phoneCodeController.text = phoneNumber!.countryCode;
+                    //print(_telContactController.text);
+                  });
+                },
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              TextFormField(
+                keyboardType: TextInputType.multiline,
+                maxLines: 5,
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  fontSize: 25,
+                ),
+                controller: _descriptionController,
+                decoration: const InputDecoration(
+                  hintStyle: TextStyle(color: Colors.black26),
+                  fillColor: Colors.white,
+                  hintText: 'Ecrire Une Description',
+                  border: InputBorder.none,
+                  filled: true,
+                  contentPadding: EdgeInsets.all(15),
+                ),
+                textInputAction: TextInputAction.next,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Vous Devez Ecrire Une Description';
+                  } else if (isSelected == false) {
+                    return 'Vous Devez Choisir Location ou Vente';
+                  }
+                  return null;
+                },
+              ), // description
+            ],
+          ),
+        ),
+        //CATEGORIES**********************************************************
+      ],
+    );
   }
 }
 
@@ -1088,4 +1162,10 @@ class LocationResult {
     this.bearing,
     this.zoom,
   });
+}
+
+class TimeValue {
+  final int _key;
+  final String _value;
+  TimeValue(this._key, this._value);
 }

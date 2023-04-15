@@ -7,13 +7,11 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:open_location_picker/open_location_picker.dart';
-import 'package:ramzy/2/publicLoggedPage.dart';
 import 'package:ramzy/pages/insta.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:intl/intl.dart' as intl;
 
 import 'package:timeago/timeago.dart' as timeago;
-import '../2/publicLoggedPage.dart';
 import 'ProfileOthers.dart';
 
 class SilverdetailItem extends StatefulWidget {
