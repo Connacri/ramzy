@@ -20,6 +20,7 @@ import 'package:provider/provider.dart';
 import 'package:ramzy/pages/booking.dart';
 import 'package:ramzy/pages/profile_edit.dart';
 import 'package:path/path.dart' as Path;
+import 'package:ramzy/services/upload_functions.dart';
 import '../Oauth/Ogoogle/googleSignInProvider.dart';
 import '../Oauth/Privacy_Policy.dart';
 import '../services/upload_random.dart';
@@ -365,7 +366,7 @@ class _ProfileState extends State<Profile> with TickerProviderStateMixin {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                            data['displayName'].toUpperCase(),
+                            data['displayName'].toString().capitalize(),
                             style: TextStyle(fontSize: 20),
                           ),
                           GestureDetector(
@@ -385,16 +386,34 @@ class _ProfileState extends State<Profile> with TickerProviderStateMixin {
                         ],
                       ),
                     ),
+                    data['email'] == 'forslog@gmail.com'
+                        ? Padding(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 10),
+                            child: IconButton(
+                              icon: Icon(
+                                Icons.add_box_rounded,
+                                color: Colors.blue,
+                              ),
+                              onPressed: () async {
+                                Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (context) =>
+                                      uploading_functions(), //upload_random(),
+                                ));
+                              },
+                            ),
+                          )
+                        : Container(),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
                         Text(
-                          'niveau : ${data['levelUser']}'.capitalize(),
+                          'Niveau : ' + '${data['levelUser']}'.capitalize(),
                           textAlign: TextAlign.justify,
                           style: TextStyle(fontSize: 20),
                         ),
                         Text(
-                          'role : ${data['role']}'.capitalize(),
+                          'Role : ' + '${data['role']}'.capitalize(),
                           textAlign: TextAlign.justify,
                           style: TextStyle(fontSize: 20),
                         ),
@@ -415,7 +434,7 @@ class _ProfileState extends State<Profile> with TickerProviderStateMixin {
                                   Icons.not_interested_outlined,
                                   color: Colors.red,
                                 ),
-                          Text(userGoo!.email.toString().toUpperCase()),
+                          Text(userGoo!.email.toString().capitalize()),
                         ],
                       ),
                     ),
@@ -462,22 +481,6 @@ class _ProfileState extends State<Profile> with TickerProviderStateMixin {
                     },
                   ),
                 ),
-                data['email'] == 'forslog@gmail.com'
-                    ? Padding(
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 50, vertical: 50),
-                        child: IconButton(
-                          icon: Icon(
-                            Icons.add_box_rounded,
-                            color: Colors.blue,
-                          ),
-                          onPressed: () async {
-                            Navigator.of(context).push(MaterialPageRoute(
-                                builder: (context) => upload_random()));
-                          },
-                        ),
-                      )
-                    : Container(),
                 data['email'] == 'forslog@gmail.com'
                     ? Padding(
                         padding: const EdgeInsets.symmetric(

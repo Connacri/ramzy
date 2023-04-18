@@ -539,6 +539,11 @@ class _SilverdetailItemState extends State<SilverdetailItem> {
               : SliverToBoxAdapter(
                   child: Container(),
                 ),
+          SliverToBoxAdapter(
+            child: SizedBox(
+              height: 100,
+            ),
+          ),
         ],
       ),
     );
@@ -1129,19 +1134,55 @@ class UnsplashSlider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () async {
-        await Navigator.push(context,
-            MaterialPageRoute(builder: (BuildContext) {
-          return Hero_UnsplashUrl(UnsplashUrl: UnsplashUrl);
-        }));
+    return InkWell(
+      onTap: () {
+        showDialog(
+            context: context,
+            builder: (_) => Material(
+                  type: MaterialType.transparency,
+                  child: SizedBox(
+                    height: double.infinity,
+                    width: double.infinity,
+                    child: AlertDialog(
+                      backgroundColor: Colors.transparent,
+                      scrollable: true,
+                      content: ShaderMask(
+                        shaderCallback: (rect) {
+                          return const LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomLeft,
+                            colors: [Colors.transparent, Colors.black],
+                          ).createShader(
+                              Rect.fromLTRB(0, 0, rect.width, rect.height));
+                        },
+                        blendMode: BlendMode.darken,
+                        child: CachedNetworkImage(
+                          fit: BoxFit.cover,
+                          imageUrl: UnsplashUrl,
+                          errorWidget: (context, url, error) => const Icon(
+                            Icons.error,
+                            color: Colors.red,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ));
       },
 
-      // onTap: () => Navigator.of(context).push(MaterialPageRoute(
-      //   builder: (context) => UnsplashSlider(
-      //     UnsplashUrl: UnsplashUrl,
-      //   ),
-      // )),
+      // GestureDetector(
+      // onTap: () async {
+      //   await Navigator.push(context,
+      //       MaterialPageRoute(builder: (BuildContext) {
+      //     return Hero_UnsplashUrl(UnsplashUrl: UnsplashUrl);
+      //   }));
+      // },
+      //
+      // // onTap: () => Navigator.of(context).push(MaterialPageRoute(
+      // //   builder: (context) => UnsplashSlider(
+      // //     UnsplashUrl: UnsplashUrl,
+      // //   ),
+      // // )),
       child: Card(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(15.0),

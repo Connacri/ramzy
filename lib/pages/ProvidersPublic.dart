@@ -71,6 +71,17 @@ class CollectionAlertData {
   }
 }
 
+class CollectionAlertArabcData {
+  final List<DocumentSnapshot> documents;
+
+  CollectionAlertArabcData(this.documents);
+  Query<Object?> fromListOfDocumentSnapshots(List<DocumentSnapshot> documents) {
+    return FirebaseFirestore.instance.collection('AlertArabic').where(
+        FieldPath.documentId,
+        whereIn: documents.map((d) => d.id).toList());
+  }
+}
+
 class MyApp extends StatelessWidget {
   MyApp({Key? key, required this.userDoc}) : super(key: key);
   var userDoc;
@@ -105,6 +116,14 @@ class MyApp extends StatelessWidget {
               .snapshots()
               .map((querySnapshot) => CollectionAlertData(querySnapshot.docs)),
           initialData: CollectionAlertData([]),
+        ),
+        StreamProvider<CollectionAlertArabcData>(
+          create: (_) => FirebaseFirestore.instance
+              .collection("AlertArabic")
+              .snapshots()
+              .map((querySnapshot) =>
+                  CollectionAlertArabcData(querySnapshot.docs)),
+          initialData: CollectionAlertArabcData([]),
         ),
       ],
       child: bottomNavigation(

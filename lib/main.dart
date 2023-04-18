@@ -15,6 +15,7 @@ import 'Oauth/verifi_auth.dart';
 import 'pages/ProvidersPublic.dart';
 import 'pages/adminLoggedPage.dart';
 import 'pages/unloggerPublicPage.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -49,6 +50,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
     return ChangeNotifierProvider(
         create: (context) => googleSignInProvider(),
         //lazy: true,

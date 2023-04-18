@@ -19,7 +19,7 @@ class _upload_randomState extends State<upload_random> {
 
   @override
   Widget build(BuildContext context) {
-    int itemsNum = 50; //int.parse(_ItemsNumController.text);
+    int itemsNum = 30; //int.parse(_ItemsNumController.text);
     _ItemsNumController.text.isEmpty ? 1 : int.parse(_ItemsNumController.text);
 
     return Scaffold(
@@ -72,10 +72,7 @@ class _upload_randomState extends State<upload_random> {
             icon: const Icon(Icons.add_chart),
             label: const Text(
               'ADD',
-              style: TextStyle(
-                  fontFamily: 'Oswald',
-                  color: Colors.blue,
-                  fontWeight: FontWeight.bold),
+              style: TextStyle(color: Colors.blue, fontWeight: FontWeight.bold),
             ),
           )),
           const SizedBox(height: 15),
@@ -87,10 +84,7 @@ class _upload_randomState extends State<upload_random> {
             icon: const Icon(Icons.public),
             label: const Text(
               'ADDPub',
-              style: TextStyle(
-                  fontFamily: 'Oswald',
-                  color: Colors.blue,
-                  fontWeight: FontWeight.bold),
+              style: TextStyle(color: Colors.blue, fontWeight: FontWeight.bold),
             ),
           )),
           const SizedBox(height: 15),
@@ -102,10 +96,7 @@ class _upload_randomState extends State<upload_random> {
             icon: const Icon(Icons.face),
             label: const Text(
               'InstaLives',
-              style: TextStyle(
-                  fontFamily: 'Oswald',
-                  color: Colors.blue,
-                  fontWeight: FontWeight.bold),
+              style: TextStyle(color: Colors.blue, fontWeight: FontWeight.bold),
             ),
           )),
         ],
@@ -259,8 +250,10 @@ class _upload_randomState extends State<upload_random> {
         email: '$randomNames$number@gmail.DZ',
         phone: 0770548452,
         createdAt: DateTime.now(),
-        avatar: 'https://source.unsplash.com/random?sig=$number*3+1',
-        timeline: 'https://source.unsplash.com/random?sig=$number*3',
+        avatar:
+            'https://firebasestorage.googleapis.com/v0/b/oran-894b7.appspot.com/o/hotel_pics%2Fhotel%20($number*3+1).jpg?alt=media&token=8d36274c-b1da-468e-b0c1-605ffd4a8b52', //''https://source.unsplash.com/random?sig=$number*3+1',
+        timeline:
+            'https://firebasestorage.googleapis.com/v0/b/oran-894b7.appspot.com/o/hotel_pics%2Fhotel%20($number*3).jpg?alt=media&token=8d36274c-b1da-468e-b0c1-605ffd4a8b52',
         displayName: randomNames,
         lastActive: DateTime.now().addYears(-37),
         role: 'public',
@@ -290,9 +283,12 @@ class _upload_randomState extends State<upload_random> {
         position: ramdomPosition,
         createdAt: DateTime.now(),
         decription: randomDesc,
-        imageUrls: ['https://source.unsplash.com/random?sig=$number+1'],
+        imageUrls: [
+          'https://firebasestorage.googleapis.com/v0/b/oran-894b7.appspot.com/o/hotel_pics%2Fhotel%20($number).jpg?alt=media&token=8d36274c-b1da-468e-b0c1-605ffd4a8b52'
+        ],
         usersLike: ['sans'],
-        themb: 'https://source.unsplash.com/random?sig=$number+1',
+        themb:
+            'https://firebasestorage.googleapis.com/v0/b/oran-894b7.appspot.com/o/hotel_pics%2Fhotel%20($number).jpg?alt=media&token=8d36274c-b1da-468e-b0c1-605ffd4a8b52',
         dateDebut: DateTime.now().add(const Duration(days: 4)),
         dateFin: DateTime.now().add(const Duration(days: 12)),
         levelItem: randomLevel,
@@ -444,9 +440,12 @@ class _upload_randomState extends State<upload_random> {
         position: ramdomPosition,
         createdAt: DateTime.now(),
         decription: randomDesc,
-        imageUrls: ['https://source.unsplash.com/random?sig=$number+1'],
+        imageUrls: [
+          'https://firebasestorage.googleapis.com/v0/b/oran-894b7.appspot.com/o/hotel_pics%2Fhotel%20($number).jpg?alt=media&token=8d36274c-b1da-468e-b0c1-605ffd4a8b52'
+        ],
         usersLike: ['sans'],
-        themb: 'https://source.unsplash.com/random?sig=$number+1',
+        themb:
+            'https://firebasestorage.googleapis.com/v0/b/oran-894b7.appspot.com/o/hotel_pics%2Fhotel%20($number).jpg?alt=media&token=8d36274c-b1da-468e-b0c1-605ffd4a8b52',
         dateDebut: DateTime.now().add(const Duration(days: 4)),
         dateFin: DateTime.now().add(const Duration(days: 12)),
         levelItem: randomLevel,
@@ -554,6 +553,7 @@ class _upload_randomState extends State<upload_random> {
         'diamond',
         'standard',
         'black',
+        'pro'
       ];
       List<String> listuserId = [
         'thGB7qmmapdrUW12DDM5TKjOGBv1',
@@ -601,9 +601,12 @@ class _upload_randomState extends State<upload_random> {
         position: ramdomPosition,
         createdAt: DateTime.now(),
         decription: randomDesc,
-        imageUrls: ['https://source.unsplash.com/random?sig=$number+1'],
+        imageUrls: [
+          'https://firebasestorage.googleapis.com/v0/b/oran-894b7.appspot.com/o/hotel_pics%2Fhotel%20($number).jpg?alt=media&token=8d36274c-b1da-468e-b0c1-605ffd4a8b52'
+        ], //['https://source.unsplash.com/random?sig=$number+1'],
         usersLike: ['sans'],
-        themb: 'https://source.unsplash.com/random?sig=$number+1',
+        themb:
+            'https://firebasestorage.googleapis.com/v0/b/oran-894b7.appspot.com/o/hotel_pics%2Fhotel%20($number).jpg?alt=media&token=8d36274c-b1da-468e-b0c1-605ffd4a8b52', //'https://source.unsplash.com/random?sig=$number+1',
         dateDebut: DateTime.now().add(const Duration(days: 4)),
         dateFin: DateTime.now().add(const Duration(days: 12)),
         levelItem: randomLevel,

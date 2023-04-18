@@ -2,6 +2,7 @@ import 'dart:math';
 import 'dart:ui';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:infinite_marquee/infinite_marquee.dart';
 import 'package:marquee/marquee.dart';
 import 'package:ramzy/Oauth/getFCM.dart';
@@ -22,7 +23,7 @@ import 'package:flutter/material.dart';
 import 'package:flutterflow_paginate_firestore/paginate_firestore.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
-import 'package:intl/intl.dart';
+import 'package:intl/intl.dart' as intl;
 import '../2/Hotel/new/globalrooms.dart';
 import 'ProfileOthers.dart';
 import 'ProvidersPublic.dart';
@@ -125,6 +126,8 @@ class homeList extends StatelessWidget {
 
     final alertItems = Provider.of<CollectionAlertData>(context);
 
+    final alertItemsArabic = Provider.of<CollectionAlertArabcData>(context);
+
     var premiumUsers = uusers.documents
         .where((element) => element['plan'] == 'premium')
         .toList();
@@ -139,10 +142,14 @@ class homeList extends StatelessWidget {
         .toList();
 
     var InfoAlert = alertItems.documents.toList();
-
     List<String> fieldValues =
         InfoAlert.map((map) => map['text'].toString() + '.').toList();
     String marqueesList = fieldValues.join('     ');
+
+    var InfoAlertArabic = alertItemsArabic.documents.toList();
+    List<String> fieldValuesArabic =
+        InfoAlertArabic.map((map) => map['text'].toString() + '.').toList();
+    String marqueesListArabic = fieldValuesArabic.join('     ');
 
     return Scaffold(
       floatingActionButton: FloatingActionButton(
@@ -367,7 +374,7 @@ class homeList extends StatelessWidget {
                           scrollAxis: Axis.horizontal,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           blankSpace: 20.0,
-                          velocity: 100.0,
+                          velocity: 70.0,
                           // pauseAfterRound: Duration(seconds: 1),
                           startPadding: 10.0,
                           //accelerationDuration: Duration(seconds: 1),
@@ -376,6 +383,32 @@ class homeList extends StatelessWidget {
                           decelerationCurve: Curves.easeOut,
                         ),
                       ),
+                InfoAlertArabic.isEmpty
+                    ? Container()
+                    : Container(
+                        height: 30,
+                        color: Colors.red,
+                        child: Marquee(
+                          text: marqueesListArabic.toUpperCase(),
+                          textDirection: TextDirection.rtl,
+                          style: GoogleFonts.cairo(
+                              textStyle: Theme.of(context).textTheme.headline4,
+                              fontSize: 16,
+                              color: Colors.white,
+                              fontWeight: FontWeight.w500),
+                          scrollAxis: Axis.horizontal,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          blankSpace: 20.0,
+                          velocity: 50.0,
+                          pauseAfterRound: Duration(seconds: 1),
+                          startPadding: 10.0,
+                          accelerationDuration: Duration(seconds: 1),
+                          accelerationCurve: Curves.linear,
+                          decelerationDuration: Duration(milliseconds: 500),
+                          decelerationCurve: Curves.easeOut,
+                        ),
+                      ),
+
                 userDoc != null
                     ? Padding(
                         padding: const EdgeInsets.symmetric(
@@ -400,7 +433,7 @@ class homeList extends StatelessWidget {
                                   fontWeight: FontWeight.w300),
                             ),
                             Text(
-                              NumberFormat.currency(
+                              intl.NumberFormat.currency(
                                       symbol: '', decimalDigits: 2)
                                   .format(userDoc['coins']),
                               overflow: TextOverflow.ellipsis,
@@ -504,11 +537,11 @@ class homeList extends StatelessWidget {
                 ),
                 Center(
                   child: Text(
-                    "كيف حالك يا أخ العرب؟",
-                    style: new TextStyle(
-                      fontFamily: 'NizarBBCKurdish-Bold',
-                      fontSize: 25.0,
-                    ),
+                    "مرحبا",
+                    style: GoogleFonts.cairo(
+                        textStyle: Theme.of(context).textTheme.headline4,
+                        fontSize: 25,
+                        fontWeight: FontWeight.w500),
                   ),
                 ),
                 Padding(
@@ -635,7 +668,7 @@ class homeList extends StatelessWidget {
                                           CrossAxisAlignment.center,
                                       children: [
                                         Text(
-                                          NumberFormat.compact().format(
+                                          intl.NumberFormat.compact().format(
                                             itm[index]['likes'],
                                             // iitem.documents[index]['likes']
                                           ),
@@ -680,7 +713,7 @@ class homeList extends StatelessWidget {
 
                                       //   iitem.documents[index]['price'] >= 1000
                                       ? Text(
-                                          NumberFormat.compactCurrency(
+                                          intl.NumberFormat.compactCurrency(
                                                   symbol: 'DZD ',
                                                   decimalDigits: 2)
                                               .format(itm[index]['price']
@@ -690,7 +723,7 @@ class homeList extends StatelessWidget {
                                           style: TextStyle(fontSize: 14),
                                         )
                                       : Text(
-                                          NumberFormat.currency(
+                                          intl.NumberFormat.currency(
                                                   symbol: 'DZD ',
                                                   decimalDigits: 2)
                                               .format(itm[index]['price']
@@ -1062,11 +1095,12 @@ class homeList extends StatelessWidget {
 
                                                       //   iitem.documents[index]['price'] >= 1000
                                                       ? Text(
-                                                          NumberFormat.compactCurrency(
-                                                                  symbol:
-                                                                      'DZD ',
-                                                                  decimalDigits:
-                                                                      2)
+                                                          intl.NumberFormat
+                                                                  .compactCurrency(
+                                                                      symbol:
+                                                                          'DZD ',
+                                                                      decimalDigits:
+                                                                          2)
                                                               .format(
                                                                   itmm[index]
                                                                       ['price']
@@ -1080,7 +1114,7 @@ class homeList extends StatelessWidget {
                                                                   .greenAccent),
                                                         )
                                                       : Text(
-                                                          NumberFormat.currency(
+                                                          intl.NumberFormat.currency(
                                                                   symbol:
                                                                       'DZD ',
                                                                   decimalDigits:
@@ -1196,7 +1230,13 @@ class homeList extends StatelessWidget {
           // ),
 
           itemsPerPage: 10000,
-          onEmpty: const EmptyDisplay(),
+          onEmpty: const Scaffold(
+            body: Center(
+                child: Text(
+              'Oran En Construcion',
+              style: TextStyle(fontSize: 40),
+            )),
+          ), // EmptyDisplay(),
           separator: const EmptySeparator(),
           initialLoader: const InitialLoader(),
           bottomLoader: const BottomLoader(),
@@ -1341,7 +1381,7 @@ class homeList extends StatelessWidget {
                                           CrossAxisAlignment.center,
                                       children: [
                                         Text(
-                                          NumberFormat.compact()
+                                          intl.NumberFormat.compact()
                                               .format(data['views']),
                                           textAlign: TextAlign.end,
                                           style: TextStyle(
@@ -1372,7 +1412,7 @@ class homeList extends StatelessWidget {
                                           CrossAxisAlignment.center,
                                       children: [
                                         Text(
-                                          NumberFormat.compact()
+                                          intl.NumberFormat.compact()
                                               .format(data['likes']),
                                           textAlign: TextAlign.end,
                                           style: TextStyle(
@@ -1424,11 +1464,11 @@ class homeList extends StatelessWidget {
                                 child: Center(
                                   child: Text(
                                     data['price'] >= 1000000.00
-                                        ? NumberFormat.compactCurrency(
+                                        ? intl.NumberFormat.compactCurrency(
                                                 symbol: 'DZD ',
                                                 decimalDigits: 2)
                                             .format(data['price'])
-                                        : NumberFormat.currency(
+                                        : intl.NumberFormat.currency(
                                                 symbol: 'DZD ',
                                                 decimalDigits: 2)
                                             .format(data['price']),
