@@ -84,8 +84,8 @@ class _LoginWidgetState extends State<LoginWidget> {
                             Image.asset(
                               'assets/images/ic_launcher/1024.png',
                               // #Image Url: https://unsplash.com/photos/bOBM8CB4ZC4
-                              fit: BoxFit.fitHeight,
-                              height: 150, width: 100,
+                              fit: BoxFit.cover, //.fitHeight,
+                              height: 150, width: 150,
                             ),
                             Lottie.asset(
                               'assets/lotties/59152-time-to-break-the-fast-in-the-month-of-ramadan-2021-animation.json',

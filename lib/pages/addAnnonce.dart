@@ -704,53 +704,53 @@ class _stepper_widgetState extends State<stepper_widget> {
                 ],
               ),
 
-              DropdownButton<String>(
-                // Step 3.
-                value: dropdownValue,
-                // Step 4.
-                items: <String>['Dog', 'Cat', 'Tiger', 'Lion']
-                    .map<DropdownMenuItem<String>>((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(
-                      value,
-                      style: TextStyle(fontSize: 30),
-                    ),
-                  );
-                }).toList(),
-                // Step 5.
-                onChanged: (String? newValue) {
-                  setState(() {
-                    dropdownValue = newValue!;
-                  });
-                },
-              ),
-              Text(dropdownValue),
-              Container(
-                height: 200,
-                child: ListView.builder(
-                  // shrinkWrap: true,
-                  // physics: NeverScrollableScrollPhysics(),
-                  scrollDirection: Axis.vertical,
-                  padding: EdgeInsets.all(8.0),
-                  itemCount: _buttonOptions.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    final timeValue = _buttonOptions[index];
-                    return RadioListTile<int>(
-                      groupValue: _currentTimeValue,
-                      title: Text(timeValue._value.toString()),
-                      value: timeValue._key,
-                      dense: true,
-                      onChanged: (val) {
-                        setState(() {
-                          debugPrint('VAL = $val');
-                          _currentTimeValue = val!;
-                        });
-                      },
-                    );
-                  },
-                ),
-              ),
+              // DropdownButton<String>(
+              //   // Step 3.
+              //   value: dropdownValue,
+              //   // Step 4.
+              //   items: <String>['Dog', 'Cat', 'Tiger', 'Lion']
+              //       .map<DropdownMenuItem<String>>((String value) {
+              //     return DropdownMenuItem<String>(
+              //       value: value,
+              //       child: Text(
+              //         value,
+              //         style: TextStyle(fontSize: 30),
+              //       ),
+              //     );
+              //   }).toList(),
+              //   // Step 5.
+              //   onChanged: (String? newValue) {
+              //     setState(() {
+              //       dropdownValue = newValue!;
+              //     });
+              //   },
+              // ),
+              // Text(dropdownValue),
+              // Container(
+              //   height: 200,
+              //   child: ListView.builder(
+              //     // shrinkWrap: true,
+              //     // physics: NeverScrollableScrollPhysics(),
+              //     scrollDirection: Axis.vertical,
+              //     padding: EdgeInsets.all(8.0),
+              //     itemCount: _buttonOptions.length,
+              //     itemBuilder: (BuildContext context, int index) {
+              //       final timeValue = _buttonOptions[index];
+              //       return RadioListTile<int>(
+              //         groupValue: _currentTimeValue,
+              //         title: Text(timeValue._value.toString()),
+              //         value: timeValue._key,
+              //         dense: true,
+              //         onChanged: (val) {
+              //           setState(() {
+              //             debugPrint('VAL = $val');
+              //             _currentTimeValue = val!;
+              //           });
+              //         },
+              //       );
+              //     },
+              //   ),
+              // ),
               SizedBox(height: 20),
               Padding(
                 padding: const EdgeInsets.fromLTRB(0, 15, 0, 10),
@@ -818,6 +818,49 @@ class _stepper_widgetState extends State<stepper_widget> {
               SizedBox(
                 height: 10,
               ),
+              // IntlPhoneField(
+              //   controller: _telContactController,
+              //   decoration: const InputDecoration(
+              //     hintStyle: TextStyle(color: Colors.black26),
+              //     fillColor: Colors.white,
+              //     hintText: '660 00 00 00',
+              //     border: InputBorder.none,
+              //     filled: true,
+              //     contentPadding: EdgeInsets.all(15),
+              //   ),
+              //   // invalidNumberMessage:
+              //   //     'Entrer Que Ooreddo ou Djezzy ou Mobilis',
+              //   disableLengthCheck: true,
+              //   validator: (value) {
+              //     if (value == null) {
+              //       return 'Entrer Ton Numero de Tel';
+              //     } else {
+              //       // validate against your regex pattern
+              //       RegExp regex = new RegExp(r'^[567][0-9]{8}$');
+              //       if (!regex.hasMatch(value.toString())) {
+              //         return 'Entrer Que Ooreddo ou Djezzy ou Mobilis';
+              //       }
+              //       return null;
+              //     }
+              //   },
+              //   showDropdownIcon: false,
+              //   initialCountryCode: 'DZ',
+              //   // onChanged: (phone) {
+              //   //   setState(() {
+              //   //     _telContactController.text =
+              //   //         phone.completeNumber;
+              //   //     print(_telContactController.text);
+              //   //   });
+              //   // },
+              //   flagsButtonMargin: EdgeInsets.zero,
+              //   flagsButtonPadding: const EdgeInsets.only(left: 15),
+              //   onSaved: (phoneNumber) async {
+              //     setState(() {
+              //       _phoneCodeController.text = phoneNumber!.countryCode;
+              //       //print(_telContactController.text);
+              //     });
+              //   },
+              // ),
               IntlPhoneField(
                 controller: _telContactController,
                 decoration: const InputDecoration(
@@ -828,39 +871,37 @@ class _stepper_widgetState extends State<stepper_widget> {
                   filled: true,
                   contentPadding: EdgeInsets.all(15),
                 ),
-                // invalidNumberMessage:
-                //     'Entrer Que Ooreddo ou Djezzy ou Mobilis',
-                disableLengthCheck: true,
+                invalidNumberMessage: 'Entrer Que Ooreddo ou Djezzy ou Mobilis',
+                // disableLengthCheck: true,
                 validator: (value) {
                   if (value == null) {
                     return 'Entrer Ton Numero de Tel';
                   } else {
-                    //   // validate against your regex pattern
-                    //   RegExp regex = new RegExp(r'^[567][0-9]{8}$');
-                    //   if (!regex.hasMatch(value.number)) {
-                    //     return 'Entrer Que Ooreddo, Djezzy ou Mobilis';
-                    //   }
+                    // validate against your regex pattern
+                    RegExp regex = new RegExp(r'^[567][0-9]{8}$');
+                    if (!regex.hasMatch(value.toString())) {
+                      return 'Entrer Que Ooreddo ou Djezzy ou Mobilis';
+                    }
                     return null;
                   }
                 },
+                style: const TextStyle(
+                  fontSize: 25,
+                ),
+
                 showDropdownIcon: false,
                 initialCountryCode: 'DZ',
-                // onChanged: (phone) {
-                //   setState(() {
-                //     _telContactController.text =
-                //         phone.completeNumber;
-                //     print(_telContactController.text);
-                //   });
-                // },
+
+                onSaved: (PhoneNumber? phone) {
+                  if (phone != null) {
+                    _telContactController.text = phone.completeNumber;
+                  }
+                  print('/////////////');
+                  print(_telContactController.text);
+                },
                 flagsButtonMargin: EdgeInsets.zero,
                 flagsButtonPadding: const EdgeInsets.only(left: 15),
-                onSaved: (phoneNumber) async {
-                  setState(() {
-                    _phoneCodeController.text = phoneNumber!.countryCode;
-                    //print(_telContactController.text);
-                  });
-                },
-              ),
+              ), // mobil
               SizedBox(
                 height: 10,
               ),

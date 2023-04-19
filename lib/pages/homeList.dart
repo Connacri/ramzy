@@ -1509,14 +1509,14 @@ class homeList extends StatelessWidget {
     );
   }
 
-  void getFcm() async {
-    String? fcmKey = await getFcmToken();
-    print('fcmKey : $fcmKey');
-    // sendNotification(
-    //     'daYiNgoeTqGL3tiZJXI4R-:APA91bFidQzX0ml2PmwWJZC_bWaauXQggw1TXQ-7V_j9EfHh0fBktjeY-p264z_hu1ReOXbTHBEjTgG-IhxP1elPtqrL8_IkYShY2zsYx19IQzWa1NC7h-uy9UQa-rVoo_HFX8Gv9OwX',
-    //     'Test Titre',
-    //     'Test body');
-  }
+  // void getFcm() async {
+  //   String? fcmKey = await getFcmToken();
+  //   print('fcmKey : $fcmKey');
+  //   // sendNotification(
+  //   //     'daYiNgoeTqGL3tiZJXI4R-:APA91bFidQzX0ml2PmwWJZC_bWaauXQggw1TXQ-7V_j9EfHh0fBktjeY-p264z_hu1ReOXbTHBEjTgG-IhxP1elPtqrL8_IkYShY2zsYx19IQzWa1NC7h-uy9UQa-rVoo_HFX8Gv9OwX',
+  //   //     'Test Titre',
+  //   //     'Test body');
+  // }
 }
 
 class UnsplashAvatarProvider extends StatelessWidget {
