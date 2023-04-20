@@ -6,6 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:infinite_marquee/infinite_marquee.dart';
 import 'package:marquee/marquee.dart';
 import 'package:ramzy/Oauth/getFCM.dart';
+import 'package:ramzy/pages/NearbyPlacesPage.dart';
 import 'package:ramzy/pages/booking2.dart';
 
 import '../pages/booking.dart';
@@ -70,50 +71,50 @@ class homeList extends StatelessWidget {
 
   get query => locationsRef.orderBy('createdAt', descending: true);
 
-  Future<void> searchNearbyLocations() async {
-    // Get the current user's location
-    Position currentPosition = await Geolocator.getCurrentPosition();
-
-    // Define the radius you want to search within (in kilometers)
-    final double radiusInKm = 10.0;
-
-    // Create a geopoint object for the user's current position
-    final userLocation = GeoPoint(
-      currentPosition.latitude,
-      currentPosition.longitude,
-    );
-
-    // Query for locations near the user's current position
-    Query<Object?> query = locationsRef
-        .where('position',
-            isGreaterThan: GeoPoint(
-              userLocation.latitude -
-                  radiusInKm / 111.0, // latitude is roughly 111 km per degree
-              userLocation.longitude -
-                  radiusInKm / (111.0 * cos(userLocation.latitude)),
-            ))
-        .where('position',
-            isLessThan: GeoPoint(
-              userLocation.latitude + radiusInKm / 111.0,
-              userLocation.longitude +
-                  radiusInKm / (111.0 * cos(userLocation.latitude)),
-            ));
-
-    // You can specify the type of object you expect to retrieve from the query:
-    // Query<DocumentSnapshot<Map<String, dynamic>>>
-    Query<Object?> queryTyped = query;
-
-    // Or you can use Query<Object?> and cast the results to the appropriate type:
-    Query<Object?> queryDynamic = query;
-    QuerySnapshot<Object?> querySnapshot = await queryDynamic.get();
-    List<DocumentSnapshot<Map<String, dynamic>>> documents =
-        querySnapshot.docs.cast<DocumentSnapshot<Map<String, dynamic>>>();
-
-    // Iterate over the documents returned by the query
-    for (DocumentSnapshot<Map<String, dynamic>> documentSnapshot in documents) {
-      // Do something with the document data
-    }
-  }
+  // Future<void> searchNearbyLocations() async {
+  //   // Get the current user's location
+  //   Position currentPosition = await Geolocator.getCurrentPosition();
+  //
+  //   // Define the radius you want to search within (in kilometers)
+  //   final double radiusInKm = 10.0;
+  //
+  //   // Create a geopoint object for the user's current position
+  //   final userLocation = GeoPoint(
+  //     currentPosition.latitude,
+  //     currentPosition.longitude,
+  //   );
+  //
+  //   // Query for locations near the user's current position
+  //   Query<Object?> query = locationsRef
+  //       .where('position',
+  //           isGreaterThan: GeoPoint(
+  //             userLocation.latitude -
+  //                 radiusInKm / 111.0, // latitude is roughly 111 km per degree
+  //             userLocation.longitude -
+  //                 radiusInKm / (111.0 * cos(userLocation.latitude)),
+  //           ))
+  //       .where('position',
+  //           isLessThan: GeoPoint(
+  //             userLocation.latitude + radiusInKm / 111.0,
+  //             userLocation.longitude +
+  //                 radiusInKm / (111.0 * cos(userLocation.latitude)),
+  //           ));
+  //
+  //   // You can specify the type of object you expect to retrieve from the query:
+  //   // Query<DocumentSnapshot<Map<String, dynamic>>>
+  //   Query<Object?> queryTyped = query;
+  //
+  //   // Or you can use Query<Object?> and cast the results to the appropriate type:
+  //   Query<Object?> queryDynamic = query;
+  //   QuerySnapshot<Object?> querySnapshot = await queryDynamic.get();
+  //   List<DocumentSnapshot<Map<String, dynamic>>> documents =
+  //       querySnapshot.docs.cast<DocumentSnapshot<Map<String, dynamic>>>();
+  //
+  //   // Iterate over the documents returned by the query
+  //   for (DocumentSnapshot<Map<String, dynamic>> documentSnapshot in documents) {
+  //     // Do something with the document data
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -190,68 +191,68 @@ class homeList extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                user == null
-                    ? Padding(
-                        padding: const EdgeInsets.all(28.0),
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 70.0),
-                          child: Card(
-                            // margin: const EdgeInsets.all(5),
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10)),
-                            clipBehavior: Clip.antiAliasWithSaveLayer,
-                            elevation: 5,
-                            child: Stack(
-                              children: [
-                                ShaderMask(
-                                  shaderCallback: (rect) {
-                                    return const LinearGradient(
-                                      begin: Alignment.topCenter,
-                                      end: Alignment.bottomLeft,
-                                      colors: [
-                                        Colors.transparent,
-                                        Colors.black
-                                      ],
-                                    ).createShader(Rect.fromLTRB(
-                                        0, 0, rect.width, rect.height));
-                                  },
-                                  blendMode: BlendMode.darken,
-                                  child: Container(
-                                    height: 50,
-                                    decoration: BoxDecoration(
-                                      image: DecorationImage(
-                                        image: CachedNetworkImageProvider(
-                                          'https://firebasestorage.googleapis.com/v0/b/adventure-eb4ca.appspot.com/o/wall%2Fwall%20(4).jpg?alt=media&token=c5c01dca-4b32-4b9d-88fe-717e976ac2f5',
-                                        ),
-                                        fit: BoxFit.cover,
-                                        alignment: Alignment.topCenter,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                Center(
-                                  child: TextButton(
-                                    onPressed: () {
-                                      Navigator.of(context).push(
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  AuthPage()));
-                                    },
-                                    child: Text(
-                                      'Google Sign in',
-                                      style: TextStyle(
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.w500,
-                                          color: Colors.white),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      )
-                    : Container(),
+                // user == null
+                //     ? Padding(
+                //         padding: const EdgeInsets.all(28.0),
+                //         child: Padding(
+                //           padding: const EdgeInsets.symmetric(horizontal: 70.0),
+                //           child: Card(
+                //             // margin: const EdgeInsets.all(5),
+                //             shape: RoundedRectangleBorder(
+                //                 borderRadius: BorderRadius.circular(10)),
+                //             clipBehavior: Clip.antiAliasWithSaveLayer,
+                //             elevation: 5,
+                //             child: Stack(
+                //               children: [
+                //                 ShaderMask(
+                //                   shaderCallback: (rect) {
+                //                     return const LinearGradient(
+                //                       begin: Alignment.topCenter,
+                //                       end: Alignment.bottomLeft,
+                //                       colors: [
+                //                         Colors.transparent,
+                //                         Colors.black
+                //                       ],
+                //                     ).createShader(Rect.fromLTRB(
+                //                         0, 0, rect.width, rect.height));
+                //                   },
+                //                   blendMode: BlendMode.darken,
+                //                   child: Container(
+                //                     height: 50,
+                //                     decoration: BoxDecoration(
+                //                       image: DecorationImage(
+                //                         image: CachedNetworkImageProvider(
+                //                           'https://firebasestorage.googleapis.com/v0/b/adventure-eb4ca.appspot.com/o/wall%2Fwall%20(4).jpg?alt=media&token=c5c01dca-4b32-4b9d-88fe-717e976ac2f5',
+                //                         ),
+                //                         fit: BoxFit.cover,
+                //                         alignment: Alignment.topCenter,
+                //                       ),
+                //                     ),
+                //                   ),
+                //                 ),
+                //                 Center(
+                //                   child: TextButton(
+                //                     onPressed: () {
+                //                       Navigator.of(context).push(
+                //                           MaterialPageRoute(
+                //                               builder: (context) =>
+                //                                   AuthPage()));
+                //                     },
+                //                     child: Text(
+                //                       'Google Sign in',
+                //                       style: TextStyle(
+                //                           fontSize: 20,
+                //                           fontWeight: FontWeight.w500,
+                //                           color: Colors.white),
+                //                     ),
+                //                   ),
+                //                 ),
+                //               ],
+                //             ),
+                //           ),
+                //         ),
+                //       )
+                //     : Container(),
                 itmCarous.length == 0
                     ? Container()
                     : Container(
@@ -408,55 +409,89 @@ class homeList extends StatelessWidget {
                           decelerationCurve: Curves.easeOut,
                         ),
                       ),
-
-                userDoc != null
-                    ? Padding(
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 8.0, horizontal: 40),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              'Wallet',
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                  color: Colors.brown,
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.w500),
-                            ),
-                            Text(
-                              'Coins : ',
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                  color: Colors.brown,
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.w300),
-                            ),
-                            Text(
-                              intl.NumberFormat.currency(
-                                      symbol: '', decimalDigits: 2)
-                                  .format(userDoc['coins']),
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                  color: Colors.black54,
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.w400),
-                            ),
-                          ],
-                        ),
-                      )
-                    : Container(), // wallet
+                Padding(
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 8.0, horizontal: 40),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        'Wallet',
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                            color: Colors.brown,
+                            fontSize: 20,
+                            fontWeight: FontWeight.w500),
+                      ),
+                      Text(
+                        'Coins : ',
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                            color: Colors.brown,
+                            fontSize: 20,
+                            fontWeight: FontWeight.w300),
+                      ),
+                      Text(
+                        intl.NumberFormat.currency(symbol: '', decimalDigits: 2)
+                            .format(userDoc['coins']),
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                            color: Colors.black54,
+                            fontSize: 20,
+                            fontWeight: FontWeight.w400),
+                      ),
+                    ],
+                  ),
+                ),
+                // userDoc != null
+                //     ? Padding(
+                //         padding: const EdgeInsets.symmetric(
+                //             vertical: 8.0, horizontal: 40),
+                //         child: Row(
+                //           mainAxisAlignment: MainAxisAlignment.center,
+                //           children: [
+                //             Text(
+                //               'Wallet',
+                //               overflow: TextOverflow.ellipsis,
+                //               style: TextStyle(
+                //                   color: Colors.brown,
+                //                   fontSize: 20,
+                //                   fontWeight: FontWeight.w500),
+                //             ),
+                //             Text(
+                //               'Coins : ',
+                //               overflow: TextOverflow.ellipsis,
+                //               style: TextStyle(
+                //                   color: Colors.brown,
+                //                   fontSize: 20,
+                //                   fontWeight: FontWeight.w300),
+                //             ),
+                //             Text(
+                //               intl.NumberFormat.currency(
+                //                       symbol: '', decimalDigits: 2)
+                //                   .format(userDoc['coins']),
+                //               overflow: TextOverflow.ellipsis,
+                //               style: TextStyle(
+                //                   color: Colors.black54,
+                //                   fontSize: 20,
+                //                   fontWeight: FontWeight.w400),
+                //             ),
+                //           ],
+                //         ),
+                //       )
+                //     : Container(), // wallet
                 Padding(
                   padding: const EdgeInsets.symmetric(
-                      horizontal: 20.0, vertical: 10),
+                      horizontal: 40.0, vertical: 10),
                   child: GestureDetector(
-                    // //onTap: () => getFcm(),
-                    // onTap: () => Navigator.of(context).push(
-                    //   MaterialPageRoute(
-                    //     builder: (context) => //GranttChartScreen2(),
-                    //         gantt_chart(),
-                    //   ),
-                    // ),
+                    //onTap: () => getFcm(),
+                    onTap: () => Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => //GranttChartScreen2(),
+                            //gantt_chart(),
+                            NearbyPlacesPage(),
+                      ),
+                    ),
                     child: Card(
                       // margin: const EdgeInsets.all(5),
                       shape: RoundedRectangleBorder(
@@ -493,8 +528,20 @@ class homeList extends StatelessWidget {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
+                                Icon(
+                                  Icons.location_pin,
+                                  color: Colors.white70,
+                                  shadows: [
+                                    Shadow(
+                                      blurRadius: 10.0, // shadow blur
+                                      color: Colors.black54, // shadow color
+                                      offset: Offset(2.0,
+                                          2.0), // how much shadow will be shown
+                                    ),
+                                  ],
+                                ),
                                 Text(
-                                  'Top',
+                                  'Autour',
                                   textAlign: TextAlign.start,
                                   style: TextStyle(
                                       shadows: [
@@ -511,7 +558,7 @@ class homeList extends StatelessWidget {
                                       color: Colors.red),
                                 ),
                                 Text(
-                                  'Dealer',
+                                  'Moi',
                                   textAlign: TextAlign.start,
                                   style: TextStyle(
                                       shadows: [
@@ -535,15 +582,27 @@ class homeList extends StatelessWidget {
                     ),
                   ),
                 ),
-                Center(
-                  child: Text(
-                    "مرحبا",
-                    style: GoogleFonts.cairo(
-                        textStyle: Theme.of(context).textTheme.headline4,
-                        fontSize: 25,
-                        fontWeight: FontWeight.w500),
-                  ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      userDoc['displayName'],
+                      style:
+                          TextStyle(fontSize: 25, fontWeight: FontWeight.w500),
+                    ),
+                    SizedBox(
+                      width: 20,
+                    ),
+                    Text(
+                      "مرحبا",
+                      style: GoogleFonts.cairo(
+                          textStyle: Theme.of(context).textTheme.headline4,
+                          fontSize: 25,
+                          fontWeight: FontWeight.w500),
+                    ),
+                  ],
                 ),
+
                 Padding(
                   padding: const EdgeInsets.fromLTRB(18, 18, 18, 0),
                   child: Row(
