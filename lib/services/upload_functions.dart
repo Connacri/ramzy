@@ -273,6 +273,8 @@ void uploadRandom(int itemsNum, String collection) async {
         fromFirestore: (snapshot, _) => UserClass.fromJson(snapshot.data()!),
         toFirestore: (post, _) => post.toJson(),
       );
+  final bool boolType = true;
+  bool type = !boolType;
 
   final numbers = List.generate(itemsNum, (index) => index + 1);
 
@@ -297,10 +299,14 @@ void uploadRandom(int itemsNum, String collection) async {
       "Villa de luxe.",
       "Appartement de plage.",
       "Maison de ville historique.",
-      "Lodge de safari."
+      "Lodge de safari.",
+      'كراء شقة 2 غرف',
+      'بيع شقة 3 غرف الجزائر',
     ];
 
     List<String> listDesc = [
+      'تبحثون عن شقق في إقامة مغلقة و محروسة و محاطة بفيلات ؟ تبحثون عن الراحة و الهدوء؟       تريدون العيش في شقق مع اقل عدد ممكن من الجيران ؟      شركة نور الافاق للعمران المختصة في الترقية العقارية توفر لكم شقق جاهزة في اقامة هادئة و مغلقة على مستوى بابا علي - الجزائر العاصمة. _____تتوفر الإقامة على___  - شقق متنوعة F3,F4, Duplex. -تتمييز الشقق بإطلالتين و مكانين توقف السيارات لكل شقة.  -تدفئة مركزية.  - اقامة مغلقة و مزودة بكاميرات مراقبة.  - رخصة البناء / عقود فردية / شهادة مطابقة.  ___الاسعار (حسب النوع)__  # F3 (82 m²) + 2 places de parking.  _ 1 milliard 680 millions centimes.',
+      'شقق للكراء اف2 نظيفة جميلة في مكان هادئ وامن       تحتوي على جميع الضروريات مكيف هوائي.ثلاجة.طباخة.الويفي.تلفاز بلازما.اغطية.افرشة.ڨاراج ركن السيارة....   الحجوزات   الشقة رقم 1 محجوزة من تاريخ 25 جويلية الى غاية 4 اوث  الشقة رقم 2 محجوزة من 21 جويلية إلى غاية 10 اوت  الشقة رقم 3 محجوزة من 21الى غاية 10 اوت  للحجز اتصل بالرقم وشكرا ',
       "Hôtel de luxe : Cet hôtel cinq étoiles propose des chambres spacieuses avec vue sur l'océan et une décoration élégante.",
       "Hôtel boutique : Cet hôtel de charme se trouve dans un bâtiment historique rénové et propose des chambres élégantes avec des touches artistiques uniques.",
       "Maison de vacances en bord de mer : Cette maison de vacances spacieuse est située à quelques pas de la plage et offre une vue imprenable sur l'océan depuis ses grandes baies vitrées.",
@@ -363,6 +369,8 @@ void uploadRandom(int itemsNum, String collection) async {
       0674258741,
       0550412365,
     ];
+
+    type = !type;
 
     String randomCat = (listCat..shuffle()).first;
     String randomLevel = (listLevel..shuffle()).first;
@@ -433,7 +441,7 @@ void uploadRandom(int itemsNum, String collection) async {
       levelItem: randomLevel,
       phone: randomPhone,
       views: 99,
-      viewed_by: listuserId,
+      viewed_by: listuserId, type: type,
     );
 
     postCollection.add(post);

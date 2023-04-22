@@ -87,14 +87,14 @@ class _LoginWidgetState extends State<LoginWidget> {
                               fit: BoxFit.cover, //.fitHeight,
                               height: 150, width: 150,
                             ),
-                            Lottie.asset(
-                              'assets/lotties/59152-time-to-break-the-fast-in-the-month-of-ramadan-2021-animation.json',
-                              repeat: true,
-                              // reverse: true,
-                              animate: true,
-                              height: 130,
-                              width: 200,
-                            ),
+                            // Lottie.asset(
+                            //   'assets/lotties/59152-time-to-break-the-fast-in-the-month-of-ramadan-2021-animation.json',
+                            //   repeat: true,
+                            //   // reverse: true,
+                            //   animate: true,
+                            //   height: 130,
+                            //   width: 200,
+                            // ),
 
                             const SizedBox(height: 10),
                             Text(

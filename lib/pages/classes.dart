@@ -271,6 +271,7 @@ class Post {
   final DateTime dateFin;
   final GeoPoint position;
   final String levelItem;
+  final bool type;
   final int phone;
   final int views;
   final List viewed_by;
@@ -290,6 +291,7 @@ class Post {
     required this.dateFin,
     required this.position,
     required this.levelItem,
+    required this.type,
     required this.phone,
     required this.views,
     required this.viewed_by,
@@ -310,6 +312,7 @@ class Post {
           dateFin: (json['dateFin']! as Timestamp).toDate(),
           position: json['position'] as GeoPoint,
           levelItem: json['levelItem']! as String,
+          type: json['type']! as bool,
           phone: json['phone'] as int,
           views: json['views'] as int,
           viewed_by: json['viewed_by']! as List,
@@ -329,6 +332,7 @@ class Post {
         'dateFin': dateFin,
         'position': position,
         'levelItem': levelItem,
+        'type': type,
         'phone': phone,
         'viewed_by': viewed_by,
         'views': views,

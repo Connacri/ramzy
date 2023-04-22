@@ -1,10 +1,12 @@
 import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:calendar_timeline/calendar_timeline.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:open_location_picker/open_location_picker.dart';
 import 'package:ramzy/pages/insta.dart';
@@ -337,10 +339,52 @@ class _SilverdetailItemState extends State<SilverdetailItem> {
                 widget.data['item'] == null
                     ? Container()
                     : Padding(
-                        padding: new EdgeInsets.symmetric(horizontal: 20.0),
-                        child: new Text(
-                          widget.data['item'].toString().toUpperCase(),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 15, vertical: 5),
+                        child: Container(
+                          width: double.infinity,
+                          child: Text(
+                            widget.data['item'].toString().toUpperCase(),
+                            overflow: TextOverflow.ellipsis,
+                            textAlign: isArabic(widget.data['item'])
+                                ? TextAlign.right
+                                : TextAlign.left,
+                            style: isArabic(widget.data['item'])
+                                ? GoogleFonts.cairo(
+                                    textStyle:
+                                        Theme.of(context).textTheme.headline4,
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w500)
+                                : TextStyle(
+                                    fontSize: 18,
+                                  ),
+                          ),
+                        ),
+                      ),
+                widget.data['type'] == null || widget.data['type'] == ''
+                    ? Container()
+                    : Padding(
+                        padding: new EdgeInsets.symmetric(horizontal: 15.0),
+                        child: Text(
+                            '${widget.data['type'] ? 'vente' : 'location'}'
+                                .toUpperCase(),
+                            textAlign: TextAlign.start,
+                            style: const TextStyle(
+                              color: Colors.blueAccent,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
+                            )),
+                      ),
+                widget.data['levelItem'] == null ||
+                        widget.data['levelItem'] == ''
+                    ? Container()
+                    : Padding(
+                        padding: new EdgeInsets.symmetric(horizontal: 15.0),
+                        child: Text(
+                          'Level : ' +
+                              widget.data['levelItem'].toString().toUpperCase(),
                           style: TextStyle(
+                            color: Colors.red,
                             fontSize: 16,
                             fontWeight: FontWeight.w500,
                           ),
@@ -349,7 +393,7 @@ class _SilverdetailItemState extends State<SilverdetailItem> {
                 widget.data['price'] == null
                     ? Container()
                     : Align(
-                        alignment: Alignment.centerLeft,
+                        alignment: Alignment.centerRight,
                         child: Padding(
                           padding: new EdgeInsets.symmetric(horizontal: 20.0),
                           child: new Text(
@@ -367,6 +411,9 @@ class _SilverdetailItemState extends State<SilverdetailItem> {
                           ),
                         ),
                       ),
+                SizedBox(
+                  height: 20,
+                ),
                 Container(
                   padding: EdgeInsets.symmetric(horizontal: 8, vertical: 10),
                   height: 150.0,
@@ -377,7 +424,7 @@ class _SilverdetailItemState extends State<SilverdetailItem> {
                       scrollDirection: Axis.horizontal,
                       itemCount: widget.data['imageUrls'].length,
                       itemBuilder: (BuildContext context, int index) {
-                        return UnsplashSlider(
+                        return UnsplashD(
                             UnsplashUrl: widget.data['imageUrls'][index]);
                       },
                     ),
@@ -422,7 +469,6 @@ class _SilverdetailItemState extends State<SilverdetailItem> {
                           ],
                         ),
                 ),
-                // MapOSM
                 Padding(
                   padding:
                       const EdgeInsets.symmetric(horizontal: 60, vertical: 10),
@@ -451,34 +497,25 @@ class _SilverdetailItemState extends State<SilverdetailItem> {
                             style: TextStyle(color: Colors.white),
                           )),
                 ),
-
-                widget.data['levelItem'] == null ||
-                        widget.data['levelItem'] == ''
-                    ? Container()
-                    : Center(
-                        child: Padding(
-                          padding: new EdgeInsets.all(20.0),
-                          child: Text(
-                            'Niveau : ' +
-                                widget.data['levelItem']
-                                    .toString()
-                                    .toUpperCase(),
-                            style: TextStyle(
-                              color: Colors.red,
-                              fontSize: 16,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ),
-                      ),
                 Padding(
                   padding: new EdgeInsets.symmetric(horizontal: 20.0),
-                  child: Text(
-                    'Description : ' + widget.data['Description'],
-                    style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                        color: Colors.black54),
+                  child: Container(
+                    child: Text(
+                      widget.data['Description'].toString().capitalize(),
+                      textAlign: isArabic(widget.data['Description'])
+                          ? TextAlign.right
+                          : TextAlign.left,
+                      style: isArabic(widget.data['Description'])
+                          ? GoogleFonts.cairo(
+                              textStyle: Theme.of(context).textTheme.headline4,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                              height: 2)
+                          : TextStyle(
+                              fontSize: 13,
+                              height: 1.5,
+                            ),
+                    ),
                   ),
                 ),
                 widget.data['origine'] == null
@@ -547,6 +584,10 @@ class _SilverdetailItemState extends State<SilverdetailItem> {
         ],
       ),
     );
+  }
+
+  bool isArabic(String text) {
+    return RegExp(r'[\u0600-\u06FF]').hasMatch(text);
   }
 }
 
@@ -1124,8 +1165,8 @@ class _SilverdetailItemState extends State<SilverdetailItem> {
 //   }
 // }
 
-class UnsplashSlider extends StatelessWidget {
-  const UnsplashSlider({
+class UnsplashD extends StatelessWidget {
+  const UnsplashD({
     Key? key,
     required this.UnsplashUrl,
   }) : super(key: key);
@@ -1137,37 +1178,35 @@ class UnsplashSlider extends StatelessWidget {
     return InkWell(
       onTap: () {
         showDialog(
-            context: context,
-            builder: (_) => Material(
-                  type: MaterialType.transparency,
-                  child: SizedBox(
-                    height: double.infinity,
-                    width: double.infinity,
-                    child: AlertDialog(
-                      backgroundColor: Colors.transparent,
-                      scrollable: true,
-                      content: ShaderMask(
-                        shaderCallback: (rect) {
-                          return const LinearGradient(
-                            begin: Alignment.topCenter,
-                            end: Alignment.bottomLeft,
-                            colors: [Colors.transparent, Colors.black],
-                          ).createShader(
-                              Rect.fromLTRB(0, 0, rect.width, rect.height));
-                        },
-                        blendMode: BlendMode.darken,
-                        child: CachedNetworkImage(
-                          fit: BoxFit.cover,
-                          imageUrl: UnsplashUrl,
-                          errorWidget: (context, url, error) => const Icon(
-                            Icons.error,
-                            color: Colors.red,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ));
+          context: context,
+          builder: (_) => AlertDialog(
+            backgroundColor: Colors.white,
+            contentPadding: EdgeInsets.zero,
+            scrollable: true,
+            content: ShaderMask(
+              shaderCallback: (rect) {
+                return const LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomLeft,
+                  colors: [Colors.transparent, Colors.black],
+                ).createShader(Rect.fromLTRB(0, 0, rect.width, rect.height));
+              },
+              blendMode: BlendMode.darken,
+              child: CachedNetworkImage(
+                fadeInCurve: Curves.easeIn,
+                filterQuality: FilterQuality.high,
+                width: MediaQuery.of(context).size.width,
+                height: MediaQuery.of(context).size.width,
+                fit: BoxFit.cover,
+                imageUrl: UnsplashUrl,
+                errorWidget: (context, url, error) => const Icon(
+                  Icons.error,
+                  color: Colors.red,
+                ),
+              ),
+            ),
+          ),
+        );
       },
 
       // GestureDetector(
@@ -1209,42 +1248,6 @@ class UnsplashSlider extends StatelessWidget {
           ),
         ),
       ),
-    );
-  }
-}
-
-class Hero_UnsplashUrl extends StatelessWidget {
-  const Hero_UnsplashUrl({
-    super.key,
-    required this.UnsplashUrl,
-  });
-
-  final String UnsplashUrl;
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        leading: Builder(
-          builder: (BuildContext context) {
-            return IconButton(
-              icon: const Icon(Icons.backspace),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            );
-          },
-        ),
-      ),
-      body: Hero(
-          tag: 'Hero_UnsplashUrl',
-          transitionOnUserGestures: true,
-          child: Container(
-            child: CachedNetworkImage(
-              imageUrl: UnsplashUrl,
-              fit: BoxFit.cover,
-            ),
-          )),
     );
   }
 }

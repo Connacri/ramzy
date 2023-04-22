@@ -152,6 +152,7 @@ class homeList extends StatelessWidget {
         InfoAlertArabic.map((map) => map['text'].toString() + '.').toList();
     String marqueesListArabic = fieldValuesArabic.join('     ');
 
+    var random = Random().nextInt(5000);
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         foregroundColor: Colors.transparent,
@@ -443,43 +444,26 @@ class homeList extends StatelessWidget {
                     ],
                   ),
                 ),
-                // userDoc != null
-                //     ? Padding(
-                //         padding: const EdgeInsets.symmetric(
-                //             vertical: 8.0, horizontal: 40),
-                //         child: Row(
-                //           mainAxisAlignment: MainAxisAlignment.center,
-                //           children: [
-                //             Text(
-                //               'Wallet',
-                //               overflow: TextOverflow.ellipsis,
-                //               style: TextStyle(
-                //                   color: Colors.brown,
-                //                   fontSize: 20,
-                //                   fontWeight: FontWeight.w500),
-                //             ),
-                //             Text(
-                //               'Coins : ',
-                //               overflow: TextOverflow.ellipsis,
-                //               style: TextStyle(
-                //                   color: Colors.brown,
-                //                   fontSize: 20,
-                //                   fontWeight: FontWeight.w300),
-                //             ),
-                //             Text(
-                //               intl.NumberFormat.currency(
-                //                       symbol: '', decimalDigits: 2)
-                //                   .format(userDoc['coins']),
-                //               overflow: TextOverflow.ellipsis,
-                //               style: TextStyle(
-                //                   color: Colors.black54,
-                //                   fontSize: 20,
-                //                   fontWeight: FontWeight.w400),
-                //             ),
-                //           ],
-                //         ),
-                //       )
-                //     : Container(), // wallet
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      userDoc['displayName'].toString().toUpperCase(),
+                      style:
+                          TextStyle(fontSize: 25, fontWeight: FontWeight.w500),
+                    ),
+                    SizedBox(
+                      width: 20,
+                    ),
+                    Text(
+                      "مرحبا",
+                      style: GoogleFonts.cairo(
+                          textStyle: Theme.of(context).textTheme.headline4,
+                          fontSize: 25,
+                          fontWeight: FontWeight.w500),
+                    ),
+                  ],
+                ),
                 Padding(
                   padding: const EdgeInsets.symmetric(
                       horizontal: 40.0, vertical: 10),
@@ -516,7 +500,7 @@ class homeList extends StatelessWidget {
                               decoration: BoxDecoration(
                                 image: DecorationImage(
                                   image: CachedNetworkImageProvider(
-                                    'https://firebasestorage.googleapis.com/v0/b/adventure-eb4ca.appspot.com/o/wall%2Fwall%20(1).jpg?alt=media&token=c5c01dca-4b32-4b9d-88fe-717e976ac2f5',
+                                    'https://source.unsplash.com/random',
                                   ),
                                   fit: BoxFit.cover,
                                   alignment: Alignment.topCenter,
@@ -541,7 +525,7 @@ class homeList extends StatelessWidget {
                                   ],
                                 ),
                                 Text(
-                                  'Autour',
+                                  'Autour ',
                                   textAlign: TextAlign.start,
                                   style: TextStyle(
                                       shadows: [
@@ -558,7 +542,7 @@ class homeList extends StatelessWidget {
                                       color: Colors.red),
                                 ),
                                 Text(
-                                  'Moi',
+                                  'De Moi',
                                   textAlign: TextAlign.start,
                                   style: TextStyle(
                                       shadows: [
@@ -581,26 +565,6 @@ class homeList extends StatelessWidget {
                       ),
                     ),
                   ),
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      userDoc['displayName'],
-                      style:
-                          TextStyle(fontSize: 25, fontWeight: FontWeight.w500),
-                    ),
-                    SizedBox(
-                      width: 20,
-                    ),
-                    Text(
-                      "مرحبا",
-                      style: GoogleFonts.cairo(
-                          textStyle: Theme.of(context).textTheme.headline4,
-                          fontSize: 25,
-                          fontWeight: FontWeight.w500),
-                    ),
-                  ],
                 ),
 
                 Padding(

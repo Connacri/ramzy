@@ -64,19 +64,19 @@ class _reset_passwordState extends State<reset_password> {
                                   child: Column(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
-                                      // SizedBox(
-                                      //     height: 100,
-                                      //     width: 100,
-                                      //     child: Image.asset(
-                                      //         'assets/images/ic_launcher/1024.png')),
-                                      Lottie.asset(
-                                        'assets/lotties/59266-pray-in-the-month-of-ramadan.json',
-                                        repeat: true,
-                                        // reverse: true,
-                                        animate: true,
-                                        height: 150,
-                                        width: 200,
-                                      ),
+                                      SizedBox(
+                                          height: 100,
+                                          width: 100,
+                                          child: Image.asset(
+                                              'assets/images/ic_launcher/1024.png')),
+                                      // Lottie.asset(
+                                      //   'assets/lotties/59266-pray-in-the-month-of-ramadan.json',
+                                      //   repeat: true,
+                                      //   // reverse: true,
+                                      //   animate: true,
+                                      //   height: 150,
+                                      //   width: 200,
+                                      // ),
                                       const SizedBox(height: 20),
                                       const Text(
                                           'Recever un E-mail de \n Réinitialision Mot de Passe',

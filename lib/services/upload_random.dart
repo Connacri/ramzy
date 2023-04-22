@@ -169,7 +169,8 @@ class _upload_randomState extends State<upload_random> {
       ];
 
       List<String> listDesc = [
-        "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
+        ''
+            "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
         "Le président français Emmanuel Macron a assuré mardi avoir «obtenu» lors de ses discussions avec Vladimir Poutine «qu'il n'y ait pas de dégradation ni d'escalade» dans la crise russo-occidentale liée à l'Ukraine.",
         "L'organisation du Traité de l'Atlantique Nord (OTAN) est une alliance politique et militaire créée en 1949 dans le contexte de la guerre froide. Elle continue à jouer un rôle de premier plan dans le système de sécurité en Europe, même depuis la chute de l'URSS en 1991 et le délitement du Pacte de Varsovie (la contre-alliance du bloc soviétique). Ses extensions et sa relation privilégiée avec l'Ukraine sont au cœur des tensions actuelles avec la Russie. Explications en cartes.",
         "Quentin Fillon-Maillet : «Avec deux fautes au tir, je n'imaginais pas pouvoir jouer la victoire»",
@@ -226,6 +227,8 @@ class _upload_randomState extends State<upload_random> {
         0674258741,
         0550412365,
       ];
+      bool boolType = true;
+      bool type = !boolType;
       String randomCat = (listCat..shuffle()).first;
       String randomLevel = (listLevel..shuffle()).first;
       String randomDesc = (listDesc..shuffle()).first;
@@ -257,6 +260,7 @@ class _upload_randomState extends State<upload_random> {
         displayName: randomNames,
         lastActive: DateTime.now().addYears(-37),
         role: 'public',
+
         state: true,
         plan: randomPlan,
         coins: 0.0,
@@ -294,7 +298,7 @@ class _upload_randomState extends State<upload_random> {
         levelItem: randomLevel,
         phone: randomPhone,
         views: 99,
-        viewed_by: listuserId,
+        viewed_by: listuserId, type: type,
       );
 
       postCollection.add(post);
@@ -412,6 +416,8 @@ class _upload_randomState extends State<upload_random> {
         0674258741,
         0550412365,
       ];
+      bool boolType = true;
+      bool type = !boolType;
       String randomCat = (listCat..shuffle()).first;
       String randomLevel = (listLevel..shuffle()).first;
       String randomDesc = (listDesc..shuffle()).first;
@@ -451,7 +457,7 @@ class _upload_randomState extends State<upload_random> {
         levelItem: randomLevel,
         phone: randomPhones,
         views: 10,
-        viewed_by: listuserId,
+        viewed_by: listuserId, type: type,
       );
 
       postCollection
@@ -555,6 +561,8 @@ class _upload_randomState extends State<upload_random> {
         'black',
         'pro'
       ];
+      bool boolType = true;
+      bool type = !boolType;
       List<String> listuserId = [
         'thGB7qmmapdrUW12DDM5TKjOGBv1',
         'oZknAZY63gT13DUTUvnx5NAz83B2',
@@ -612,7 +620,7 @@ class _upload_randomState extends State<upload_random> {
         levelItem: randomLevel,
         phone: randomPhones,
         views: 20,
-        viewed_by: listuserId,
+        viewed_by: listuserId, type: type,
       );
 
       postCollection

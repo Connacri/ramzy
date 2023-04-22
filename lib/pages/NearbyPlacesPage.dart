@@ -7,6 +7,7 @@ import 'package:flutterflow_paginate_firestore/paginate_firestore.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart' as intl;
 import 'package:provider/provider.dart';
 import 'package:ramzy/pages/ProvidersPublic.dart';
@@ -284,10 +285,14 @@ class _NearbyPlacesPageState extends State<NearbyPlacesPage> {
         );
         return _buildListItem(place, distance);
       },
-      separator: Divider(),
-      onEmpty: Text('No places found.'),
-      onError: (error) => Text('Error: $error'),
-      itemBuilderType: PaginateBuilderType.gridView,
+      //separator: Divider(),
+      onEmpty: Center(
+          child: Text(
+        'No places found.',
+        style: TextStyle(fontSize: 35),
+      )),
+      onError: (error) => Center(child: Text('Error: $error')),
+      itemBuilderType: PaginateBuilderType.listView,
     );
   }
 
@@ -314,196 +319,499 @@ class _NearbyPlacesPageState extends State<NearbyPlacesPage> {
           )),
         );
       },
+      child: buildListTile(data, isLiked, distance),
+    );
+  }
+
+  Widget buildListTile(
+      DocumentSnapshot<Object?> data, bool isLiked, double distance) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 0),
       child: Card(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         clipBehavior: Clip.antiAliasWithSaveLayer,
-        elevation: 5,
-        child: Stack(
-          alignment: Alignment.bottomCenter,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            ShaderMask(
-              shaderCallback: (rect) {
-                return const LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomLeft,
-                  colors: [Colors.transparent, Colors.black],
-                ).createShader(Rect.fromLTRB(0, 0, rect.width, rect.height));
-              },
-              blendMode: BlendMode.darken,
-              child: Container(
-                decoration: BoxDecoration(
-                  image: DecorationImage(
-                    image: CachedNetworkImageProvider(
-                      data['imageUrls'][0],
-                    ),
-                    fit: BoxFit.cover,
-                    alignment: Alignment.topCenter,
-                  ),
-                ),
-              ),
-            ),
-            Container(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Container(
-                    decoration: BoxDecoration(
-                        color: Colors.black54,
-                        borderRadius: BorderRadius.circular(8)),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Container(
-                          decoration: BoxDecoration(
-                              color: Colors.black54,
-                              borderRadius: BorderRadius.circular(8)),
-                          padding: const EdgeInsets.all(5.0),
-                          child: Text(
-                            data['category'],
-                            overflow: TextOverflow.fade,
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 11,
-                                fontWeight: FontWeight.w500),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Stack(
+                  children: [
+                    ShaderMask(
+                      shaderCallback: (rect) {
+                        return const LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomLeft,
+                          colors: [Colors.transparent, Colors.black],
+                        ).createShader(
+                            Rect.fromLTRB(0, 0, rect.width, rect.height));
+                      },
+                      blendMode: BlendMode.darken,
+                      child: Container(
+                        height: 210,
+                        width: MediaQuery.of(context).size.width / 3,
+                        decoration: BoxDecoration(
+                          image: DecorationImage(
+                            image: CachedNetworkImageProvider(
+                                data['themb'] // data['imageUrls'][0],
+                                ),
+                            fit: BoxFit.cover,
+                            alignment: Alignment.topCenter,
                           ),
                         ),
-                        Spacer(),
-                        Builder(builder: (context) {
-                          return Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 8),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
+                      ),
+                    ),
+                    Container(
+                      height: 210,
+                      width: MediaQuery.of(context).size.width / 3,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                  color: Colors.black54,
+                                  borderRadius: BorderRadius.circular(8)),
+                              padding: const EdgeInsets.all(5.0),
+                              child: Text(
+                                data['category'],
+                                overflow: TextOverflow.fade,
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.w500),
+                              ),
+                            ),
+                          ),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 8),
+                                child: Text(
+                                    '${data['type'] ? 'vente' : 'location'}'
+                                        .toUpperCase(),
+                                    textAlign: TextAlign.start,
+                                    style: const TextStyle(
+                                      color: Colors.white70,
+                                      fontWeight: FontWeight.normal,
+                                      fontSize: 12,
+                                    )),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.fromLTRB(8, 0, 8, 8),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: [
+                                        Text(
+                                          intl.NumberFormat.compact()
+                                              .format(data['views']),
+                                          textAlign: TextAlign.end,
+                                          style: TextStyle(
+                                            color: Colors.white70,
+                                            fontSize: 12,
+                                          ),
+                                        ),
+                                        SizedBox(
+                                          width: 3,
+                                        ),
+                                        Icon(
+                                          FontAwesomeIcons.eye,
+                                          size: 11,
+                                          color: Colors.white70,
+                                        )
+                                      ],
+                                    ),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: [
+                                        Text(
+                                          intl.NumberFormat.compact()
+                                              .format(data['likes']),
+                                          textAlign: TextAlign.end,
+                                          style: TextStyle(
+                                            color: isLiked
+                                                ? Colors.red
+                                                : Colors.white70,
+                                            fontSize: 13,
+                                          ),
+                                        ),
+                                        SizedBox(
+                                          width: 3,
+                                        ),
+                                        isLiked
+                                            ? Icon(
+                                                FontAwesomeIcons
+                                                    .heartCircleCheck,
+                                                size: 12,
+                                                color: Colors.red,
+                                              )
+                                            : Icon(
+                                                FontAwesomeIcons.heart,
+                                                size: 12,
+                                                color: Colors.white70,
+                                              )
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                Expanded(
+                  child: Container(
+                    height: 210,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 15, vertical: 5),
+                              child: Container(
+                                width: double.infinity,
+                                child: Text(
+                                  data['item'].toString().toUpperCase(),
+                                  overflow: TextOverflow.ellipsis,
+                                  textAlign: isArabic(data['item'])
+                                      ? TextAlign.right
+                                      : TextAlign.left,
+                                  style: isArabic(data['item'])
+                                      ? GoogleFonts.cairo(
+                                          textStyle: Theme.of(context)
+                                              .textTheme
+                                              .headline4,
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.w500)
+                                      : TextStyle(
+                                          fontSize: 18,
+                                        ),
+                                ),
+                              ),
+                            ),
+                            Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 15),
+                              child: Container(
+                                child: Text(
+                                  data['Description'].toString().toUpperCase(),
+                                  overflow: TextOverflow.ellipsis,
+                                  textAlign: isArabic(data['Description'])
+                                      ? TextAlign.right
+                                      : TextAlign.left,
+                                  maxLines: 4,
+                                  style: isArabic(data['Description'])
+                                      ? GoogleFonts.cairo(
+                                          textStyle: Theme.of(context)
+                                              .textTheme
+                                              .headline4,
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w500)
+                                      : TextStyle(
+                                          fontSize: 13,
+                                        ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        Column(
+                          children: [
+                            Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 15),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text('Level : ${data['levelItem']}',
+                                      textAlign: TextAlign.start,
+                                      style: const TextStyle(
+                                        color: Colors.black54,
+                                        fontWeight: FontWeight.normal,
+                                        fontSize: 12,
+                                      )),
+                                ],
+                              ),
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
                               children: [
-                                Text(
-                                  intl.NumberFormat.compact()
-                                      .format(data['views']),
-                                  textAlign: TextAlign.end,
-                                  style: TextStyle(
-                                    color: Colors.white70,
-                                    fontSize: 12,
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 15),
+                                  child: Text(
+                                    data['price'] >= 1000000.00
+                                        ? intl.NumberFormat.compactCurrency(
+                                                symbol: 'DZD ',
+                                                decimalDigits: 2)
+                                            .format(data['price'])
+                                        : intl.NumberFormat.currency(
+                                                symbol: 'DZD ',
+                                                decimalDigits: 2)
+                                            .format(data['price']),
+                                    overflow: TextOverflow.ellipsis,
+                                    textAlign: TextAlign.end,
+                                    style: TextStyle(
+                                      //backgroundColor: Colors.black45,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w500,
+                                      color: Colors.green,
+                                    ),
                                   ),
                                 ),
-                                SizedBox(
-                                  width: 3,
-                                ),
-                                Icon(
-                                  FontAwesomeIcons.eye,
-                                  size: 11,
-                                  color: Colors.white70,
-                                )
                               ],
                             ),
-                          );
-                        }),
-                        Builder(builder: (context) {
-                          return Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 8),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Text(
-                                  intl.NumberFormat.compact()
-                                      .format(data['likes']),
-                                  textAlign: TextAlign.end,
-                                  style: TextStyle(
-                                    color:
-                                        isLiked ? Colors.red : Colors.white70,
-                                    fontSize: 13,
-                                  ),
-                                ),
-                                SizedBox(
-                                  width: 3,
-                                ),
-                                isLiked
-                                    ? Icon(
-                                        FontAwesomeIcons.heartCircleCheck,
-                                        size: 12,
-                                        color: Colors.red,
-                                      )
-                                    : Icon(
-                                        FontAwesomeIcons.heart,
-                                        size: 12,
-                                        color: Colors.white70,
-                                      )
-                              ],
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 15, vertical: 10),
+                              child: Column(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                      'Distance: ${distance.toStringAsFixed(2)} km',
+                                      textAlign: TextAlign.start,
+                                      style: const TextStyle(
+                                        color: Colors.black54,
+                                        fontWeight: FontWeight.normal,
+                                        fontSize: 12,
+                                      )),
+                                  Text(
+                                      timeago.format(data['createdAt'].toDate(),
+                                          locale: 'fr'),
+                                      textAlign: TextAlign.start,
+                                      style: const TextStyle(
+                                        color: Colors.black54,
+                                        fontWeight: FontWeight.normal,
+                                        fontSize: 12,
+                                      )),
+                                ],
+                              ),
                             ),
-                          );
-                        }),
+                          ],
+                        ),
                       ],
                     ),
                   ),
-                  Spacer(),
-                  Column(
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Card buildCard(
+      DocumentSnapshot<Object?> data, bool isLiked, double distance) {
+    return Card(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      clipBehavior: Clip.antiAliasWithSaveLayer,
+      elevation: 5,
+      child: Stack(
+        alignment: Alignment.bottomCenter,
+        children: [
+          ShaderMask(
+            shaderCallback: (rect) {
+              return const LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomLeft,
+                colors: [Colors.transparent, Colors.black],
+              ).createShader(Rect.fromLTRB(0, 0, rect.width, rect.height));
+            },
+            blendMode: BlendMode.darken,
+            child: Container(
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                  image: CachedNetworkImageProvider(
+                    data['imageUrls'][0],
+                  ),
+                  fit: BoxFit.cover,
+                  alignment: Alignment.topCenter,
+                ),
+              ),
+            ),
+          ),
+          Container(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Container(
+                  decoration: BoxDecoration(
+                      color: Colors.black54,
+                      borderRadius: BorderRadius.circular(8)),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 5),
+                      Container(
+                        decoration: BoxDecoration(
+                            color: Colors.black54,
+                            borderRadius: BorderRadius.circular(8)),
+                        padding: const EdgeInsets.all(5.0),
                         child: Text(
-                          data['item'].toString().toUpperCase(),
-                          overflow: TextOverflow.ellipsis,
+                          data['category'],
+                          overflow: TextOverflow.fade,
+                          textAlign: TextAlign.center,
                           style: TextStyle(
-                              color: Colors.white70,
-                              fontSize: 12,
+                              color: Colors.white,
+                              fontSize: 11,
                               fontWeight: FontWeight.w500),
                         ),
                       ),
+                      Spacer(),
                       Padding(
-                        padding: const EdgeInsets.only(bottom: 0.0),
-                        child: Center(
-                          child: Text(
-                            data['price'] >= 1000000.00
-                                ? intl.NumberFormat.compactCurrency(
-                                        symbol: 'DZD ', decimalDigits: 2)
-                                    .format(data['price'])
-                                : intl.NumberFormat.currency(
-                                        symbol: 'DZD ', decimalDigits: 2)
-                                    .format(data['price']),
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                                //backgroundColor: Colors.black45,
-                                fontSize: 16,
-                                fontWeight: FontWeight.w500,
-                                color: Colors.white,
-                                fontFamily: 'oswald'),
-                          ),
+                        padding: const EdgeInsets.symmetric(horizontal: 8),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Text(
+                              intl.NumberFormat.compact().format(data['views']),
+                              textAlign: TextAlign.end,
+                              style: TextStyle(
+                                color: Colors.white70,
+                                fontSize: 12,
+                              ),
+                            ),
+                            SizedBox(
+                              width: 3,
+                            ),
+                            Icon(
+                              FontAwesomeIcons.eye,
+                              size: 11,
+                              color: Colors.white70,
+                            )
+                          ],
                         ),
                       ),
                       Padding(
-                        padding:
-                            const EdgeInsets.only(left: 5, bottom: 5, right: 5),
+                        padding: const EdgeInsets.symmetric(horizontal: 8),
                         child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            Text('Distance: ${distance.toStringAsFixed(2)} km',
-                                textAlign: TextAlign.start,
-                                style: const TextStyle(
-                                  color: Colors.white70,
-                                  fontWeight: FontWeight.normal,
-                                  fontSize: 12,
-                                  fontFamily: 'Oswald',
-                                )),
                             Text(
-                                timeago.format(data['createdAt'].toDate(),
-                                    locale: 'fr'),
-                                textAlign: TextAlign.start,
-                                style: const TextStyle(
-                                  color: Colors.white70,
-                                  fontWeight: FontWeight.normal,
-                                  fontSize: 12,
-                                  fontFamily: 'Oswald',
-                                )),
+                              intl.NumberFormat.compact().format(data['likes']),
+                              textAlign: TextAlign.end,
+                              style: TextStyle(
+                                color: isLiked ? Colors.red : Colors.white70,
+                                fontSize: 13,
+                              ),
+                            ),
+                            SizedBox(
+                              width: 3,
+                            ),
+                            isLiked
+                                ? Icon(
+                                    FontAwesomeIcons.heartCircleCheck,
+                                    size: 12,
+                                    color: Colors.red,
+                                  )
+                                : Icon(
+                                    FontAwesomeIcons.heart,
+                                    size: 12,
+                                    color: Colors.white70,
+                                  )
                           ],
                         ),
                       ),
                     ],
                   ),
-                ],
-              ),
+                ),
+                Spacer(),
+                Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 5),
+                      child: Text(
+                        data['item'].toString().toUpperCase(),
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                            color: Colors.white70,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 0.0),
+                      child: Center(
+                        child: Text(
+                          data['price'] >= 1000000.00
+                              ? intl.NumberFormat.compactCurrency(
+                                      symbol: 'DZD ', decimalDigits: 2)
+                                  .format(data['price'])
+                              : intl.NumberFormat.currency(
+                                      symbol: 'DZD ', decimalDigits: 2)
+                                  .format(data['price']),
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                              //backgroundColor: Colors.black45,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.white,
+                              fontFamily: 'oswald'),
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding:
+                          const EdgeInsets.only(left: 5, bottom: 5, right: 5),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text('Distance: ${distance.toStringAsFixed(2)} km',
+                              textAlign: TextAlign.start,
+                              style: const TextStyle(
+                                color: Colors.white70,
+                                fontWeight: FontWeight.normal,
+                                fontSize: 12,
+                                fontFamily: 'Oswald',
+                              )),
+                          Text(
+                              timeago.format(data['createdAt'].toDate(),
+                                  locale: 'fr'),
+                              textAlign: TextAlign.start,
+                              style: const TextStyle(
+                                color: Colors.white70,
+                                fontWeight: FontWeight.normal,
+                                fontSize: 12,
+                                fontFamily: 'Oswald',
+                              )),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -569,5 +877,9 @@ class _NearbyPlacesPageState extends State<NearbyPlacesPage> {
         'viewed_by': viewedByList..add(userId),
       });
     }
+  }
+
+  bool isArabic(String text) {
+    return RegExp(r'[\u0600-\u06FF]').hasMatch(text);
   }
 }

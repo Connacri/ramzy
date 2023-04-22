@@ -56,6 +56,7 @@ class MyApp extends StatelessWidget {
         //lazy: true,
         child: MaterialApp(
           locale: const Locale('fr', 'CA'),
+
           //scaffoldMessengerKey: Utils.messengerKey,
           navigatorKey: navigatorKey,
           debugShowCheckedModeBanner: false,

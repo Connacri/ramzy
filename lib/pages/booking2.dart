@@ -34,11 +34,11 @@ class GranttChartScreen2State extends State<GranttChartScreen2>
     roomsInChart = rooms;
   }
 
-  Widget buildAppBar() {
-    return AppBar(
-      title: Text('GANTT CHART'),
-    );
-  }
+  // Widget buildAppBar() {
+  //   return AppBar(
+  //     title: Text('GANTT CHART'),
+  //   );
+  // }
 
   @override
   Widget build(BuildContext context) {
