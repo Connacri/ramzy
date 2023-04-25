@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -98,7 +100,7 @@ class _NearbyPlacesPageState extends State<NearbyPlacesPage> {
       header: SliverToBoxAdapter(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             // user == null
             //     ? Padding(
@@ -253,7 +255,36 @@ class _NearbyPlacesPageState extends State<NearbyPlacesPage> {
                         scrollDirection: Axis.horizontal,
                       ),
                     ),
-                  ), // Caroussel
+                  ),
+            Center(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(18, 18, 18, 18),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text(
+                      'Autour ',
+                      textAlign: TextAlign.start,
+                      style: TextStyle(
+                          fontStyle: FontStyle.italic,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black87),
+                    ),
+                    Text(
+                      'De Moi',
+                      textAlign: TextAlign.start,
+                      style: TextStyle(
+                          fontStyle: FontStyle.italic,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.red),
+                    ),
+                  ],
+                ),
+              ),
+            ),
           ],
         ),
       ),
@@ -283,6 +314,49 @@ class _NearbyPlacesPageState extends State<NearbyPlacesPage> {
           place['position'].latitude,
           place['position'].longitude,
         );
+        Random random = new Random();
+        var randomNumber = random.nextInt(27);
+        String randomPhoto =
+            'https://firebasestorage.googleapis.com/v0/b/wahrane-a42eb.appspot.com/o/pub%2Fpub(${randomNumber}).jpg?alt=media&token=5d9e0764-23f6-4b18-95f4-e085736659cc';
+        if (int % 5 == 0 && int != 0) {
+          return Card(
+            //  margin: const EdgeInsets.all(5),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            clipBehavior: Clip.antiAliasWithSaveLayer,
+            elevation: 5,
+            child: Stack(
+              alignment: Alignment.center,
+              fit: StackFit.passthrough,
+              children: [
+                Container(
+                  height: 150,
+                  child: CachedNetworkImage(
+                    fit: BoxFit.cover,
+                    imageUrl: randomPhoto,
+                  ),
+                ),
+                Center(
+                  child: Text(
+                    'PubArea',
+                    style: TextStyle(
+                        shadows: [
+                          Shadow(
+                            blurRadius: 10.0, // shadow blur
+                            color: Colors.black54, // shadow color
+                            offset: Offset(
+                                2.0, 2.0), // how much shadow will be shown
+                          ),
+                        ],
+                        fontSize: 40,
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold),
+                  ),
+                )
+              ],
+            ),
+          );
+        }
         return _buildListItem(place, distance);
       },
       //separator: Divider(),
@@ -372,20 +446,33 @@ class _NearbyPlacesPageState extends State<NearbyPlacesPage> {
                         children: [
                           Padding(
                             padding: const EdgeInsets.all(8.0),
-                            child: Container(
-                              decoration: BoxDecoration(
-                                  color: Colors.black54,
-                                  borderRadius: BorderRadius.circular(8)),
-                              padding: const EdgeInsets.all(5.0),
-                              child: Text(
-                                data['category'],
-                                overflow: TextOverflow.fade,
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 11,
-                                    fontWeight: FontWeight.w500),
-                              ),
+                            child: Row(
+                              children: [
+                                Icon(
+                                  PropertyIconMapper.mapItemTypeToIcon(
+                                      data['category']),
+                                  color: Colors.white70,
+                                  size: 22,
+                                ),
+                                SizedBox(
+                                  width: 5,
+                                ),
+                                Container(
+                                  decoration: BoxDecoration(
+                                      color: Colors.black54,
+                                      borderRadius: BorderRadius.circular(8)),
+                                  padding: const EdgeInsets.all(5.0),
+                                  child: Text(
+                                    data['category'],
+                                    overflow: TextOverflow.fade,
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 11,
+                                        fontWeight: FontWeight.w500),
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
                           Column(

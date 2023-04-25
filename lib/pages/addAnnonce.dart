@@ -7,6 +7,7 @@ import 'package:cloud_firestore/cloud_firestore.dart' as cloud;
 import 'package:flutter/material.dart';
 import 'package:flutter_osm_plugin/flutter_osm_plugin.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:geocoding/geocoding.dart';
 
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
@@ -284,28 +285,69 @@ class _stepper_widgetState extends State<stepper_widget> {
                         Expanded(
                             child: ElevatedButton(
                               onPressed: isLastStep
-                                  ? () async {
-                                      await Navigator.push(context,
-                                          MaterialPageRoute(builder: (_) {
-                                        return page_detail(
-                                          geoLocation: notifier,
-                                          imagesList: _imagesList,
-                                          locationventeSelected:
-                                              _locationventeSelected,
-                                          user: widget.userDoc,
-                                          typeSelected: _typeSelected,
-                                          itemController: _itemController.text,
-                                          priceController:
-                                              _priceController.text,
-                                          phoneCodeController:
-                                              _phoneCodeController.text,
-                                          descriptionController:
-                                              _descriptionController.text,
-                                          phoneController:
-                                              _telContactController.text,
-                                        );
-                                      }));
-                                    }
+                                  ? notifier.value != null
+                                      ? () async {
+                                          await Navigator.push(context,
+                                              MaterialPageRoute(builder: (_) {
+                                            return page_detail(
+                                              geoLocation: notifier,
+                                              imagesList: _imagesList,
+                                              locationventeSelected:
+                                                  _locationventeSelected,
+                                              user: widget.userDoc,
+                                              typeSelected: _typeSelected,
+                                              itemController:
+                                                  _itemController.text,
+                                              priceController:
+                                                  _priceController.text,
+                                              phoneCodeController:
+                                                  _phoneCodeController.text,
+                                              descriptionController:
+                                                  _descriptionController.text,
+                                              phoneController:
+                                                  _telContactController.text,
+                                            );
+                                          }));
+                                        }
+                                      : () => showDialog(
+                                            context: context,
+                                            builder: (_) => AlertDialog(
+                                              scrollable: true,
+                                              title: Center(
+                                                child: Text(
+                                                  'Attention!',
+                                                  textAlign: TextAlign.center,
+                                                ),
+                                              ),
+                                              content: Center(
+                                                child: Text(
+                                                  'Vous Devez Choisir\nLa Localisation de Votre Annonce\nSur La Carte',
+                                                  textAlign: TextAlign.center,
+                                                ),
+                                              ),
+                                              actionsAlignment:
+                                                  MainAxisAlignment.center,
+                                              actions: [
+                                                IconButton(
+                                                  onPressed: () async {
+                                                    Navigator.of(context).pop();
+                                                    var p = await Navigator.of(
+                                                            context)
+                                                        .push(MaterialPageRoute(
+                                                            builder: (ctx) =>
+                                                                SearchPage()));
+                                                    if (p != null) {
+                                                      notifier.value =
+                                                          p as GeoPoint;
+                                                    }
+                                                  },
+                                                  icon: Icon(FontAwesomeIcons
+                                                      .location),
+                                                ),
+                                                CloseButtonIcon()
+                                              ],
+                                            ),
+                                          )
                                   : details.onStepContinue,
                               child: Text(
                                 isLastStep ? 'Aperçu' : 'Suivant',
@@ -513,12 +555,28 @@ class _stepper_widgetState extends State<stepper_widget> {
                         child: ValueListenableBuilder<GeoPoint?>(
                           valueListenable: notifier,
                           builder: (ctx, px, child) {
-                            return Center(
-                              child: Text(
-                                "${px?.toString() ?? ""}",
-                                textAlign: TextAlign.center,
-                              ),
+                            return FutureBuilder<String>(
+                              future: getAddressFromLatLng(
+                                  px!.latitude, px.longitude),
+                              builder: (BuildContext context,
+                                  AsyncSnapshot<String> snapshot) {
+                                if (snapshot.hasData) {
+                                  return Text(snapshot.data!);
+                                } else if (snapshot.hasError) {
+                                  return Text('Erreur: ${snapshot.error}');
+                                } else {
+                                  return CircularProgressIndicator();
+                                }
+                              },
                             );
+
+                            //   Center(
+                            //   child: Text(
+                            //     "${px?.latitude.toString()} - ${px?.longitude.toString()}" ??
+                            //         '',
+                            //     textAlign: TextAlign.center,
+                            //   ),
+                            // );
                           },
                         ),
                       ),
@@ -937,6 +995,17 @@ class _stepper_widgetState extends State<stepper_widget> {
         //CATEGORIES**********************************************************
       ],
     );
+  }
+
+  Future<String> getAddressFromLatLng(double lat, double lng) async {
+    final List<Placemark> placemarks = await placemarkFromCoordinates(lat, lng);
+
+    if (placemarks.isNotEmpty) {
+      final Placemark place = placemarks.first;
+      return "${place.locality}, ${place.country}"; //${place.street}, ${place.postalCode},
+    }
+
+    return "";
   }
 }
 

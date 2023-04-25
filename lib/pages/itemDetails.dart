@@ -9,6 +9,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:open_location_picker/open_location_picker.dart';
+import 'package:ramzy/pages/homeList.dart';
 import 'package:ramzy/pages/insta.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:intl/intl.dart' as intl;
@@ -62,6 +63,15 @@ class _SilverdetailItemState extends State<SilverdetailItem> {
                 children: [
                   Padding(
                     padding: const EdgeInsets.only(left: 15),
+                    child: Icon(
+                      PropertyIconMapper.mapItemTypeToIcon(
+                          widget.data['category']),
+                      color: Colors.white70,
+                      size: 18,
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 5),
                     child: Text(
                       widget.data['category'] ?? ' ',
                       overflow: TextOverflow.fade,
@@ -307,7 +317,7 @@ class _SilverdetailItemState extends State<SilverdetailItem> {
                               ),
                               onPressed: () async {
                                 //var phone = 00971566129156;
-                                String msg = 'Hello Oran';
+                                String msg = 'Hi this is Oran';
                                 var whatsappUrl =
                                     "whatsapp://send?phone=+213${widget.data['phone']}" +
                                         "&text=${Uri.encodeComponent(msg)}";
@@ -336,6 +346,20 @@ class _SilverdetailItemState extends State<SilverdetailItem> {
           SliverList(
             delegate: SliverChildListDelegate(
               [
+                widget.data['type'] == null || widget.data['type'] == ''
+                    ? Container()
+                    : Padding(
+                        padding: new EdgeInsets.symmetric(horizontal: 15.0),
+                        child: Text(
+                            '${widget.data['type'] ? 'A Vendre' : 'A Louer'}'
+                                .toUpperCase(),
+                            textAlign: TextAlign.start,
+                            style: const TextStyle(
+                              color: Colors.blueAccent,
+                              fontSize: 18,
+                              fontWeight: FontWeight.w500,
+                            )),
+                      ),
                 widget.data['item'] == null
                     ? Container()
                     : Padding(
@@ -361,35 +385,21 @@ class _SilverdetailItemState extends State<SilverdetailItem> {
                           ),
                         ),
                       ),
-                widget.data['type'] == null || widget.data['type'] == ''
-                    ? Container()
-                    : Padding(
-                        padding: new EdgeInsets.symmetric(horizontal: 15.0),
-                        child: Text(
-                            '${widget.data['type'] ? 'vente' : 'location'}'
-                                .toUpperCase(),
-                            textAlign: TextAlign.start,
-                            style: const TextStyle(
-                              color: Colors.blueAccent,
-                              fontSize: 16,
-                              fontWeight: FontWeight.w500,
-                            )),
-                      ),
-                widget.data['levelItem'] == null ||
-                        widget.data['levelItem'] == ''
-                    ? Container()
-                    : Padding(
-                        padding: new EdgeInsets.symmetric(horizontal: 15.0),
-                        child: Text(
-                          'Level : ' +
-                              widget.data['levelItem'].toString().toUpperCase(),
-                          style: TextStyle(
-                            color: Colors.red,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ),
+                // widget.data['levelItem'] == null ||
+                //         widget.data['levelItem'] == ''
+                //     ? Container()
+                //     : Padding(
+                //         padding: new EdgeInsets.symmetric(horizontal: 15.0),
+                //         child: Text(
+                //           'Level : ' +
+                //               widget.data['levelItem'].toString().toUpperCase(),
+                //           style: TextStyle(
+                //             color: Colors.red,
+                //             fontSize: 16,
+                //             fontWeight: FontWeight.w500,
+                //           ),
+                //         ),
+                //       ),
                 widget.data['price'] == null
                     ? Container()
                     : Align(
@@ -1180,7 +1190,7 @@ class UnsplashD extends StatelessWidget {
         showDialog(
           context: context,
           builder: (_) => AlertDialog(
-            backgroundColor: Colors.white,
+            backgroundColor: Colors.transparent,
             contentPadding: EdgeInsets.zero,
             scrollable: true,
             content: ShaderMask(
@@ -1197,7 +1207,7 @@ class UnsplashD extends StatelessWidget {
                 filterQuality: FilterQuality.high,
                 width: MediaQuery.of(context).size.width,
                 height: MediaQuery.of(context).size.width,
-                fit: BoxFit.cover,
+                fit: BoxFit.contain,
                 imageUrl: UnsplashUrl,
                 errorWidget: (context, url, error) => const Icon(
                   Icons.error,

@@ -7,6 +7,7 @@ import 'package:infinite_marquee/infinite_marquee.dart';
 import 'package:marquee/marquee.dart';
 import 'package:ramzy/Oauth/getFCM.dart';
 import 'package:ramzy/pages/NearbyPlacesPage.dart';
+import 'package:ramzy/pages/SearchPage.dart';
 import 'package:ramzy/pages/booking2.dart';
 
 import '../pages/booking.dart';
@@ -154,6 +155,15 @@ class homeList extends StatelessWidget {
 
     var random = Random().nextInt(5000);
     return Scaffold(
+      // appBar: AppBar(
+      //   title: GestureDetector(
+      //     onTap: () => Navigator.of(context)
+      //         .push(MaterialPageRoute(builder: (context) => Search())),
+      //     child: Text(
+      //       'Search...',
+      //     ),
+      //   ),
+      // ),
       floatingActionButton: FloatingActionButton(
         foregroundColor: Colors.transparent,
         onPressed: () {
@@ -369,14 +379,14 @@ class homeList extends StatelessWidget {
                     ? Container()
                     : Container(
                         height: 30,
-                        color: Colors.cyan,
+                        color: Colors.yellow,
                         child: Marquee(
                           text: marqueesList.toUpperCase(),
-                          style: TextStyle(color: Colors.white),
+                          style: TextStyle(color: Colors.black),
                           scrollAxis: Axis.horizontal,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           blankSpace: 20.0,
-                          velocity: 70.0,
+                          velocity: 35.0,
                           // pauseAfterRound: Duration(seconds: 1),
                           startPadding: 10.0,
                           //accelerationDuration: Duration(seconds: 1),
@@ -389,7 +399,7 @@ class homeList extends StatelessWidget {
                     ? Container()
                     : Container(
                         height: 30,
-                        color: Colors.red,
+                        color: Colors.black54,
                         child: Marquee(
                           text: marqueesListArabic.toUpperCase(),
                           textDirection: TextDirection.rtl,
@@ -401,7 +411,7 @@ class homeList extends StatelessWidget {
                           scrollAxis: Axis.horizontal,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           blankSpace: 20.0,
-                          velocity: 50.0,
+                          velocity: 35.0,
                           pauseAfterRound: Duration(seconds: 1),
                           startPadding: 10.0,
                           accelerationDuration: Duration(seconds: 1),
@@ -513,7 +523,7 @@ class homeList extends StatelessWidget {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Icon(
-                                  Icons.location_pin,
+                                  Icons.radar,
                                   color: Colors.white70,
                                   shadows: [
                                     Shadow(
@@ -566,7 +576,6 @@ class homeList extends StatelessWidget {
                     ),
                   ),
                 ),
-
                 Padding(
                   padding: const EdgeInsets.fromLTRB(18, 18, 18, 0),
                   child: Row(
@@ -678,6 +687,26 @@ class homeList extends StatelessWidget {
                                           const Icon(
                                         Icons.error,
                                         color: Colors.red,
+                                      ),
+                                    ),
+                                  ),
+                                  Positioned(
+                                    top: 5,
+                                    left: 5,
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                          color: Colors.black54,
+                                          borderRadius:
+                                              BorderRadius.circular(8)),
+                                      padding: const EdgeInsets.all(5.0),
+                                      child: Text(
+                                        itm[index]['category'],
+                                        overflow: TextOverflow.fade,
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 11,
+                                            fontWeight: FontWeight.w500),
                                       ),
                                     ),
                                   ),
@@ -1109,6 +1138,32 @@ class homeList extends StatelessWidget {
                                                 //     ],
                                                 //   ),
                                                 // ),
+                                                Positioned(
+                                                  top: 5,
+                                                  left: 5,
+                                                  child: Container(
+                                                    decoration: BoxDecoration(
+                                                        color: Colors.black54,
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(8)),
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            5.0),
+                                                    child: Text(
+                                                      itmm[index]['category'],
+                                                      overflow:
+                                                          TextOverflow.fade,
+                                                      textAlign:
+                                                          TextAlign.center,
+                                                      style: TextStyle(
+                                                          color: Colors.white,
+                                                          fontSize: 11,
+                                                          fontWeight:
+                                                              FontWeight.w500),
+                                                    ),
+                                                  ),
+                                                ),
                                                 Padding(
                                                   padding: const EdgeInsets
                                                           .symmetric(
@@ -1323,6 +1378,7 @@ class homeList extends StatelessWidget {
             }
             final bool isLiked =
                 data!['usersLike'].toString().contains(user!.uid);
+
             return GestureDetector(
               onTap: () {
                 updateViewsAndUserList(
@@ -1369,6 +1425,7 @@ class homeList extends StatelessWidget {
                     Container(
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Container(
                             decoration: BoxDecoration(
@@ -1377,19 +1434,14 @@ class homeList extends StatelessWidget {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Container(
-                                  decoration: BoxDecoration(
-                                      color: Colors.black54,
-                                      borderRadius: BorderRadius.circular(8)),
-                                  padding: const EdgeInsets.all(5.0),
-                                  child: Text(
-                                    data['category'],
-                                    overflow: TextOverflow.fade,
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 11,
-                                        fontWeight: FontWeight.w500),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 5, vertical: 3),
+                                  child: Icon(
+                                    PropertyIconMapper.mapItemTypeToIcon(
+                                        data['category']),
+                                    color: Colors.white70,
+                                    size: 18,
                                   ),
                                 ),
                                 Spacer(),
@@ -1467,6 +1519,24 @@ class homeList extends StatelessWidget {
                               ],
                             ),
                           ),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                  color: Colors.black54,
+                                  borderRadius: BorderRadius.circular(8)),
+                              padding: const EdgeInsets.all(5.0),
+                              child: Text(
+                                data['category'],
+                                overflow: TextOverflow.fade,
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.w500),
+                              ),
+                            ),
+                          ),
                           Spacer(),
                           Column(
                             children: [
@@ -1540,6 +1610,25 @@ class homeList extends StatelessWidget {
   //   //     'Test Titre',
   //   //     'Test body');
   // }
+}
+
+class PropertyIconMapper {
+  static IconData mapItemTypeToIcon(String itemType) {
+    switch (itemType) {
+      case 'Hotel':
+        return Icons.hotel;
+      case 'Autres':
+        return Icons.home;
+      case 'Agence':
+        return Icons.real_estate_agent;
+      case 'Residence':
+        return Icons.business;
+      case 'Sponsors':
+        return Icons.monetization_on_rounded;
+      default:
+        return Icons.help_outline;
+    }
+  }
 }
 
 class UnsplashAvatarProvider extends StatelessWidget {

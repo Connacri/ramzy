@@ -3,7 +3,7 @@ description: A new Flutter project.
 
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
-version: 1.0.10+13
+version: 1.0.10+14
 
 environment:
   sdk: '>=3.0.0-290.0.dev <4.0.0'
@@ -72,7 +72,9 @@ dependencies:
   date_utils: ^0.2.0
   infinite_marquee: ^0.0.1
   google_fonts: ^4.0.3
-
+  firebase_admin:
+  googleapis_auth:
+  fuzzy:
   #######################################################################
   cupertino_icons: ^1.0.2
 
