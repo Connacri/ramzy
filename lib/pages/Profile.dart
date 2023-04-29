@@ -15,6 +15,7 @@ import 'package:flutterflow_paginate_firestore/widgets/empty_separator.dart';
 import 'package:flutterflow_paginate_firestore/widgets/initial_loader.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import 'package:ramzy/Oauth/users_authentification.dart';
@@ -722,15 +723,24 @@ class PostListOfMyProfil extends StatelessWidget {
                     ),
                   ),
                   title: Text(
-                    data['Description'], //.toUpperCase(),
+                    data['Description'].toString().toUpperCase(),
                     overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                      color: Colors.black45,
-                      fontWeight: FontWeight.normal,
-                      fontSize: 15,
-                      fontFamily: 'Oswald',
-                    ),
+                    textAlign: isArabic(data['Description'])
+                        ? TextAlign.right
+                        : TextAlign.left,
+                    style: isArabic(data['Description'])
+                        ? GoogleFonts.cairo(
+                            color: Colors.black45,
+                            fontWeight: FontWeight.normal,
+                            fontSize: 15,
+                          )
+                        : TextStyle(
+                            color: Colors.black45,
+                            fontWeight: FontWeight.normal,
+                            fontSize: 15,
+                          ),
                   ),
+
                   subtitle: collection == 'Instalives'
                       ? null
                       : Text(
@@ -740,7 +750,6 @@ class PostListOfMyProfil extends StatelessWidget {
                             color: Colors.green,
                             fontWeight: FontWeight.bold,
                             fontSize: 15,
-                            fontFamily: 'Oswald',
                           ),
                         ),
                   isThreeLine: collection == 'Instalives' ? false : true,
@@ -794,6 +803,10 @@ class PostListOfMyProfil extends StatelessWidget {
         );
       },
     );
+  }
+
+  bool isArabic(String text) {
+    return RegExp(r'[\u0600-\u06FF]').hasMatch(text);
   }
 }
 

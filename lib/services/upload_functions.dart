@@ -21,6 +21,7 @@ class _uploading_functionsState extends State<uploading_functions> {
   final _formKey = GlobalKey<FormState>();
   final _textController = TextEditingController();
   String collectionAlert = 'Alert';
+  //String collectionPubArea = 'pubArea';
 
   CollectionReference _alertCollection =
       FirebaseFirestore.instance.collection('Alert');
@@ -56,8 +57,12 @@ class _uploading_functionsState extends State<uploading_functions> {
                     // Step 3.
                     value: collection, //dropdownValue,
                     // Step 4.
-                    items: <String>['Products', 'Instalives', 'Caroussel']
-                        .map<DropdownMenuItem<String>>((String value) {
+                    items: <String>[
+                      'Products',
+                      'Instalives',
+                      'Caroussel',
+                      'PubArea'
+                    ].map<DropdownMenuItem<String>>((String value) {
                       return DropdownMenuItem<String>(
                         value: value,
                         child: Text(
@@ -273,8 +278,8 @@ void uploadRandom(int itemsNum, String collection) async {
         fromFirestore: (snapshot, _) => UserClass.fromJson(snapshot.data()!),
         toFirestore: (post, _) => post.toJson(),
       );
-  final bool boolType = true;
-  bool type = !boolType;
+  // final bool boolType = true;
+  // bool type = !boolType;
 
   final numbers = List.generate(itemsNum, (index) => index + 1);
 
@@ -287,7 +292,6 @@ void uploadRandom(int itemsNum, String collection) async {
       'Residence',
       'Agence',
       'Autres',
-      'Sponsors',
     ];
     List<String> listItem = [
       "Hôtel de luxe.",
@@ -369,8 +373,9 @@ void uploadRandom(int itemsNum, String collection) async {
       0674258741,
       0550412365,
     ];
+    List<String> lisTypes = ['vente', 'location'];
 
-    type = !type;
+    // type = !type;
 
     String randomCat = (listCat..shuffle()).first;
     String randomLevel = (listLevel..shuffle()).first;
@@ -381,6 +386,7 @@ void uploadRandom(int itemsNum, String collection) async {
     String randomPlan = (listPlan..shuffle()).first;
     int randomPhone = (listPhones..shuffle()).first;
     int number2 = Random().nextInt(numbers.length);
+    String randomType = (lisTypes..shuffle()).first;
 
     int prix = Random().nextInt(5000);
     String catego = listCat[0];
@@ -441,7 +447,7 @@ void uploadRandom(int itemsNum, String collection) async {
       levelItem: randomLevel,
       phone: randomPhone,
       views: 99,
-      viewed_by: listuserId, type: type,
+      viewed_by: listuserId, type: randomType,
     );
 
     postCollection.add(post);

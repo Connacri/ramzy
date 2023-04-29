@@ -312,13 +312,22 @@ class _page_detailState extends State<page_detail> {
                             setState(() => uploading = true);
                             // await Future.delayed(Duration(seconds: 5));
                             // setState(() => uploading = false);
-
-                            uploadFile().whenComplete(
-                              () => Navigator.push(context,
+/////////////////////////////////////////////////
+//                             uploadFile().whenComplete(
+//                               () => Navigator.push(context,
+//                                   MaterialPageRoute(builder: (_) {
+//                                 return verifi_auth();
+//                               })),
+//                             );
+                            //////////////////////////////
+                            uploadFile().whenComplete(() {
+                              Navigator.of(context)
+                                  .popUntil((route) => route.isFirst);
+                              Navigator.pushReplacement(context,
                                   MaterialPageRoute(builder: (_) {
                                 return verifi_auth();
-                              })),
-                            );
+                              }));
+                            });
                           },
                           child: uploading == false
                               ? const Text('Publier')

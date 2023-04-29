@@ -93,7 +93,7 @@ class _stepper_widgetState extends State<stepper_widget> {
           ? const Icon(Icons.check)
           : Container(), //Icon(Icons.check_box_outline_blank),
       label: Text(
-        locavente,
+        locavente.toUpperCase(), // == false ? 'vente' : 'location',
         style: const TextStyle(
           fontSize: 18,
         ),
@@ -550,36 +550,39 @@ class _stepper_widgetState extends State<stepper_widget> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: ValueListenableBuilder<GeoPoint?>(
-                          valueListenable: notifier,
-                          builder: (ctx, px, child) {
-                            return FutureBuilder<String>(
-                              future: getAddressFromLatLng(
-                                  px!.latitude, px.longitude),
-                              builder: (BuildContext context,
-                                  AsyncSnapshot<String> snapshot) {
-                                if (snapshot.hasData) {
-                                  return Text(snapshot.data!);
-                                } else if (snapshot.hasError) {
-                                  return Text('Erreur: ${snapshot.error}');
-                                } else {
-                                  return CircularProgressIndicator();
-                                }
-                              },
-                            );
+                      notifier.value == null
+                          ? Container()
+                          : Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: ValueListenableBuilder<GeoPoint?>(
+                                valueListenable: notifier,
+                                builder: (ctx, px, child) {
+                                  return FutureBuilder<String>(
+                                    future: getAddressFromLatLng(
+                                        px!.latitude, px.longitude),
+                                    builder: (BuildContext context,
+                                        AsyncSnapshot<String> snapshot) {
+                                      if (snapshot.hasData) {
+                                        return Text(snapshot.data!);
+                                      } else if (snapshot.hasError) {
+                                        return Text(
+                                            'Erreur: ${snapshot.error}');
+                                      } else {
+                                        return CircularProgressIndicator();
+                                      }
+                                    },
+                                  );
 
-                            //   Center(
-                            //   child: Text(
-                            //     "${px?.latitude.toString()} - ${px?.longitude.toString()}" ??
-                            //         '',
-                            //     textAlign: TextAlign.center,
-                            //   ),
-                            // );
-                          },
-                        ),
-                      ),
+                                  //   Center(
+                                  //   child: Text(
+                                  //     "${px?.latitude.toString()} - ${px?.longitude.toString()}" ??
+                                  //         '',
+                                  //     textAlign: TextAlign.center,
+                                  //   ),
+                                  // );
+                                },
+                              ),
+                            ),
                       Padding(
                         padding: const EdgeInsets.all(38.0),
                         child: IconButton(
@@ -588,7 +591,9 @@ class _stepper_widgetState extends State<stepper_widget> {
                                 MaterialPageRoute(
                                     builder: (ctx) => SearchPage()));
                             if (p != null) {
-                              notifier.value = p as GeoPoint;
+                              setState(
+                                () => notifier.value = p as GeoPoint,
+                              );
                             }
                           },
                           icon: Icon(FontAwesomeIcons.location),
@@ -751,13 +756,13 @@ class _stepper_widgetState extends State<stepper_widget> {
                   Expanded(
                       child: Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: _buildLocationVente('Location'),
+                    child: _buildLocationVente('vente'),
                   )),
                   // const SizedBox(width: 10),
                   Expanded(
                       child: Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: _buildLocationVente('Vente'),
+                    child: _buildLocationVente('location'),
                   )),
                 ],
               ),

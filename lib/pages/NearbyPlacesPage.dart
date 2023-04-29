@@ -292,7 +292,7 @@ class _NearbyPlacesPageState extends State<NearbyPlacesPage> {
       shrinkWrap: true,
       isLive: true,
       query: FirebaseFirestore.instance.collection('Products'),
-      itemBuilder: (BuildContext, DocumentSnapshot, int) {
+      itemBuilder: (BuildContext, DocumentSnapshot, intex) {
         DocumentSnapshot.sort((a, b) => _calculateDistance(
               _currentLocation!.latitude,
               _currentLocation!.longitude,
@@ -306,7 +306,7 @@ class _NearbyPlacesPageState extends State<NearbyPlacesPage> {
                 b['position'].longitude,
               ),
             ));
-        final place = DocumentSnapshot[int];
+        final place = DocumentSnapshot[intex];
 
         final distance = _calculateDistance(
           _currentLocation!.latitude,
@@ -318,44 +318,61 @@ class _NearbyPlacesPageState extends State<NearbyPlacesPage> {
         var randomNumber = random.nextInt(27);
         String randomPhoto =
             'https://firebasestorage.googleapis.com/v0/b/wahrane-a42eb.appspot.com/o/pub%2Fpub(${randomNumber}).jpg?alt=media&token=5d9e0764-23f6-4b18-95f4-e085736659cc';
-        if (int % 5 == 0 && int != 0) {
-          return Card(
-            //  margin: const EdgeInsets.all(5),
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-            clipBehavior: Clip.antiAliasWithSaveLayer,
-            elevation: 5,
-            child: Stack(
-              alignment: Alignment.center,
-              fit: StackFit.passthrough,
-              children: [
-                Container(
-                  height: 150,
-                  child: CachedNetworkImage(
-                    fit: BoxFit.cover,
-                    imageUrl: randomPhoto,
-                  ),
-                ),
-                Center(
-                  child: Text(
-                    'PubArea',
-                    style: TextStyle(
-                        shadows: [
-                          Shadow(
-                            blurRadius: 10.0, // shadow blur
-                            color: Colors.black54, // shadow color
-                            offset: Offset(
-                                2.0, 2.0), // how much shadow will be shown
-                          ),
-                        ],
-                        fontSize: 40,
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold),
-                  ),
-                )
-              ],
-            ),
-          );
+        // if (int % 5 == 0 && int != 0) {
+        //   return BannerNearBy5(randomPhoto: randomPhoto);
+        // }
+        List<String> list2 = ['A', 'B', 'C', 'D', 'E'];
+        List<String> list3 = [
+          'Item 1',
+          'Item 2',
+          'Item 3',
+          'Item 4',
+          'Item 5',
+          'Item 6',
+          'Item 7',
+          'Item 8',
+          'Item 9',
+          'Item 10',
+          'Item 11',
+          'Item 12',
+          'Item 13',
+          'Item 14',
+          'Item 15',
+          'Item 16',
+          'Item 17',
+          'Item 18',
+          'Item 19',
+          'Item 20',
+          'Item 21',
+          'Item 22',
+          'Item 23',
+          'Item 24',
+          'Item 25',
+          'Item 26',
+          'Item 27',
+          'Item 28',
+          'Item 29',
+          'Item 30',
+          'Item 31',
+          'Item 32',
+          'Item 33',
+          'Item 34',
+          'Item 35',
+          'Item 36',
+          'Item 37',
+          'Item 38',
+          'Item 39',
+          'Item 40',
+        ];
+
+        if ((intex + 1) % 5 == 0) {
+          int listIndex = ((intex + 1) ~/ 5) - 1;
+          if (listIndex < list3.length) {
+            return BannerNearBy5(
+              randomPhoto: randomPhoto,
+              label: list3[listIndex],
+            );
+          }
         }
         return _buildListItem(place, distance);
       },
@@ -448,12 +465,6 @@ class _NearbyPlacesPageState extends State<NearbyPlacesPage> {
                             padding: const EdgeInsets.all(8.0),
                             child: Row(
                               children: [
-                                Icon(
-                                  PropertyIconMapper.mapItemTypeToIcon(
-                                      data['category']),
-                                  color: Colors.white70,
-                                  size: 22,
-                                ),
                                 SizedBox(
                                   width: 5,
                                 ),
@@ -462,14 +473,27 @@ class _NearbyPlacesPageState extends State<NearbyPlacesPage> {
                                       color: Colors.black54,
                                       borderRadius: BorderRadius.circular(8)),
                                   padding: const EdgeInsets.all(5.0),
-                                  child: Text(
-                                    data['category'],
-                                    overflow: TextOverflow.fade,
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 11,
-                                        fontWeight: FontWeight.w500),
+                                  child: Row(
+                                    children: [
+                                      Icon(
+                                        PropertyIconMapper.mapItemTypeToIcon(
+                                            data['category']),
+                                        color: Colors.white70,
+                                        size: 22,
+                                      ),
+                                      SizedBox(
+                                        width: 3,
+                                      ),
+                                      Text(
+                                        data['category'],
+                                        overflow: TextOverflow.fade,
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 11,
+                                            fontWeight: FontWeight.w500),
+                                      ),
+                                    ],
                                   ),
                                 ),
                               ],
@@ -481,12 +505,12 @@ class _NearbyPlacesPageState extends State<NearbyPlacesPage> {
                               Padding(
                                 padding:
                                     const EdgeInsets.symmetric(horizontal: 8),
-                                child: Text(
-                                    '${data['type'] ? 'vente' : 'location'}'
-                                        .toUpperCase(),
+                                child: Text('${data['type']}'.toUpperCase(),
                                     textAlign: TextAlign.start,
-                                    style: const TextStyle(
-                                      color: Colors.white70,
+                                    style: TextStyle(
+                                      color: data['type'] == 'vente'
+                                          ? Colors.green
+                                          : Colors.lightBlue,
                                       fontWeight: FontWeight.normal,
                                       fontSize: 12,
                                     )),
@@ -968,5 +992,59 @@ class _NearbyPlacesPageState extends State<NearbyPlacesPage> {
 
   bool isArabic(String text) {
     return RegExp(r'[\u0600-\u06FF]').hasMatch(text);
+  }
+}
+
+class BannerNearBy5 extends StatelessWidget {
+  const BannerNearBy5({
+    super.key,
+    required this.randomPhoto,
+    required this.label,
+  });
+
+  final String randomPhoto;
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 0),
+      child: Card(
+        //  margin: const EdgeInsets.all(5),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        clipBehavior: Clip.antiAliasWithSaveLayer,
+        elevation: 5,
+        child: Stack(
+          alignment: Alignment.center,
+          fit: StackFit.passthrough,
+          children: [
+            Container(
+              height: 150,
+              child: CachedNetworkImage(
+                fit: BoxFit.cover,
+                imageUrl: randomPhoto,
+              ),
+            ),
+            Center(
+              child: Text(
+                'PubArea $label',
+                style: TextStyle(
+                    shadows: [
+                      Shadow(
+                        blurRadius: 10.0, // shadow blur
+                        color: Colors.black54, // shadow color
+                        offset:
+                            Offset(2.0, 2.0), // how much shadow will be shown
+                      ),
+                    ],
+                    fontSize: 40,
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold),
+              ),
+            )
+          ],
+        ),
+      ),
+    );
   }
 }

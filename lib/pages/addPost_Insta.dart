@@ -7,6 +7,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_osm_plugin/flutter_osm_plugin.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:geocoding/geocoding.dart';
 
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
@@ -205,23 +206,57 @@ class _stepper2_widgetState extends State<stepper2_widget> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                ValueListenableBuilder<GeoPoint?>(
-                  valueListenable: notifier,
-                  builder: (ctx, p, child) {
-                    return Center(
-                      child: Text(
-                        "${p?.toString() ?? ""}",
-                        textAlign: TextAlign.center,
+                notifier.value == null
+                    ? Container()
+                    : Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: ValueListenableBuilder<GeoPoint?>(
+                          valueListenable: notifier,
+                          builder: (ctx, px, child) {
+                            return FutureBuilder<String>(
+                              future: getAddressFromLatLng(
+                                  px!.latitude, px.longitude),
+                              builder: (BuildContext context,
+                                  AsyncSnapshot<String> snapshot) {
+                                if (snapshot.hasData) {
+                                  return Text(snapshot.data!);
+                                } else if (snapshot.hasError) {
+                                  return Text('Erreur: ${snapshot.error}');
+                                } else {
+                                  return CircularProgressIndicator();
+                                }
+                              },
+                            );
+
+                            //   Center(
+                            //   child: Text(
+                            //     "${px?.latitude.toString()} - ${px?.longitude.toString()}" ??
+                            //         '',
+                            //     textAlign: TextAlign.center,
+                            //   ),
+                            // );
+                          },
+                        ),
                       ),
-                    );
-                  },
-                ),
+                // ValueListenableBuilder<GeoPoint?>(
+                //   valueListenable: notifier,
+                //   builder: (ctx, p, child) {
+                //     return Center(
+                //       child: Text(
+                //         "${p?.toString() ?? ""}",
+                //         textAlign: TextAlign.center,
+                //       ),
+                //     );
+                //   },
+                // ),
                 IconButton(
                   onPressed: () async {
                     var p = await Navigator.of(context).push(
                         MaterialPageRoute(builder: (ctx) => SearchPage()));
                     if (p != null) {
-                      notifier.value = p as GeoPoint;
+                      setState(
+                        () => notifier.value = p as GeoPoint,
+                      );
                     }
                   },
                   icon: Icon(FontAwesomeIcons.location),
@@ -240,6 +275,67 @@ class _stepper2_widgetState extends State<stepper2_widget> {
                           MaterialStateProperty.all(const Size(200, 40)),
                     ),
                     onPressed: () async {
+                      if (_imagesList.isEmpty ||
+                          _descriptionController.text == null ||
+                          _descriptionController.text == '' ||
+                          notifier.value == null) {
+                        return showDialog(
+                          context: context,
+                          builder: (_) => AlertDialog(
+                            scrollable: true,
+                            title: Center(
+                              child: Text(
+                                'Attention!',
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                            content: Center(
+                              child: Text(
+                                'Completez\nToute\nLa Publication',
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                            actionsAlignment: MainAxisAlignment.center,
+                          ),
+                        );
+                      }
+                      if (notifier.value == null) {
+                        () => showDialog(
+                              context: context,
+                              builder: (_) => AlertDialog(
+                                scrollable: true,
+                                title: Center(
+                                  child: Text(
+                                    'Attention!',
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
+                                content: Center(
+                                  child: Text(
+                                    'Vous Devez Choisir\nLa Localisation de Votre Annonce\nSur La Carte',
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
+                                actionsAlignment: MainAxisAlignment.center,
+                                actions: [
+                                  IconButton(
+                                    onPressed: () async {
+                                      Navigator.of(context).pop();
+                                      var p = await Navigator.of(context).push(
+                                          MaterialPageRoute(
+                                              builder: (ctx) => SearchPage()));
+                                      if (p != null) {
+                                        notifier.value = p as GeoPoint;
+                                      }
+                                    },
+                                    icon: Icon(FontAwesomeIcons.location),
+                                  ),
+                                  CloseButtonIcon()
+                                ],
+                              ),
+                            );
+                      }
+
                       if (uploading) return;
                       setState(() => uploading = true);
 
@@ -447,6 +543,17 @@ class _stepper2_widgetState extends State<stepper2_widget> {
       'viewed_by': [],
       'views': 0,
     });
+  }
+
+  Future<String> getAddressFromLatLng(double lat, double lng) async {
+    final List<Placemark> placemarks = await placemarkFromCoordinates(lat, lng);
+
+    if (placemarks.isNotEmpty) {
+      final Placemark place = placemarks.first;
+      return "${place.locality}, ${place.country}"; //${place.street}, ${place.postalCode},
+    }
+
+    return "";
   }
 }
 

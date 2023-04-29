@@ -351,7 +351,7 @@ class _SilverdetailItemState extends State<SilverdetailItem> {
                     : Padding(
                         padding: new EdgeInsets.symmetric(horizontal: 15.0),
                         child: Text(
-                            '${widget.data['type'] ? 'A Vendre' : 'A Louer'}'
+                            '${widget.data['type'] == 'vente' ? 'A Vendre' : 'A Louer'}'
                                 .toUpperCase(),
                             textAlign: TextAlign.start,
                             style: const TextStyle(

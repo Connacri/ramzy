@@ -10,6 +10,7 @@ import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutterflow_paginate_firestore/paginate_firestore.dart';
 import 'package:flutterflow_paginate_firestore/widgets/bottom_loader.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:ramzy/pages/Profil_premium.dart';
 import 'package:readmore/readmore.dart';
@@ -206,10 +207,19 @@ class _instaState extends State<insta> {
                                           .toString()
                                           .toUpperCase(),
                                       overflow: TextOverflow.ellipsis,
-                                      style: TextStyle(
-                                          color: Colors.white70,
-                                          fontSize: 28,
-                                          fontWeight: FontWeight.bold),
+                                      textAlign:
+                                          isArabic(itmCarous[index]['item'])
+                                              ? TextAlign.right
+                                              : TextAlign.left,
+                                      style: isArabic(itmCarous[index]['item'])
+                                          ? GoogleFonts.cairo(
+                                              color: Colors.white70,
+                                              fontSize: 28,
+                                              fontWeight: FontWeight.bold)
+                                          : TextStyle(
+                                              color: Colors.white70,
+                                              fontSize: 28,
+                                              fontWeight: FontWeight.bold),
                                     ),
                                   ),
                                 ],
@@ -428,10 +438,20 @@ class _instaState extends State<insta> {
                                   padding: const EdgeInsets.symmetric(
                                       horizontal: 4.0),
                                   child: Text(
-                                    itm[index]['item'],
-                                    // iitem.documents[index]['item'],
+                                    itm[index]['item'].toString().toUpperCase(),
                                     overflow: TextOverflow.ellipsis,
-                                    style: TextStyle(fontSize: 12),
+                                    textAlign: isArabic(itm[index]['item'])
+                                        ? TextAlign.right
+                                        : TextAlign.left,
+                                    style: isArabic(itm[index]['item'])
+                                        ? GoogleFonts.cairo(
+                                            // textStyle: Theme.of(context).textTheme.headline4,
+                                            fontSize: 12,
+                                          )
+                                        : TextStyle(
+                                            // color: Colors.white70,
+                                            fontSize: 12,
+                                          ),
                                   ),
                                 ),
                               ),
@@ -792,12 +812,24 @@ class _instaState extends State<insta> {
                                                     const EdgeInsets.symmetric(
                                                         horizontal: 4.0),
                                                 child: Text(
-                                                  itmm[index]['item'],
-                                                  // iitem.documents[index]['item'],
+                                                  itmm[index]['item']
+                                                      .toString()
+                                                      .toUpperCase(),
                                                   overflow:
                                                       TextOverflow.ellipsis,
-                                                  style:
-                                                      TextStyle(fontSize: 12),
+                                                  textAlign: isArabic(
+                                                          itmm[index]['item'])
+                                                      ? TextAlign.right
+                                                      : TextAlign.left,
+                                                  style: isArabic(
+                                                          itmm[index]['item'])
+                                                      ? GoogleFonts.cairo(
+                                                          //  textStyle: Theme.of(context).textTheme.headline4,
+                                                          fontSize: 12,
+                                                        )
+                                                      : TextStyle(
+                                                          fontSize: 12,
+                                                        ),
                                                 ),
                                               ),
                                             ),
@@ -950,6 +982,10 @@ class _instaState extends State<insta> {
         'METEOMETEOMETEOMETEOMETEOMETEOMETEOMETEOMETEOMETEOMETEOMETEOMETEOMETEOMETEOMETEOMETEO');
     //print(directionVent(direction).toString());
   }
+
+  bool isArabic(String text) {
+    return RegExp(r'[\u0600-\u06FF]').hasMatch(text);
+  }
 }
 
 class like_instagram extends StatefulWidget {
@@ -980,6 +1016,9 @@ class _like_instagramState extends State<like_instagram> {
   final user = FirebaseAuth.instance.currentUser;
   int _current = 0;
   final CarouselController _controller = CarouselController();
+  bool isArabic(String text) {
+    return RegExp(r'[\u0600-\u06FF]').hasMatch(text);
+  }
 
   @override
   Widget build(BuildContext context) => Padding(
@@ -1059,12 +1098,38 @@ class _like_instagramState extends State<like_instagram> {
                 trimLines: 3,
                 colorClickableText: Colors.pink,
                 trimMode: TrimMode.Line,
-                textAlign: TextAlign.justify,
+                textAlign: isArabic(widget.datam!['Description'])
+                    ? TextAlign.right
+                    : TextAlign.left,
                 trimCollapsedText: 'Plus',
                 trimExpandedText: '  Moins',
-                moreStyle: const TextStyle(fontSize: 14, color: Colors.blue),
-                lessStyle: const TextStyle(fontSize: 14, color: Colors.red),
-                style: const TextStyle(fontSize: 14, color: Colors.black87),
+                moreStyle: isArabic(widget.datam!['Description'])
+                    ? GoogleFonts.cairo(
+                        color: Colors.blue,
+                        fontSize: 14,
+                      )
+                    : TextStyle(
+                        color: Colors.blue,
+                        fontSize: 14,
+                      ),
+                lessStyle: isArabic(widget.datam!['Description'])
+                    ? GoogleFonts.cairo(
+                        color: Colors.red,
+                        fontSize: 14,
+                      )
+                    : TextStyle(
+                        color: Colors.red,
+                        fontSize: 14,
+                      ),
+                style: isArabic(widget.datam!['Description'])
+                    ? GoogleFonts.cairo(
+                        color: Colors.black87,
+                        fontSize: 14,
+                      )
+                    : TextStyle(
+                        color: Colors.black87,
+                        fontSize: 14,
+                      ),
               ),
             ),
             Divider()

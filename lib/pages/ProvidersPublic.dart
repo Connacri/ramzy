@@ -82,6 +82,17 @@ class CollectionAlertArabcData {
   }
 }
 
+class CollectionPubArea {
+  final List<DocumentSnapshot> documents;
+
+  CollectionPubArea(this.documents);
+  Query<Object?> fromListOfDocumentSnapshots(List<DocumentSnapshot> documents) {
+    return FirebaseFirestore.instance.collection('PubArea').where(
+        FieldPath.documentId,
+        whereIn: documents.map((d) => d.id).toList());
+  }
+}
+
 class MyApp extends StatelessWidget {
   MyApp({Key? key, required this.userDoc}) : super(key: key);
   var userDoc;
@@ -124,6 +135,13 @@ class MyApp extends StatelessWidget {
               .map((querySnapshot) =>
                   CollectionAlertArabcData(querySnapshot.docs)),
           initialData: CollectionAlertArabcData([]),
+        ),
+        StreamProvider<CollectionPubArea>(
+          create: (_) => FirebaseFirestore.instance
+              .collection("PubArea")
+              .snapshots()
+              .map((querySnapshot) => CollectionPubArea(querySnapshot.docs)),
+          initialData: CollectionPubArea([]),
         ),
       ],
       child: bottomNavigation(
