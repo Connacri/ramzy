@@ -7,6 +7,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutterflow_paginate_firestore/paginate_firestore.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -24,15 +25,71 @@ class NearbyPlacesPage extends StatefulWidget {
 
 class _NearbyPlacesPageState extends State<NearbyPlacesPage> {
   List<DocumentSnapshot> _places = [];
-  late Position? _currentLocation;
+  late Position? _currentLocationp;
   bool _isLoading = true;
 
   @override
   void initState() {
     super.initState();
+    _determinePosition();
     _getCurrentLocation();
     _getCarouselItems();
   }
+//////////////////////////////////////////////////////////////
+
+  /// Determine the current position of the device.
+  ///
+  /// When the location services are not enabled or permissions
+  /// are denied the `Future` will return an error.
+  Future<Position> _determinePosition() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+
+    // Test if location services are enabled.
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      // Location services are not enabled don't continue
+      // accessing the position and request users of the
+      // App to enable the location services.
+      return Future.error('Location services are disabled.');
+    }
+
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        // Permissions are denied, next time you could try
+        // requesting permissions again (this is also where
+        // Android's shouldShowRequestPermissionRationale
+        // returned true. According to Android guidelines
+        // your App should show an explanatory UI now.
+        return Future.error('Location permissions are denied');
+      }
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      // Permissions are denied forever, handle appropriately.
+      return Future.error(
+          'Location permissions are permanently denied, we cannot request permissions.');
+    }
+
+    // When we reach here, permissions are granted and we can
+    // continue accessing the position of the device.
+    return await Geolocator.getCurrentPosition();
+  }
+
+  Future<String> getAddressFromLatLng(double lat, double lng) async {
+    final List<Placemark> placemarks = await placemarkFromCoordinates(lat, lng);
+
+    if (placemarks.isNotEmpty) {
+      final Placemark place = placemarks.first;
+      return "${place.locality}, ${place.country}"; //${place.street}, ${place.postalCode},
+    }
+
+    return "";
+  }
+
+  ////////////////////////////////////////////////////////////////////////
 
   //List<Map<dynamic, dynamic>> itmCarous = [];
   late List<DocumentSnapshot<Object?>> itmCarous = [];
@@ -59,8 +116,9 @@ class _NearbyPlacesPageState extends State<NearbyPlacesPage> {
           ? Center(
               child: CircularProgressIndicator(),
             )
-          : //_buildPlacesList(),
-          _buildPlacesListyy(),
+          : Center(
+              child: _buildPlacesListyy(),
+            ),
     );
   }
 
@@ -69,22 +127,22 @@ class _NearbyPlacesPageState extends State<NearbyPlacesPage> {
       itemCount: _places.length,
       itemBuilder: (BuildContext context, int index) {
         _places.sort((a, b) => _calculateDistance(
-              _currentLocation!.latitude,
-              _currentLocation!.longitude,
+              _currentLocationp!.latitude,
+              _currentLocationp!.longitude,
               a['position'].latitude,
               a['position'].longitude,
             ).compareTo(
               _calculateDistance(
-                _currentLocation!.latitude,
-                _currentLocation!.longitude,
+                _currentLocationp!.latitude,
+                _currentLocationp!.longitude,
                 b['position'].latitude,
                 b['position'].longitude,
               ),
             ));
         final place = _places[index];
         final distance = _calculateDistance(
-          _currentLocation!.latitude,
-          _currentLocation!.longitude,
+          _currentLocationp!.latitude,
+          _currentLocationp!.longitude,
           place['position'].latitude,
           place['position'].longitude,
         );
@@ -258,7 +316,7 @@ class _NearbyPlacesPageState extends State<NearbyPlacesPage> {
                   ),
             Center(
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(18, 18, 18, 18),
+                padding: const EdgeInsets.fromLTRB(18, 18, 18, 8),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -285,6 +343,34 @@ class _NearbyPlacesPageState extends State<NearbyPlacesPage> {
                 ),
               ),
             ),
+            _currentLocationp == null
+                ? Text('null')
+                : Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: FutureBuilder<String>(
+                      future: getAddressFromLatLng(
+                        _currentLocationp!.latitude,
+                        _currentLocationp!.longitude,
+                      ),
+                      builder: (BuildContext context,
+                          AsyncSnapshot<String> snapshot) {
+                        if (snapshot.hasData) {
+                          return Text(
+                            'Je suis à ' + snapshot.data!,
+                            style: TextStyle(
+                                fontStyle: FontStyle.italic,
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black38),
+                          );
+                        } else if (snapshot.hasError) {
+                          return Text('Erreur: ${snapshot.error}');
+                        } else {
+                          return CircularProgressIndicator();
+                        }
+                      },
+                    ),
+                  ),
           ],
         ),
       ),
@@ -294,14 +380,14 @@ class _NearbyPlacesPageState extends State<NearbyPlacesPage> {
       query: FirebaseFirestore.instance.collection('Products'),
       itemBuilder: (BuildContext, DocumentSnapshot, intex) {
         DocumentSnapshot.sort((a, b) => _calculateDistance(
-              _currentLocation!.latitude,
-              _currentLocation!.longitude,
+              _currentLocationp!.latitude,
+              _currentLocationp!.longitude,
               a['position'].latitude,
               a['position'].longitude,
             ).compareTo(
               _calculateDistance(
-                _currentLocation!.latitude,
-                _currentLocation!.longitude,
+                _currentLocationp!.latitude,
+                _currentLocationp!.longitude,
                 b['position'].latitude,
                 b['position'].longitude,
               ),
@@ -309,8 +395,8 @@ class _NearbyPlacesPageState extends State<NearbyPlacesPage> {
         final place = DocumentSnapshot[intex];
 
         final distance = _calculateDistance(
-          _currentLocation!.latitude,
-          _currentLocation!.longitude,
+          _currentLocationp!.latitude,
+          _currentLocationp!.longitude,
           place['position'].latitude,
           place['position'].longitude,
         );
@@ -935,7 +1021,7 @@ class _NearbyPlacesPageState extends State<NearbyPlacesPage> {
     Position position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high);
     setState(() {
-      _currentLocation = position;
+      _currentLocationp = position;
       _isLoading = false;
     });
     _getNearbyPlaces(position);
