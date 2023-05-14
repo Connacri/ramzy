@@ -296,6 +296,7 @@ class PostListOfUserPremium extends StatelessWidget {
   final String text2;
   final Color color1;
   final Color color2;
+
   Future<void> updateViewsAndUserList(
       String collection, productId, String userId) async {
     // Récupération du document du produit

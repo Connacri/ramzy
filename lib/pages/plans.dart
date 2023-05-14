@@ -142,6 +142,7 @@ class _plansState extends State<plans> {
   final List<int> price = [1000, 2000, 4000, 5000];
 
   ScrollController _scrollController = new ScrollController();
+
   @override
   void initState() {
     super.initState();

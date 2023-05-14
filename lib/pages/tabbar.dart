@@ -21,7 +21,9 @@ class _CustomTabState extends State<CustomTab> {
         }
         //Map<String, dynamic> data = doc.data()! as Map<String, dynamic>;
 
-        final tabs = snapshot.data!.docs.map((doc) => doc.data()! as Map<String, dynamic>).toList();
+        final tabs = snapshot.data!.docs
+            .map((doc) => doc.data()! as Map<String, dynamic>)
+            .toList();
         return DefaultTabController(
           length: tabs.length,
           child: Scaffold(

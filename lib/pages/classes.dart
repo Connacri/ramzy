@@ -221,6 +221,7 @@ class Invoice {
     required this.itemCodeBar,
     required this.total,
   });
+
   Map<String, dynamic> toMap() {
     return {
       'id': id,
@@ -296,6 +297,7 @@ class Post {
     required this.views,
     required this.viewed_by,
   });
+
   Post.fromJson(Map<String, Object?> json)
       : this(
           userID: json['userID']! as String,
@@ -317,6 +319,7 @@ class Post {
           views: json['views'] as int,
           viewed_by: json['viewed_by']! as List,
         );
+
   Map<String, Object?> toJson() => {
         'userID': userID,
         'likes': likes,
@@ -357,6 +360,7 @@ class UserClass {
   final int userItemsNbr;
   final int views;
   final List viewed_by;
+
   UserClass({
     required this.id,
     required this.phone,
@@ -376,6 +380,7 @@ class UserClass {
     required this.views,
     required this.viewed_by,
   });
+
   UserClass.fromJson(Map<String, Object?> json)
       : this(
           id: json['id']! as String,

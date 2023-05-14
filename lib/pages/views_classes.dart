@@ -650,7 +650,8 @@ class Top_Hotelstream extends StatelessWidget {
     Key? key,
     required Stream<QuerySnapshot<Object?>>
         streamTopHotelFuture, //****************
-  })  : _streamTopHotelFuture = streamTopHotelFuture, //**************
+  })  : _streamTopHotelFuture = streamTopHotelFuture,
+        //**************
         super(key: key);
 
   final Stream<QuerySnapshot<Object?>> _streamTopHotelFuture; //***************
@@ -1193,6 +1194,7 @@ class Cardless extends StatelessWidget {
 
   final Map? _data;
   final String dataid;
+
   //final Function like;
   //final Function Dislike;
 
@@ -1311,7 +1313,8 @@ class Cardless extends StatelessWidget {
                         ),
                       ),
                     ),
-                  ), // price
+                  ),
+                  // price
                   Align(
                     alignment: Alignment.bottomRight,
                     child: Text(
@@ -1458,7 +1461,8 @@ class Cardless extends StatelessWidget {
               '${' ' + data['category'].toUpperCase()} ',
               overflow: TextOverflow.ellipsis,
               style: TextStyle(
-                backgroundColor: customColor, //Colors.blue,
+                backgroundColor: customColor,
+                //Colors.blue,
                 color: customColor2,
                 fontWeight: FontWeight.normal,
                 fontSize: 12,

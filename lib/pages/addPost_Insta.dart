@@ -32,6 +32,7 @@ class stepper2_widget extends StatefulWidget {
 class _stepper2_widgetState extends State<stepper2_widget> {
   bool uploading = false;
   int currentStep = 0;
+
   // final List<XFile> _imagesList = [];
   final List<File> _imagesList = [];
   final multiPicker = ImagePicker();
@@ -42,6 +43,7 @@ class _stepper2_widgetState extends State<stepper2_widget> {
   final TextEditingController _likesController = TextEditingController();
   final TextEditingController _telContactController = TextEditingController();
   final TextEditingController _generaleController = TextEditingController();
+
   //final user = FirebaseAuth.instance.currentUser;
   String _typeSelected = '';
   String _locationventeSelected = '';
@@ -70,6 +72,7 @@ class _stepper2_widgetState extends State<stepper2_widget> {
 
   final GlobalKey<FormState> _formStepperKey = GlobalKey<FormState>();
   ValueNotifier<GeoPoint?> notifier = ValueNotifier(null);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

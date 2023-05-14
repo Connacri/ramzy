@@ -15,6 +15,7 @@ class Collection1Data {
   final List<DocumentSnapshot> documents;
 
   Collection1Data(this.documents);
+
   Query<Object?> fromListOfDocumentSnapshots(List<DocumentSnapshot> documents) {
     return FirebaseFirestore.instance.collection('Products').where(
         FieldPath.documentId,
@@ -26,6 +27,7 @@ class Collection3Data {
   final List<DocumentSnapshot> documents;
 
   Collection3Data(this.documents);
+
   Query<Object?> fromListOfDocumentSnapshots(List<DocumentSnapshot> documents) {
     return FirebaseFirestore.instance.collection('Caroussel').where(
         FieldPath.documentId,
@@ -35,6 +37,7 @@ class Collection3Data {
 
 class Collection2Data {
   final List<DocumentSnapshot> documents;
+
   Collection2Data(this.documents);
 
   Future<UserClass?> getUserById(String userID) async {
@@ -64,6 +67,7 @@ class CollectionAlertData {
   final List<DocumentSnapshot> documents;
 
   CollectionAlertData(this.documents);
+
   Query<Object?> fromListOfDocumentSnapshots(List<DocumentSnapshot> documents) {
     return FirebaseFirestore.instance.collection('Alert').where(
         FieldPath.documentId,
@@ -75,6 +79,7 @@ class CollectionAlertArabcData {
   final List<DocumentSnapshot> documents;
 
   CollectionAlertArabcData(this.documents);
+
   Query<Object?> fromListOfDocumentSnapshots(List<DocumentSnapshot> documents) {
     return FirebaseFirestore.instance.collection('AlertArabic').where(
         FieldPath.documentId,
@@ -86,6 +91,7 @@ class CollectionPubArea {
   final List<DocumentSnapshot> documents;
 
   CollectionPubArea(this.documents);
+
   Query<Object?> fromListOfDocumentSnapshots(List<DocumentSnapshot> documents) {
     return FirebaseFirestore.instance.collection('PubArea').where(
         FieldPath.documentId,
@@ -96,6 +102,7 @@ class CollectionPubArea {
 class MyApp extends StatelessWidget {
   MyApp({Key? key, required this.userDoc}) : super(key: key);
   var userDoc;
+
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
@@ -173,6 +180,7 @@ class _bottomNavigationState extends State<bottomNavigation> {
   }
 
   int currentPageIndex = 0;
+
   @override
   Widget build(BuildContext context) {
     final uusers = Provider.of<Collection2Data>(context);

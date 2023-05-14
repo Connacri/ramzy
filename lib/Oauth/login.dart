@@ -104,131 +104,189 @@ class _LoginWidgetState extends State<LoginWidget> {
                               textAlign: TextAlign.center,
                               style: const TextStyle(
                                   color: Colors.black45,
-                                  fontSize: 20,
+                                  fontSize: 18,
                                   fontWeight: FontWeight.w500,
                                   fontFamily: 'Oswald'),
                             ),
-                            const SizedBox(height: 10),
-                            TextFormField(
-                              showCursor: true,
-                              textAlign: TextAlign.center,
-                              style: const TextStyle(
-                                fontSize: 25,
-                              ),
-                              keyboardType: TextInputType.emailAddress,
-                              controller: emailController,
-                              textInputAction: TextInputAction.next,
-                              decoration: InputDecoration(
-                                fillColor: Colors.blue.shade50,
-                                hintText: 'Email',
-                                border: InputBorder.none,
-                                filled: true,
-                                contentPadding: EdgeInsets.all(15),
-                                hintStyle: TextStyle(color: Colors.black12),
-                              ),
-                              autovalidateMode:
-                                  AutovalidateMode.onUserInteraction,
-                              validator: (email) => email != null &&
-                                      !EmailValidator.validate(email)
-                                  ? 'Entrer a Valide E-Mail'
-                                  : null,
-                            ),
-                            const SizedBox(height: 12), // ti
-                            TextFormField(
-                              textAlign: TextAlign.center,
-                              style: const TextStyle(
-                                fontSize: 25,
-                              ),
-                              controller: passwordController,
-                              textInputAction: TextInputAction.next,
-                              obscureText: _obscureText,
-                              decoration: InputDecoration(
-                                fillColor: Colors.blue.shade50,
-                                hintText: 'Mot De Passe',
-                                suffixIcon: IconButton(
-                                  icon: Icon(
-                                    _obscureText
-                                        ? Icons.visibility_off
-                                        : Icons.visibility,
-                                  ),
-                                  onPressed: () {
-                                    setState(() {
-                                      _obscureText = !_obscureText;
-                                    });
-                                  },
+                            Card(
+                              child: Padding(
+                                padding: const EdgeInsets.all(15.0),
+                                child: Column(
+                                  children: [
+                                    Text(
+                                      'J\'ai Déja un Compte' //S\'Identifier'
+                                          .toUpperCase(),
+                                      textAlign: TextAlign.center,
+                                      style: const TextStyle(
+                                          color: Colors.black45,
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.w500,
+                                          fontFamily: 'Oswald'),
+                                    ),
+                                    const SizedBox(height: 10),
+                                    TextFormField(
+                                      showCursor: true,
+                                      textAlign: TextAlign.center,
+                                      style: const TextStyle(
+                                        fontSize: 25,
+                                      ),
+                                      keyboardType: TextInputType.emailAddress,
+                                      controller: emailController,
+                                      textInputAction: TextInputAction.next,
+                                      decoration: InputDecoration(
+                                        fillColor: Colors.blue.shade50,
+                                        hintText: 'Email',
+                                        border: InputBorder.none,
+                                        filled: true,
+                                        contentPadding: EdgeInsets.symmetric(
+                                            horizontal: 15, vertical: 5),
+                                        hintStyle:
+                                            TextStyle(color: Colors.black12),
+                                      ),
+                                      autovalidateMode:
+                                          AutovalidateMode.onUserInteraction,
+                                      validator: (email) => email != null &&
+                                              !EmailValidator.validate(email)
+                                          ? 'Entrer a Valide E-Mail'
+                                          : null,
+                                    ),
+                                    const SizedBox(height: 12), // ti
+                                    TextFormField(
+                                      textAlign: TextAlign.center,
+                                      style: const TextStyle(
+                                        fontSize: 25,
+                                      ),
+                                      controller: passwordController,
+                                      textInputAction: TextInputAction.next,
+                                      obscureText: _obscureText,
+                                      decoration: InputDecoration(
+                                        fillColor: Colors.blue.shade50,
+                                        hintText: 'Mot De Passe',
+                                        suffixIcon: IconButton(
+                                          icon: Icon(
+                                            _obscureText
+                                                ? Icons.visibility_off
+                                                : Icons.visibility,
+                                          ),
+                                          onPressed: () {
+                                            setState(() {
+                                              _obscureText = !_obscureText;
+                                            });
+                                          },
+                                        ),
+                                        border: InputBorder.none,
+                                        filled: true,
+                                        contentPadding: EdgeInsets.symmetric(
+                                            horizontal: 15, vertical: 5),
+                                        hintStyle:
+                                            TextStyle(color: Colors.black12),
+                                      ),
+                                      autovalidateMode:
+                                          AutovalidateMode.onUserInteraction,
+                                      validator: (value) =>
+                                          value != null && value.length < 6
+                                              ? 'Entrer min 6 characteres.'
+                                              : null,
+                                    ),
+                                    const SizedBox(height: 20),
+                                    ElevatedButton.icon(
+                                      style: ElevatedButton.styleFrom(
+                                          primary: Colors.blue,
+                                          shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(15)),
+                                          elevation: 4.0,
+                                          minimumSize:
+                                              const Size.fromHeight(50)),
+                                      icon: const Icon(Icons.lock_open,
+                                          size: 32, color: Colors.white),
+                                      label: const Text(
+                                        'Entrer',
+                                        style: TextStyle(
+                                            fontSize: 24, color: Colors.white),
+                                      ),
+                                      onPressed: () async {
+                                        signIn().then((value) =>
+                                            Navigator.of(context).popUntil(
+                                                (route) => route.isFirst));
+                                        // .whenComplete(() => Navigator.of(context)
+                                        //             .push(MaterialPageRoute(
+                                        //           builder: (context) =>
+                                        //               verifi_auth(),
+                                        //         ))
+
+                                        //     .whenComplete(
+                                        //   () => Navigator.of(context)
+                                        //       .popUntil((route) => route.isFirst),
+                                        //  );
+                                      },
+                                    ), // Entrer
+                                  ],
                                 ),
-                                border: InputBorder.none,
-                                filled: true,
-                                contentPadding: EdgeInsets.all(15),
-                                hintStyle: TextStyle(color: Colors.black12),
                               ),
-                              autovalidateMode:
-                                  AutovalidateMode.onUserInteraction,
-                              validator: (value) =>
-                                  value != null && value.length < 6
-                                      ? 'Entrer min 6 characteres.'
-                                      : null,
                             ),
                             const SizedBox(height: 20),
-                            ElevatedButton.icon(
-                              style: ElevatedButton.styleFrom(
-                                  primary: Colors.blue,
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(15)),
-                                  elevation: 4.0,
-                                  minimumSize: const Size.fromHeight(50)),
-                              icon: const Icon(Icons.lock_open,
-                                  size: 32, color: Colors.white),
-                              label: const Text(
-                                'Entrer',
-                                style: TextStyle(
-                                    fontSize: 24, color: Colors.white),
-                              ),
-                              onPressed: () async {
-                                signIn().then((value) => Navigator.of(context)
-                                    .popUntil((route) => route.isFirst));
-                                // .whenComplete(() => Navigator.of(context)
-                                //             .push(MaterialPageRoute(
-                                //           builder: (context) =>
-                                //               verifi_auth(),
-                                //         ))
+                            Card(
+                              child: Padding(
+                                padding: const EdgeInsets.all(15.0),
+                                child: Column(
+                                  children: [
+                                    Text(
+                                      'J\'ai Pas Encore un Compte'
+                                          .toUpperCase(),
+                                      textAlign: TextAlign.center,
+                                      style: const TextStyle(
+                                          color: Colors.black45,
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.w500,
+                                          fontFamily: 'Oswald'),
+                                    ),
+                                    Text(
+                                      'Utilisant Ton Compte Google'
+                                          .toUpperCase(),
+                                      textAlign: TextAlign.center,
+                                      style: const TextStyle(
+                                          color: Colors.black45,
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.w500,
+                                          fontFamily: 'Oswald'),
+                                    ),
+                                    const SizedBox(height: 10),
+                                    ElevatedButton.icon(
+                                      style: ElevatedButton.styleFrom(
+                                          primary: Colors.black54,
+                                          shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(15)),
+                                          elevation: 4.0,
+                                          minimumSize:
+                                              const Size.fromHeight(50)),
+                                      icon: Icon(
+                                        FontAwesomeIcons.google,
+                                        color: Colors.red,
+                                      ),
+                                      label: const Text(
+                                        'Google',
+                                        style: TextStyle(
+                                            fontSize: 24, color: Colors.white),
+                                      ),
+                                      onPressed: () async {
+                                        final provider = await Provider.of<
+                                                googleSignInProvider>(context,
+                                            listen: false);
 
-                                //     .whenComplete(
-                                //   () => Navigator.of(context)
-                                //       .popUntil((route) => route.isFirst),
-                                //  );
-                              },
-                            ), // Entrer
-                            const SizedBox(height: 10),
-                            ElevatedButton.icon(
-                              style: ElevatedButton.styleFrom(
-                                  primary: Colors.black54,
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(15)),
-                                  elevation: 4.0,
-                                  minimumSize: const Size.fromHeight(50)),
-                              icon: Icon(
-                                FontAwesomeIcons.google,
-                                color: Colors.red,
+                                        //  if (user != null) {
+                                        provider.googleLogin().whenComplete(
+                                              () => Navigator.of(context)
+                                                  .popUntil(
+                                                      (route) => route.isFirst),
+                                            );
+                                      },
+                                    ), // Google
+                                  ],
+                                ),
                               ),
-                              label: const Text(
-                                'Google',
-                                style: TextStyle(
-                                    fontSize: 24, color: Colors.white),
-                              ),
-                              onPressed: () async {
-                                final provider =
-                                    await Provider.of<googleSignInProvider>(
-                                        context,
-                                        listen: false);
-
-                                //  if (user != null) {
-                                provider.googleLogin().whenComplete(
-                                      () => Navigator.of(context)
-                                          .popUntil((route) => route.isFirst),
-                                    );
-                              },
-                            ), // Google
+                            ),
                             const SizedBox(
                               height: 10,
                             ),
@@ -248,7 +306,7 @@ class _LoginWidgetState extends State<LoginWidget> {
                                           const reset_password())),
                             ), //Forgot Password
                             const SizedBox(
-                              height: 16,
+                              height: 10,
                             ),
                             RichText(
                                 text: TextSpan(
@@ -270,7 +328,7 @@ class _LoginWidgetState extends State<LoginWidget> {
                                           fontFamily: 'Oswald',
                                           color: Colors.blue,
                                           fontWeight: FontWeight.bold))
-                                ])), // J'ai pas Encore de Compte? / S'Enregistrer
+                                ])),
                           ],
                         ),
                       ),

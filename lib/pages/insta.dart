@@ -1016,6 +1016,7 @@ class _like_instagramState extends State<like_instagram> {
   final user = FirebaseAuth.instance.currentUser;
   int _current = 0;
   final CarouselController _controller = CarouselController();
+
   bool isArabic(String text) {
     return RegExp(r'[\u0600-\u06FF]').hasMatch(text);
   }

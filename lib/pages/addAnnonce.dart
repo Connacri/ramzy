@@ -26,6 +26,7 @@ class stepper_widget extends StatefulWidget {
       : super(key: key);
   String ccollection;
   final userDoc;
+
   @override
   State<stepper_widget> createState() => _stepper_widgetState();
 }
@@ -767,53 +768,53 @@ class _stepper_widgetState extends State<stepper_widget> {
                 ],
               ),
 
-              // DropdownButton<String>(
-              //   // Step 3.
-              //   value: dropdownValue,
-              //   // Step 4.
-              //   items: <String>['Dog', 'Cat', 'Tiger', 'Lion']
-              //       .map<DropdownMenuItem<String>>((String value) {
-              //     return DropdownMenuItem<String>(
-              //       value: value,
-              //       child: Text(
-              //         value,
-              //         style: TextStyle(fontSize: 30),
-              //       ),
-              //     );
-              //   }).toList(),
-              //   // Step 5.
-              //   onChanged: (String? newValue) {
-              //     setState(() {
-              //       dropdownValue = newValue!;
-              //     });
-              //   },
-              // ),
-              // Text(dropdownValue),
-              // Container(
-              //   height: 200,
-              //   child: ListView.builder(
-              //     // shrinkWrap: true,
-              //     // physics: NeverScrollableScrollPhysics(),
-              //     scrollDirection: Axis.vertical,
-              //     padding: EdgeInsets.all(8.0),
-              //     itemCount: _buttonOptions.length,
-              //     itemBuilder: (BuildContext context, int index) {
-              //       final timeValue = _buttonOptions[index];
-              //       return RadioListTile<int>(
-              //         groupValue: _currentTimeValue,
-              //         title: Text(timeValue._value.toString()),
-              //         value: timeValue._key,
-              //         dense: true,
-              //         onChanged: (val) {
-              //           setState(() {
-              //             debugPrint('VAL = $val');
-              //             _currentTimeValue = val!;
-              //           });
-              //         },
-              //       );
-              //     },
-              //   ),
-              // ),
+              DropdownButton<String>(
+                // Step 3.
+                value: dropdownValue,
+                // Step 4.
+                items: <String>['nuité', 'mois', '06 mois', 'an']
+                    .map<DropdownMenuItem<String>>((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(
+                      value,
+                      style: TextStyle(fontSize: 30),
+                    ),
+                  );
+                }).toList(),
+                // Step 5.
+                onChanged: (String? newValue) {
+                  setState(() {
+                    dropdownValue = newValue!;
+                  });
+                },
+              ),
+              Text(dropdownValue),
+              Container(
+                height: 200,
+                child: ListView.builder(
+                  // shrinkWrap: true,
+                  // physics: NeverScrollableScrollPhysics(),
+                  scrollDirection: Axis.vertical,
+                  padding: EdgeInsets.all(8.0),
+                  itemCount: _buttonOptions.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    final timeValue = _buttonOptions[index];
+                    return RadioListTile<int>(
+                      groupValue: _currentTimeValue,
+                      title: Text(timeValue._value.toString()),
+                      value: timeValue._key,
+                      dense: true,
+                      onChanged: (val) {
+                        setState(() {
+                          debugPrint('VAL = $val');
+                          _currentTimeValue = val!;
+                        });
+                      },
+                    );
+                  },
+                ),
+              ),
               SizedBox(height: 20),
               Padding(
                 padding: const EdgeInsets.fromLTRB(0, 15, 0, 10),
@@ -1282,5 +1283,6 @@ class LocationResult {
 class TimeValue {
   final int _key;
   final String _value;
+
   TimeValue(this._key, this._value);
 }

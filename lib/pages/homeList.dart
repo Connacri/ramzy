@@ -5,10 +5,10 @@ import 'package:geolocator/geolocator.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:infinite_marquee/infinite_marquee.dart';
 import 'package:marquee/marquee.dart';
-import 'package:ramzy/Oauth/getFCM.dart';
-import 'package:ramzy/pages/NearbyPlacesPage.dart';
-import 'package:ramzy/pages/SearchPage.dart';
-import 'package:ramzy/pages/booking2.dart';
+import '../Oauth/getFCM.dart';
+import '../pages/NearbyPlacesPage.dart';
+import '../pages/SearchPage.dart';
+import '../pages/booking2.dart';
 
 import '../pages/booking.dart';
 import '../pages/plans.dart';
@@ -115,10 +115,10 @@ class homeList extends StatelessWidget {
         // .where((element) => element['levelItem'] == 'carou')
         .toList();
     var itm = iitem.documents
-        .where((element) => element['levelItem'] == 'gold')
+        .where((element) => element['levelItem'] == 'black')
         .toList();
     var itmm = iitem.documents
-        .where((element) => element['levelItem'] == 'silver')
+        .where((element) => element['levelItem'] == 'gold')
         .toList();
     var itmPubArea = PubArea.documents.toList();
 
@@ -284,7 +284,8 @@ class homeList extends StatelessWidget {
                         },
                         options: CarouselOptions(
                           aspectRatio: 16 / 9,
-                          viewportFraction: 1, //0.8,
+                          viewportFraction: 1,
+                          //0.8,
                           initialPage: 0,
                           enableInfiniteScroll: true,
                           reverse: false,
@@ -292,10 +293,11 @@ class homeList extends StatelessWidget {
                           autoPlayInterval: Duration(seconds: 5),
                           autoPlayAnimationDuration:
                               Duration(milliseconds: 800),
-                          autoPlayCurve:
-                              Curves.easeInToLinear, //.fastOutSlowIn,
+                          autoPlayCurve: Curves.easeInToLinear,
+                          //.fastOutSlowIn,
                           enlargeCenterPage: true,
-                          enlargeFactor: 0, // 0.3,
+                          enlargeFactor: 0,
+                          // 0.3,
                           //onPageChanged: callbackFunction,
                           scrollDirection: Axis.horizontal,
                         ),
@@ -560,8 +562,8 @@ class homeList extends StatelessWidget {
                   shrinkWrap: true,
                   physics: BouncingScrollPhysics(),
                   scrollDirection: Axis.horizontal,
-                  itemCount: itm
-                      .length, //1, //(iitem.documents.length / 3).truncate(),
+                  itemCount: itm.length,
+                  //1, //(iitem.documents.length / 3).truncate(),
                   itemBuilder: (BuildContext context, int index) {
                     var data = itm[index].data() as Map;
                     return GestureDetector(
@@ -873,7 +875,7 @@ class homeList extends StatelessWidget {
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   children: [
                                     Text(
-                                      'Affaire',
+                                      'Af',
                                       textAlign: TextAlign.start,
                                       style: TextStyle(
                                           shadows: [
@@ -891,7 +893,7 @@ class homeList extends StatelessWidget {
                                           color: Colors.white),
                                     ),
                                     Text(
-                                      'Jahde',
+                                      'faire',
                                       textAlign: TextAlign.center,
                                       style: TextStyle(
                                           shadows: [
@@ -1184,7 +1186,8 @@ class homeList extends StatelessWidget {
             'BD Oran En Construcion',
             style: TextStyle(fontSize: 40),
           )),
-        ), // EmptyDisplay(),
+        ),
+        // EmptyDisplay(),
         separator: const EmptySeparator(),
         initialLoader: const InitialLoader(),
         bottomLoader: const BottomLoader(),
@@ -1300,14 +1303,14 @@ class homeList extends StatelessWidget {
     );
   }
 
-  // void getFcm() async {
-  //   String? fcmKey = await getFcmToken();
-  //   print('fcmKey : $fcmKey');
-  //   // sendNotification(
-  //   //     'daYiNgoeTqGL3tiZJXI4R-:APA91bFidQzX0ml2PmwWJZC_bWaauXQggw1TXQ-7V_j9EfHh0fBktjeY-p264z_hu1ReOXbTHBEjTgG-IhxP1elPtqrL8_IkYShY2zsYx19IQzWa1NC7h-uy9UQa-rVoo_HFX8Gv9OwX',
-  //   //     'Test Titre',
-  //   //     'Test body');
-  // }
+// void getFcm() async {
+//   String? fcmKey = await getFcmToken();
+//   print('fcmKey : $fcmKey');
+//   // sendNotification(
+//   //     'daYiNgoeTqGL3tiZJXI4R-:APA91bFidQzX0ml2PmwWJZC_bWaauXQggw1TXQ-7V_j9EfHh0fBktjeY-p264z_hu1ReOXbTHBEjTgG-IhxP1elPtqrL8_IkYShY2zsYx19IQzWa1NC7h-uy9UQa-rVoo_HFX8Gv9OwX',
+//   //     'Test Titre',
+//   //     'Test body');
+// }
 }
 
 class CardFirestore extends StatelessWidget {
@@ -1323,6 +1326,7 @@ class CardFirestore extends StatelessWidget {
   bool isLiked;
   final user;
   final dataid;
+
   bool isArabic(String text) {
     return RegExp(r'[\u0600-\u06FF]').hasMatch(text);
   }

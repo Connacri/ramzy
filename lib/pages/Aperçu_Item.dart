@@ -44,6 +44,7 @@ class page_detail extends StatefulWidget {
   String phoneController;
   String descriptionController;
   ValueNotifier<GeoPoint?> geoLocation;
+
   @override
   State<page_detail> createState() => _page_detailState();
 }

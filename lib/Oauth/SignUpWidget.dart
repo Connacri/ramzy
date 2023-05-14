@@ -81,116 +81,132 @@ class _SignUpWidgetState extends State<SignUpWidget> {
                             height: 200,
                             width: 200,
                           ),
-                          Text(
-                            'S\'enregistrer'.toUpperCase(),
-                            textAlign: TextAlign.center,
-                            style: const TextStyle(
-                                color: Colors.black54,
-                                fontSize: 20,
-                                fontWeight: FontWeight.w500,
-                                fontFamily: 'Oswald'),
-                          ),
-                          const SizedBox(height: 12),
-                          TextFormField(
-                            textAlign: TextAlign.center,
-                            style: const TextStyle(
-                              fontSize: 25,
+                          Card(
+                            child: Padding(
+                              padding: const EdgeInsets.all(15.0),
+                              child: Column(
+                                children: [
+                                  Text(
+                                    'S\'enregistrer'.toUpperCase(),
+                                    textAlign: TextAlign.center,
+                                    style: const TextStyle(
+                                      color: Colors.black54,
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 10),
+                                  TextFormField(
+                                    textAlign: TextAlign.center,
+                                    style: const TextStyle(
+                                      fontSize: 25,
+                                    ),
+                                    keyboardType: TextInputType
+                                        .emailAddress, //.emailAddress,
+                                    controller: emailController,
+                                    textInputAction: TextInputAction.next,
+                                    decoration: InputDecoration(
+                                      fillColor: Colors.blue.shade50,
+                                      hintText: 'Email',
+                                      border: InputBorder.none,
+                                      filled: true,
+                                      contentPadding: EdgeInsets.symmetric(
+                                          horizontal: 15, vertical: 5),
+                                      hintStyle:
+                                          TextStyle(color: Colors.black12),
+                                    ),
+                                    autovalidateMode:
+                                        AutovalidateMode.onUserInteraction,
+                                    // validator: (email) =>
+                                    //     email != null && !EmailValidator.validate(email)
+                                    //         ? 'Entrer a Valide E-Mail'
+                                    //         : null,
+                                  ),
+                                  const SizedBox(height: 10),
+                                  TextFormField(
+                                    textAlign: TextAlign.center,
+                                    style: const TextStyle(
+                                      fontSize: 25,
+                                    ),
+                                    controller: passwordController,
+                                    obscureText: true,
+                                    textInputAction: TextInputAction.next,
+                                    decoration: InputDecoration(
+                                      fillColor: Colors.blue.shade50,
+                                      hintText: 'Mot De Passe',
+                                      border: InputBorder.none,
+                                      filled: true,
+                                      contentPadding: EdgeInsets.symmetric(
+                                          horizontal: 15, vertical: 5),
+                                      hintStyle:
+                                          TextStyle(color: Colors.black12),
+                                    ),
+                                    autovalidateMode:
+                                        AutovalidateMode.onUserInteraction,
+                                    validator: (value) =>
+                                        value != null && value.length < 6
+                                            ? 'Entrer min 6 characteres.'
+                                            : null,
+                                    // onChanged : _password = value!,
+                                    //   onEditingComplete :
+                                  ),
+                                  const SizedBox(
+                                    height: 10,
+                                  ),
+                                  TextFormField(
+                                    textAlign: TextAlign.center,
+                                    style: const TextStyle(
+                                      fontSize: 25,
+                                    ),
+                                    controller: confirmpasswordController,
+                                    obscureText: true,
+                                    textInputAction: TextInputAction.next,
+                                    decoration: InputDecoration(
+                                      fillColor: Colors.blue.shade50,
+                                      hintText: 'Confirmé Mot De Passe',
+                                      border: InputBorder.none,
+                                      filled: true,
+                                      contentPadding: EdgeInsets.symmetric(
+                                          horizontal: 15, vertical: 5),
+                                      hintStyle:
+                                          TextStyle(color: Colors.black12),
+                                    ),
+                                    autovalidateMode:
+                                        AutovalidateMode.onUserInteraction,
+                                    validator: (value) => value !=
+                                            passwordController
+                                                .text //(value) => value != null && value.length < 6
+                                        ? 'Mot de Passe de Confimation n\'est Pas le Même.'
+                                        : null,
+                                  ),
+                                  const SizedBox(height: 10),
+                                  ElevatedButton.icon(
+                                    style: ElevatedButton.styleFrom(
+                                        primary: Colors.black54,
+                                        shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(15)),
+                                        elevation: 4.0,
+                                        minimumSize: const Size.fromHeight(50)),
+                                    icon: const Icon(
+                                      Icons.lock_open,
+                                      size: 32,
+                                      color: Colors.white,
+                                    ),
+                                    label: const Text(
+                                      'Enregistrer',
+                                      style: TextStyle(
+                                          fontSize: 24, color: Colors.white),
+                                    ),
+                                    onPressed: () => signUp().whenComplete(
+                                        () => Navigator.of(context).pop()),
+                                  ),
+                                ],
+                              ),
                             ),
-                            keyboardType:
-                                TextInputType.emailAddress, //.emailAddress,
-                            controller: emailController,
-                            textInputAction: TextInputAction.next,
-                            decoration: InputDecoration(
-                              fillColor: Colors.blue.shade50,
-                              hintText: 'Email',
-                              border: InputBorder.none,
-                              filled: true,
-                              contentPadding: EdgeInsets.all(15),
-                              hintStyle: TextStyle(color: Colors.black12),
-                            ),
-                            autovalidateMode:
-                                AutovalidateMode.onUserInteraction,
-                            // validator: (email) =>
-                            //     email != null && !EmailValidator.validate(email)
-                            //         ? 'Entrer a Valide E-Mail'
-                            //         : null,
-                          ),
-                          const SizedBox(height: 12),
-                          TextFormField(
-                            textAlign: TextAlign.center,
-                            style: const TextStyle(
-                              fontSize: 25,
-                            ),
-                            controller: passwordController,
-                            obscureText: true,
-                            textInputAction: TextInputAction.next,
-                            decoration: InputDecoration(
-                              fillColor: Colors.blue.shade50,
-                              hintText: 'Mot De Passe',
-                              border: InputBorder.none,
-                              filled: true,
-                              contentPadding: EdgeInsets.all(15),
-                              hintStyle: TextStyle(color: Colors.black12),
-                            ),
-                            autovalidateMode:
-                                AutovalidateMode.onUserInteraction,
-                            validator: (value) =>
-                                value != null && value.length < 6
-                                    ? 'Entrer min 6 characteres.'
-                                    : null,
-                            // onChanged : _password = value!,
-                            //   onEditingComplete :
                           ),
                           const SizedBox(
-                            height: 12,
-                          ),
-                          TextFormField(
-                            textAlign: TextAlign.center,
-                            style: const TextStyle(
-                              fontSize: 25,
-                            ),
-                            controller: confirmpasswordController,
-                            obscureText: true,
-                            textInputAction: TextInputAction.next,
-                            decoration: InputDecoration(
-                              fillColor: Colors.blue.shade50,
-                              hintText: 'Confirmé Mot De Passe',
-                              border: InputBorder.none,
-                              filled: true,
-                              contentPadding: EdgeInsets.all(15),
-                              hintStyle: TextStyle(color: Colors.black12),
-                            ),
-                            autovalidateMode:
-                                AutovalidateMode.onUserInteraction,
-                            validator: (value) => value !=
-                                    passwordController
-                                        .text //(value) => value != null && value.length < 6
-                                ? 'Mot de Passe de Confimation n\'est Pas le Même.'
-                                : null,
-                          ),
-                          const SizedBox(height: 12),
-                          ElevatedButton.icon(
-                            style: ElevatedButton.styleFrom(
-                                primary: Colors.black54,
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(15)),
-                                elevation: 4.0,
-                                minimumSize: const Size.fromHeight(50)),
-                            icon: const Icon(
-                              Icons.lock_open,
-                              size: 32,
-                              color: Colors.white,
-                            ),
-                            label: const Text(
-                              'Enregistrer',
-                              style:
-                                  TextStyle(fontSize: 24, color: Colors.white),
-                            ),
-                            onPressed: () => signUp().whenComplete(
-                                () => Navigator.of(context).pop()),
-                          ),
-                          const SizedBox(
-                            height: 12,
+                            height: 10,
                           ),
                           RichText(
                               text: TextSpan(

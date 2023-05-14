@@ -15,6 +15,7 @@ class _HotelManagementPageState extends State<HotelManagementPage> {
       FirebaseFirestore.instance.collection('Products');
 
   CollectionReference get hotelCollection => _hotelCollection;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -442,6 +443,7 @@ class ReservationRow extends StatelessWidget {
   final DocumentSnapshot reservation;
 
   ReservationRow({required this.reservation});
+
   @override
   Widget build(BuildContext context) {
     final chambre = reservation['likes'];

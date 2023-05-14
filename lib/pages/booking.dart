@@ -120,10 +120,12 @@ class GanttChart extends StatelessWidget {
 
   /*************************************************************************************************/
   final itemKey = GlobalKey();
+
   Future scrollToItem() async {
     final context = itemKey.currentContext!;
     await Scrollable.ensureVisible(context);
   }
+
   /*************************************************************************************************/
 
   int calculateDistanceToLeftBorder(

@@ -65,7 +65,8 @@ class MyApp extends StatelessWidget {
           theme: ThemeData(
             useMaterial3: true,
             fontFamily: "Oswald",
-            primarySwatch: Colors.blue,
+            colorScheme: ColorScheme.fromSwatch(
+                primarySwatch: Colors.lightBlue, backgroundColor: Colors.white),
             appBarTheme: AppBarTheme(
               systemOverlayStyle: SystemUiOverlayStyle(
                 statusBarColor: Colors.transparent,

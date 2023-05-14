@@ -35,6 +35,7 @@ class _NearbyPlacesPageState extends State<NearbyPlacesPage> {
     _getCurrentLocation();
     _getCarouselItems();
   }
+
 //////////////////////////////////////////////////////////////
 
   /// Determine the current position of the device.
@@ -299,16 +300,19 @@ class _NearbyPlacesPageState extends State<NearbyPlacesPage> {
                       },
                       options: CarouselOptions(
                         aspectRatio: 16 / 9,
-                        viewportFraction: 1, //0.8,
+                        viewportFraction: 1,
+                        //0.8,
                         initialPage: 0,
                         enableInfiniteScroll: true,
                         reverse: false,
                         autoPlay: true,
                         autoPlayInterval: Duration(seconds: 5),
                         autoPlayAnimationDuration: Duration(milliseconds: 800),
-                        autoPlayCurve: Curves.easeInToLinear, //.fastOutSlowIn,
+                        autoPlayCurve: Curves.easeInToLinear,
+                        //.fastOutSlowIn,
                         enlargeCenterPage: true,
-                        enlargeFactor: 0, // 0.3,
+                        enlargeFactor: 0,
+                        // 0.3,
                         //onPageChanged: callbackFunction,
                         scrollDirection: Axis.horizontal,
                       ),
