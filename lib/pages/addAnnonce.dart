@@ -96,7 +96,7 @@ class _stepper_widgetState extends State<stepper_widget> {
       label: Text(
         locavente.toUpperCase(), // == false ? 'vente' : 'location',
         style: const TextStyle(
-          fontSize: 18,
+          fontSize: 15,
         ),
       ),
     );
@@ -151,7 +151,7 @@ class _stepper_widgetState extends State<stepper_widget> {
     ),
   ];
 
-  String dropdownValue = 'Dog';
+  String dropdownValue = 'mois';
 
   @override
   Widget _buildType(String catego) {
@@ -222,391 +222,382 @@ class _stepper_widgetState extends State<stepper_widget> {
               ),
             ],
           )),
-      body: Theme(
-        data: Theme.of(context).copyWith(
-          colorScheme: const ColorScheme.light(
-            primary: Colors.blue,
-          ),
-        ),
-        child: Center(
-          child: Stepper(
-            type: StepperType.horizontal,
-            currentStep: currentStep,
-            onStepTapped: (index) {
-              if (_imagesList.isEmpty) {
-                return;
+      body: Center(
+        child: Stepper(
+          type: StepperType.horizontal,
+          currentStep: currentStep,
+          onStepTapped: (index) {
+            if (_imagesList.isEmpty) {
+              return;
+            } else {
+              setState(() => currentStep = index);
+            }
+          },
+          onStepContinue: () {
+            // if (currentStep == 0) {
+            //   setState(() => currentStep++);
+            // }
+            // if (currentStep == 1) {
+            //   //  if (_formStepperKey.currentState!.validate()) {
+            //   setState(() => currentStep++);
+            //   //}
+            // }
+            if (currentStep != 2) {
+              if (currentStep != 1) {
+                setState(() => currentStep++);
               } else {
-                setState(() => currentStep = index);
-              }
-            },
-            onStepContinue: () {
-              // if (currentStep == 0) {
-              //   setState(() => currentStep++);
-              // }
-              // if (currentStep == 1) {
-              //   //  if (_formStepperKey.currentState!.validate()) {
-              //   setState(() => currentStep++);
-              //   //}
-              // }
-              if (currentStep != 2) {
-                if (currentStep != 1) {
+                if (_formStepperKey.currentState!.validate()) {
                   setState(() => currentStep++);
-                } else {
-                  if (_formStepperKey.currentState!.validate()) {
-                    setState(() => currentStep++);
-                  }
                 }
               }
-            },
-            onStepCancel:
-                currentStep == 0 ? null : () => setState(() => currentStep--),
-            controlsBuilder: (BuildContext context, ControlsDetails details) {
-              final isLastStep = currentStep == 2;
-              return Padding(
-                padding: const EdgeInsets.symmetric(vertical: 20),
-                child: Row(
-                  children: [
-                    if (currentStep != 0)
+            }
+          },
+          onStepCancel:
+              currentStep == 0 ? null : () => setState(() => currentStep--),
+          controlsBuilder: (BuildContext context, ControlsDetails details) {
+            final isLastStep = currentStep == 2;
+            return Padding(
+              padding: const EdgeInsets.symmetric(vertical: 20),
+              child: Row(
+                children: [
+                  if (currentStep != 0)
+                    Expanded(
+                        child: ElevatedButton(
+                      onPressed: details.onStepCancel,
+                      child: const Text(
+                        'Precédant',
+                        style: TextStyle(
+                            fontSize: 14,
+                            fontFamily: 'oswald',
+                            fontWeight: FontWeight.bold),
+                      ),
+                    )),
+                  _imagesList.isEmpty
+                      ? Container()
+                      :
+                      // widget.ccollection == 'Products'
+                      //         ?
                       Expanded(
                           child: ElevatedButton(
-                        onPressed: details.onStepCancel,
-                        child: const Text(
-                          'Precédant',
-                          style: TextStyle(
-                              fontSize: 14,
-                              fontFamily: 'oswald',
-                              fontWeight: FontWeight.bold),
-                        ),
-                      )),
-                    _imagesList.isEmpty
-                        ? Container()
-                        :
-                        // widget.ccollection == 'Products'
-                        //         ?
-                        Expanded(
-                            child: ElevatedButton(
-                              onPressed: isLastStep
-                                  ? notifier.value != null
-                                      ? () async {
-                                          await Navigator.push(context,
-                                              MaterialPageRoute(builder: (_) {
-                                            return page_detail(
-                                              geoLocation: notifier,
-                                              imagesList: _imagesList,
-                                              locationventeSelected:
-                                                  _locationventeSelected,
-                                              user: widget.userDoc,
-                                              typeSelected: _typeSelected,
-                                              itemController:
-                                                  _itemController.text,
-                                              priceController:
-                                                  _priceController.text,
-                                              phoneCodeController:
-                                                  _phoneCodeController.text,
-                                              descriptionController:
-                                                  _descriptionController.text,
-                                              phoneController:
-                                                  _telContactController.text,
-                                            );
-                                          }));
-                                        }
-                                      : () => showDialog(
-                                            context: context,
-                                            builder: (_) => AlertDialog(
-                                              scrollable: true,
-                                              title: Center(
-                                                child: Text(
-                                                  'Attention!',
-                                                  textAlign: TextAlign.center,
-                                                ),
+                            onPressed: isLastStep
+                                ? notifier.value != null
+                                    ? () async {
+                                        await Navigator.push(context,
+                                            MaterialPageRoute(builder: (_) {
+                                          return page_detail(
+                                            geoLocation: notifier,
+                                            imagesList: _imagesList,
+                                            locationventeSelected:
+                                                _locationventeSelected,
+                                            user: widget.userDoc,
+                                            typeSelected: _typeSelected,
+                                            itemController:
+                                                _itemController.text,
+                                            priceController:
+                                                _priceController.text,
+                                            phoneCodeController:
+                                                _phoneCodeController.text,
+                                            descriptionController:
+                                                _descriptionController.text,
+                                            phoneController:
+                                                _telContactController.text,
+                                          );
+                                        }));
+                                      }
+                                    : () => showDialog(
+                                          context: context,
+                                          builder: (_) => AlertDialog(
+                                            scrollable: true,
+                                            title: Center(
+                                              child: Text(
+                                                'Attention!',
+                                                textAlign: TextAlign.center,
                                               ),
-                                              content: Center(
-                                                child: Text(
-                                                  'Vous Devez Choisir\nLa Localisation de Votre Annonce\nSur La Carte',
-                                                  textAlign: TextAlign.center,
-                                                ),
-                                              ),
-                                              actionsAlignment:
-                                                  MainAxisAlignment.center,
-                                              actions: [
-                                                IconButton(
-                                                  onPressed: () async {
-                                                    Navigator.of(context).pop();
-                                                    var p = await Navigator.of(
-                                                            context)
-                                                        .push(MaterialPageRoute(
-                                                            builder: (ctx) =>
-                                                                SearchPage()));
-                                                    if (p != null) {
-                                                      notifier.value =
-                                                          p as GeoPoint;
-                                                    }
-                                                  },
-                                                  icon: Icon(FontAwesomeIcons
-                                                      .location),
-                                                ),
-                                                CloseButtonIcon()
-                                              ],
                                             ),
-                                          )
-                                  : details.onStepContinue,
-                              child: Text(
-                                isLastStep ? 'Aperçu' : 'Suivant',
-                                style: const TextStyle(
-                                    fontSize: 14,
-                                    fontFamily: 'oswald',
-                                    fontWeight: FontWeight.bold),
-                              ),
-                            ),
-                          )
-                  ],
-                ),
-              );
-            },
-            steps: [
-              Step(
-                state: currentStep > 0 ? StepState.complete : StepState.indexed,
-                isActive: currentStep >= 0,
-                title: const Text(
-                  'Photo(s)',
-                  style: TextStyle(fontSize: 14),
-                ),
-                content: Column(
-                  children: [
-                    _imagesList.length < 4
-                        ? Column(
-                            children: [
-                              TextButton(
-                                onPressed: () {
-                                  setState(() {});
-                                  //getMultiImagesGallery();
-                                  _getFromCamera();
-                                },
-                                clipBehavior: Clip.none,
-                                child: Text(
-                                  'Ajouter Moins de ${4 - _imagesList.length} Photos',
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(fontSize: 14),
-                                ),
-                              ),
-                              _imagesList.length == 0
-                                  ? Container()
-                                  : Center(
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.center,
-                                        children: [
-                                          IconButton(
-                                            onPressed: () {
-                                              _getFromCamera();
-                                            },
-                                            icon:
-                                                Icon(Icons.camera_alt_rounded),
+                                            content: Center(
+                                              child: Text(
+                                                'Vous Devez Choisir\nLa Localisation de Votre Annonce\nSur La Carte',
+                                                textAlign: TextAlign.center,
+                                              ),
+                                            ),
+                                            actionsAlignment:
+                                                MainAxisAlignment.center,
+                                            actions: [
+                                              IconButton(
+                                                onPressed: () async {
+                                                  Navigator.of(context).pop();
+                                                  var p = await Navigator.of(
+                                                          context)
+                                                      .push(MaterialPageRoute(
+                                                          builder: (ctx) =>
+                                                              SearchPage()));
+                                                  if (p != null) {
+                                                    notifier.value =
+                                                        p as GeoPoint;
+                                                  }
+                                                },
+                                                icon: Icon(
+                                                    FontAwesomeIcons.location),
+                                              ),
+                                              CloseButtonIcon()
+                                            ],
                                           ),
-                                          IconButton(
-                                            onPressed: () {
-                                              getMultiImagesGallery();
-                                            },
-                                            icon: Icon(Icons.image),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                            ],
-                          )
-                        : TextButton(
-                            onPressed: () {
-                              Fluttertoast.showToast(
-                                msg: 'Devenir Premium',
-                                toastLength: Toast.LENGTH_LONG,
-                                gravity: ToastGravity.CENTER,
-                                timeInSecForIosWeb: 1,
-                                backgroundColor: Colors.green,
-                                textColor: Colors.white,
-                              );
-                            },
-                            child: const Text(
-                              'Limite d\'Ajout des Photos',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                  fontFamily: 'oswald',
+                                        )
+                                : details.onStepContinue,
+                            child: Text(
+                              isLastStep ? 'Aperçu' : 'Suivant',
+                              style: const TextStyle(
                                   fontSize: 14,
-                                  color: Colors.deepOrange),
+                                  fontFamily: 'oswald',
+                                  fontWeight: FontWeight.bold),
                             ),
                           ),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    _imagesList.isEmpty
-                        ? Center(
-                            child: Container(
-                            decoration: BoxDecoration(
-                                border: Border.all(
-                              color: Colors.grey.withOpacity(0.5),
-                            )),
-                            height: 300,
-                            width: double.infinity,
-                            child: InkWell(
-                              onTap: () {
-                                getMultiImagesGallery();
+                        )
+                ],
+              ),
+            );
+          },
+          steps: [
+            Step(
+              state: currentStep > 0 ? StepState.complete : StepState.indexed,
+              isActive: currentStep >= 0,
+              title: const Text(
+                'Photo(s)',
+                style: TextStyle(fontSize: 14),
+              ),
+              content: Column(
+                children: [
+                  _imagesList.length < 4
+                      ? Column(
+                          children: [
+                            TextButton(
+                              onPressed: () {
+                                setState(() {});
+                                //getMultiImagesGallery();
+                                _getFromCamera();
                               },
-                              child: Center(
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    IconButton(
-                                      onPressed: () {
-                                        _getFromCamera();
-                                      },
-                                      icon: Icon(Icons.camera_alt_rounded),
-                                      color: Colors.grey.withOpacity(0.5),
-                                    ),
-                                    IconButton(
-                                      onPressed: () {
-                                        getMultiImagesGallery();
-                                      },
-                                      icon: Icon(Icons.image),
-                                      color: Colors.grey.withOpacity(0.5),
-                                    ),
-                                  ],
-                                ),
+                              clipBehavior: Clip.none,
+                              child: Text(
+                                'Ajouter Moins de ${4 - _imagesList.length} Photos',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(fontSize: 14),
                               ),
                             ),
-                          ))
-                        : GridView.builder(
-                            key: UniqueKey(),
-                            shrinkWrap: true,
-                            itemCount:
-                                _imagesList.isEmpty ? 2 : _imagesList.length,
-                            gridDelegate:
-                                const SliverGridDelegateWithFixedCrossAxisCount(
-                                    crossAxisCount: 2),
-                            itemBuilder: (context, index) => Container(
-                                  decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      border: Border.all(
-                                          color: Colors.grey.withOpacity(0.5))),
-                                  child:
-                                      // _imagesList.isEmpty
-                                      //     ? InkWell(
-                                      //         onTap: () {
-                                      //           getMultiImages();
-                                      //         },
-                                      //         child: Icon(
-                                      //           CupertinoIcons.camera,
-                                      //           color: Colors.grey.withOpacity(0.5),
-                                      //         ),
-                                      //       )
-                                      //     :
-                                      Stack(
-                                    fit: StackFit.expand,
-                                    children: [
-                                      Image.file(
-                                        File(_imagesList[index].path),
-                                        fit: BoxFit.cover,
-                                      ),
-                                      Positioned(
-                                          right: -4,
-                                          top: -4,
-                                          child: Container(
-                                            // color: const Colors.,
-                                            child: IconButton(
-                                              icon: const Icon(Icons.delete),
-                                              color: Colors.red,
-                                              onPressed: () {
-                                                _imagesList.removeAt(index);
-                                                setState(() {});
-                                              },
-                                            ),
-                                          ))
-                                    ],
+                            _imagesList.length == 0
+                                ? Container()
+                                : Center(
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: [
+                                        IconButton(
+                                          onPressed: () {
+                                            _getFromCamera();
+                                          },
+                                          icon: Icon(Icons.camera_alt_rounded),
+                                        ),
+                                        IconButton(
+                                          onPressed: () {
+                                            getMultiImagesGallery();
+                                          },
+                                          icon: Icon(Icons.image),
+                                        ),
+                                      ],
+                                    ),
                                   ),
-                                  // )
-                                )),
+                          ],
+                        )
+                      : TextButton(
+                          onPressed: () {
+                            Fluttertoast.showToast(
+                              msg: 'Devenir Premium',
+                              toastLength: Toast.LENGTH_LONG,
+                              gravity: ToastGravity.CENTER,
+                              timeInSecForIosWeb: 1,
+                              backgroundColor: Colors.green,
+                              textColor: Colors.white,
+                            );
+                          },
+                          child: const Text(
+                            'Limite d\'Ajout des Photos',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                                fontFamily: 'oswald',
+                                fontSize: 14,
+                                color: Colors.deepOrange),
+                          ),
+                        ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  _imagesList.isEmpty
+                      ? Center(
+                          child: Container(
+                          decoration: BoxDecoration(
+                              border: Border.all(
+                            color: Colors.grey.withOpacity(0.5),
+                          )),
+                          height: 300,
+                          width: double.infinity,
+                          child: InkWell(
+                            onTap: () {
+                              getMultiImagesGallery();
+                            },
+                            child: Center(
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  IconButton(
+                                    onPressed: () {
+                                      _getFromCamera();
+                                    },
+                                    icon: Icon(Icons.camera_alt_rounded),
+                                    color: Colors.grey.withOpacity(0.5),
+                                  ),
+                                  IconButton(
+                                    onPressed: () {
+                                      getMultiImagesGallery();
+                                    },
+                                    icon: Icon(Icons.image),
+                                    color: Colors.grey.withOpacity(0.5),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ))
+                      : GridView.builder(
+                          key: UniqueKey(),
+                          shrinkWrap: true,
+                          itemCount:
+                              _imagesList.isEmpty ? 2 : _imagesList.length,
+                          gridDelegate:
+                              const SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: 2),
+                          itemBuilder: (context, index) => Container(
+                                decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    border: Border.all(
+                                        color: Colors.grey.withOpacity(0.5))),
+                                child:
+                                    // _imagesList.isEmpty
+                                    //     ? InkWell(
+                                    //         onTap: () {
+                                    //           getMultiImages();
+                                    //         },
+                                    //         child: Icon(
+                                    //           CupertinoIcons.camera,
+                                    //           color: Colors.grey.withOpacity(0.5),
+                                    //         ),
+                                    //       )
+                                    //     :
+                                    Stack(
+                                  fit: StackFit.expand,
+                                  children: [
+                                    Image.file(
+                                      File(_imagesList[index].path),
+                                      fit: BoxFit.cover,
+                                    ),
+                                    Positioned(
+                                        right: -4,
+                                        top: -4,
+                                        child: Container(
+                                          // color: const Colors.,
+                                          child: IconButton(
+                                            icon: const Icon(Icons.delete),
+                                            color: Colors.red,
+                                            onPressed: () {
+                                              _imagesList.removeAt(index);
+                                              setState(() {});
+                                            },
+                                          ),
+                                        ))
+                                  ],
+                                ),
+                                // )
+                              )),
+                ],
+              ),
+            ),
+            Step(
+              state: currentStep > 1 ? StepState.complete : StepState.indexed,
+              isActive: currentStep >= 1,
+              title: const Text(
+                'Details',
+                style: TextStyle(fontSize: 14),
+              ),
+              content: buildStep2(),
+            ),
+            Step(
+              state: currentStep > 2 ? StepState.complete : StepState.indexed,
+              isActive: currentStep >= 2,
+              title: const Text(
+                'Localisation',
+                style: TextStyle(fontSize: 14),
+              ),
+              content: Center(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    notifier.value == null
+                        ? Container()
+                        : Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: ValueListenableBuilder<GeoPoint?>(
+                              valueListenable: notifier,
+                              builder: (ctx, px, child) {
+                                return FutureBuilder<String>(
+                                  future: getAddressFromLatLng(
+                                      px!.latitude, px.longitude),
+                                  builder: (BuildContext context,
+                                      AsyncSnapshot<String> snapshot) {
+                                    if (snapshot.hasData) {
+                                      return Text(snapshot.data!);
+                                    } else if (snapshot.hasError) {
+                                      return Text('Erreur: ${snapshot.error}');
+                                    } else {
+                                      return CircularProgressIndicator();
+                                    }
+                                  },
+                                );
+
+                                //   Center(
+                                //   child: Text(
+                                //     "${px?.latitude.toString()} - ${px?.longitude.toString()}" ??
+                                //         '',
+                                //     textAlign: TextAlign.center,
+                                //   ),
+                                // );
+                              },
+                            ),
+                          ),
+                    Padding(
+                      padding: const EdgeInsets.all(38.0),
+                      child: IconButton(
+                        onPressed: () async {
+                          var p = await Navigator.of(context).push(
+                              MaterialPageRoute(
+                                  builder: (ctx) => SearchPage()));
+                          if (p != null) {
+                            setState(
+                              () => notifier.value = p as GeoPoint,
+                            );
+                          }
+                        },
+                        icon: Icon(FontAwesomeIcons.location),
+                      ),
+                    ),
                   ],
                 ),
               ),
-              Step(
-                state: currentStep > 1 ? StepState.complete : StepState.indexed,
-                isActive: currentStep >= 1,
-                title: const Text(
-                  'Details',
-                  style: TextStyle(fontSize: 14),
-                ),
-                content: buildStep2(),
-              ),
-              Step(
-                state: currentStep > 2 ? StepState.complete : StepState.indexed,
-                isActive: currentStep >= 2,
-                title: const Text(
-                  'Localisation',
-                  style: TextStyle(fontSize: 14),
-                ),
-                content: Center(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      notifier.value == null
-                          ? Container()
-                          : Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: ValueListenableBuilder<GeoPoint?>(
-                                valueListenable: notifier,
-                                builder: (ctx, px, child) {
-                                  return FutureBuilder<String>(
-                                    future: getAddressFromLatLng(
-                                        px!.latitude, px.longitude),
-                                    builder: (BuildContext context,
-                                        AsyncSnapshot<String> snapshot) {
-                                      if (snapshot.hasData) {
-                                        return Text(snapshot.data!);
-                                      } else if (snapshot.hasError) {
-                                        return Text(
-                                            'Erreur: ${snapshot.error}');
-                                      } else {
-                                        return CircularProgressIndicator();
-                                      }
-                                    },
-                                  );
-
-                                  //   Center(
-                                  //   child: Text(
-                                  //     "${px?.latitude.toString()} - ${px?.longitude.toString()}" ??
-                                  //         '',
-                                  //     textAlign: TextAlign.center,
-                                  //   ),
-                                  // );
-                                },
-                              ),
-                            ),
-                      Padding(
-                        padding: const EdgeInsets.all(38.0),
-                        child: IconButton(
-                          onPressed: () async {
-                            var p = await Navigator.of(context).push(
-                                MaterialPageRoute(
-                                    builder: (ctx) => SearchPage()));
-                            if (p != null) {
-                              setState(
-                                () => notifier.value = p as GeoPoint,
-                              );
-                            }
-                          },
-                          icon: Icon(FontAwesomeIcons.location),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              // Disable the next button if p is null
-            ],
-          ),
+            ),
+            // Disable the next button if p is null
+          ],
         ),
       ),
     );
@@ -767,55 +758,32 @@ class _stepper_widgetState extends State<stepper_widget> {
                   )),
                 ],
               ),
-
-              DropdownButton<String>(
-                // Step 3.
-                value: dropdownValue,
-                // Step 4.
-                items: <String>['nuité', 'mois', '06 mois', 'an']
-                    .map<DropdownMenuItem<String>>((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(
-                      value,
-                      style: TextStyle(fontSize: 30),
-                    ),
-                  );
-                }).toList(),
-                // Step 5.
-                onChanged: (String? newValue) {
-                  setState(() {
-                    dropdownValue = newValue!;
-                  });
-                },
-              ),
-              Text(dropdownValue),
-              Container(
-                height: 200,
-                child: ListView.builder(
-                  // shrinkWrap: true,
-                  // physics: NeverScrollableScrollPhysics(),
-                  scrollDirection: Axis.vertical,
-                  padding: EdgeInsets.all(8.0),
-                  itemCount: _buttonOptions.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    final timeValue = _buttonOptions[index];
-                    return RadioListTile<int>(
-                      groupValue: _currentTimeValue,
-                      title: Text(timeValue._value.toString()),
-                      value: timeValue._key,
-                      dense: true,
-                      onChanged: (val) {
-                        setState(() {
-                          debugPrint('VAL = $val');
-                          _currentTimeValue = val!;
-                        });
-                      },
-                    );
-                  },
-                ),
-              ),
-              SizedBox(height: 20),
+              // Container(
+              //   height: 200,
+              //   child: ListView.builder(
+              //     // shrinkWrap: true,
+              //     // physics: NeverScrollableScrollPhysics(),
+              //     scrollDirection: Axis.vertical,
+              //     padding: EdgeInsets.all(8.0),
+              //     itemCount: _buttonOptions.length,
+              //     itemBuilder: (BuildContext context, int index) {
+              //       final timeValue = _buttonOptions[index];
+              //       return RadioListTile<int>(
+              //         groupValue: _currentTimeValue,
+              //         title: Text(timeValue._value.toString()),
+              //         value: timeValue._key,
+              //         dense: true,
+              //         onChanged: (val) {
+              //           setState(() {
+              //             debugPrint('VAL = $val');
+              //             _currentTimeValue = val!;
+              //           });
+              //         },
+              //       );
+              //     },
+              //   ),
+              // ),
+              // SizedBox(height: 20),
               Padding(
                 padding: const EdgeInsets.fromLTRB(0, 15, 0, 10),
                 child: SizedBox(
@@ -842,9 +810,9 @@ class _stepper_widgetState extends State<stepper_widget> {
                 ),
                 keyboardType: TextInputType.text,
                 controller: _itemController,
-                decoration: const InputDecoration(
+                decoration: InputDecoration(
                   hintStyle: TextStyle(color: Colors.black26),
-                  fillColor: Colors.white,
+                  fillColor: Colors.blue.shade50,
                   hintText: 'Titre',
                   border: InputBorder.none,
                   filled: true,
@@ -853,32 +821,89 @@ class _stepper_widgetState extends State<stepper_widget> {
                 validator: (value) => value != null && value.length < 3
                     ? 'Entrer min 3 characteres.'
                     : null,
-              ), // titre du produit
+              ),
               SizedBox(
                 height: 10,
               ),
-              TextFormField(
-                textAlign: TextAlign.center,
-                style: const TextStyle(
-                  fontSize: 25,
-                ),
-                keyboardType: TextInputType.number,
-                controller: _priceController,
-                decoration: const InputDecoration(
-                  hintStyle: TextStyle(color: Colors.black26),
-                  fillColor: Colors.white,
-                  hintText: 'Prix En Dinar Sans Virgule',
-                  border: InputBorder.none,
-                  filled: true,
-                  contentPadding: EdgeInsets.all(15),
-                ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Prix Réel du Jour';
-                  }
-                  return null;
-                },
-              ), // prix
+              Column(
+                children: [
+                  TextFormField(
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 25,
+                    ),
+                    keyboardType: TextInputType.number,
+                    controller: _priceController,
+                    decoration: InputDecoration(
+                      hintStyle: TextStyle(color: Colors.black26),
+                      fillColor: Colors.blue.shade50,
+                      hintText: 'Prix En Dinar Sans Virgule',
+                      border: InputBorder.none,
+                      filled: true,
+                      contentPadding: EdgeInsets.all(15),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Prix Réel du Jour';
+                      }
+                      return null;
+                    },
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  _locationventeSelected == 'vente'
+                      ? Container()
+                      : Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            Text(
+                              'Paiement Par',
+                              style: TextStyle(
+                                  fontSize: 25,
+                                  fontWeight: FontWeight.w500,
+                                  color: Colors.black26),
+                            ),
+                            Container(
+                              width: MediaQuery.of(context).size.width / 3,
+                              child: DropdownButton<String>(
+                                iconSize: 35,
+
+                                underline: Container(),
+                                // Step 3.
+                                value: dropdownValue,
+                                // Step 4.
+                                isDense: false,
+                                items: <String>[
+                                  'nuité',
+                                  'mois',
+                                  '06 mois',
+                                  'an'
+                                ].map<DropdownMenuItem<String>>((String value) {
+                                  return DropdownMenuItem<String>(
+                                    value: value,
+                                    child: Text(
+                                      value.toUpperCase(),
+                                      style: TextStyle(
+                                        fontSize: 25,
+                                        color: Colors.blue,
+                                      ),
+                                    ),
+                                  );
+                                }).toList(),
+                                // Step 5.
+                                onChanged: (String? newValue) {
+                                  setState(() {
+                                    dropdownValue = newValue!;
+                                  });
+                                },
+                              ),
+                            ),
+                          ],
+                        ),
+                  //Text(dropdownValue),
+                ],
+              ),
               SizedBox(
                 height: 10,
               ),
@@ -927,9 +952,9 @@ class _stepper_widgetState extends State<stepper_widget> {
               // ),
               IntlPhoneField(
                 controller: _telContactController,
-                decoration: const InputDecoration(
+                decoration: InputDecoration(
                   hintStyle: TextStyle(color: Colors.black26),
-                  fillColor: Colors.white,
+                  fillColor: Colors.blue.shade50,
                   hintText: '660 00 00 00',
                   border: InputBorder.none,
                   filled: true,
@@ -959,15 +984,14 @@ class _stepper_widgetState extends State<stepper_widget> {
                 onSaved: (PhoneNumber? phone) {
                   if (phone != null) {
                     _telContactController.text = phone.completeNumber;
+                    _phoneCodeController.text = phone.countryCode;
                   }
                   print('/////////////');
                   print(_telContactController.text);
+                  print(_phoneCodeController.text);
                 },
                 flagsButtonMargin: EdgeInsets.zero,
                 flagsButtonPadding: const EdgeInsets.only(left: 15),
-              ), // mobil
-              SizedBox(
-                height: 10,
               ),
               TextFormField(
                 keyboardType: TextInputType.multiline,
@@ -977,9 +1001,9 @@ class _stepper_widgetState extends State<stepper_widget> {
                   fontSize: 25,
                 ),
                 controller: _descriptionController,
-                decoration: const InputDecoration(
+                decoration: InputDecoration(
                   hintStyle: TextStyle(color: Colors.black26),
-                  fillColor: Colors.white,
+                  fillColor: Colors.blue.shade50,
                   hintText: 'Ecrire Une Description',
                   border: InputBorder.none,
                   filled: true,
@@ -994,7 +1018,7 @@ class _stepper_widgetState extends State<stepper_widget> {
                   }
                   return null;
                 },
-              ), // description
+              ),
             ],
           ),
         ),
