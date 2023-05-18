@@ -45,50 +45,6 @@ class homeList extends StatelessWidget {
 
   get query => locationsRef.orderBy('createdAt', descending: true);
 
-  // Future<void> searchNearbyLocations() async {
-  //   // Get the current user's location
-  //   Position currentPosition = await Geolocator.getCurrentPosition();
-  //
-  //   // Define the radius you want to search within (in kilometers)
-  //   final double radiusInKm = 10.0;
-  //
-  //   // Create a geopoint object for the user's current position
-  //   final userLocation = GeoPoint(
-  //     currentPosition.latitude,
-  //     currentPosition.longitude,
-  //   );
-  //
-  //   // Query for locations near the user's current position
-  //   Query<Object?> query = locationsRef
-  //       .where('position',
-  //           isGreaterThan: GeoPoint(
-  //             userLocation.latitude -
-  //                 radiusInKm / 111.0, // latitude is roughly 111 km per degree
-  //             userLocation.longitude -
-  //                 radiusInKm / (111.0 * cos(userLocation.latitude)),
-  //           ))
-  //       .where('position',
-  //           isLessThan: GeoPoint(
-  //             userLocation.latitude + radiusInKm / 111.0,
-  //             userLocation.longitude +
-  //                 radiusInKm / (111.0 * cos(userLocation.latitude)),
-  //           ));
-  //
-  //   // You can specify the type of object you expect to retrieve from the query:
-  //   // Query<DocumentSnapshot<Map<String, dynamic>>>
-  //   Query<Object?> queryTyped = query;
-  //
-  //   // Or you can use Query<Object?> and cast the results to the appropriate type:
-  //   Query<Object?> queryDynamic = query;
-  //   QuerySnapshot<Object?> querySnapshot = await queryDynamic.get();
-  //   List<DocumentSnapshot<Map<String, dynamic>>> documents =
-  //       querySnapshot.docs.cast<DocumentSnapshot<Map<String, dynamic>>>();
-  //
-  //   // Iterate over the documents returned by the query
-  //   for (DocumentSnapshot<Map<String, dynamic>> documentSnapshot in documents) {
-  //     // Do something with the document data
-  //   }
-  // }
   bool isArabic(String text) {
     return RegExp(r'[\u0600-\u06FF]').hasMatch(text);
   }
@@ -876,7 +832,7 @@ class homeList extends StatelessWidget {
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   children: [
                                     Text(
-                                      'Af',
+                                      'A Ne Pas',
                                       textAlign: TextAlign.start,
                                       style: TextStyle(
                                           shadows: [
@@ -894,7 +850,7 @@ class homeList extends StatelessWidget {
                                           color: Colors.white),
                                     ),
                                     Text(
-                                      'faire',
+                                      'Rater',
                                       textAlign: TextAlign.center,
                                       style: TextStyle(
                                           shadows: [

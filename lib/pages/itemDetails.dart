@@ -1,9 +1,11 @@
+import 'dart:async';
 import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:calendar_timeline/calendar_timeline.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_osm_plugin/flutter_osm_plugin.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
@@ -37,6 +39,38 @@ class _SilverdetailItemState extends State<SilverdetailItem> {
       FirebaseFirestore.instance.collection("Products");
   final String userId = FirebaseAuth.instance.currentUser!.uid;
 
+  // Stream<Map<String, dynamic>> getPositionStream() {
+  //   // Exemple d'utilisation d'un StreamController pour émettre les positions
+  //   StreamController<Map<String, dynamic>> controller = StreamController();
+  //
+  //   // Exemple de récupération des nouvelles positions à partir d'une source de données
+  //   // Vous pouvez remplacer cette logique par votre propre méthode de récupération des positions
+  //
+  //   // Simulation d'un flux de positions mises à jour
+  //   Timer.periodic(Duration(seconds: 5), (timer) {
+  //     // Ici, vous pouvez récupérer les nouvelles positions depuis votre source de données (par exemple, Firestore)
+  //     // et émettre les données via le contrôleur du flux
+  //
+  //     // Exemple de nouvelles positions
+  //     double newLatitude = 37.7749;
+  //     double newLongitude = -122.4194;
+  //
+  //     // Création d'une nouvelle map contenant les positions mises à jour
+  //     Map<String, dynamic> updatedData = {
+  //       'position': {
+  //         'latitude': newLatitude,
+  //         'longitude': newLongitude,
+  //       },
+  //     };
+  //
+  //     // Émission des nouvelles positions via le flux
+  //     controller.add(updatedData);
+  //   });
+  //
+  //   // Retourne le flux du contrôleur
+  //   return controller.stream;
+  // }
+
   @override
   Widget build(BuildContext context) {
     timeago.setLocaleMessages('fr', timeago.FrMessages());
@@ -47,6 +81,7 @@ class _SilverdetailItemState extends State<SilverdetailItem> {
         : LatLng(0, 0);
     return Scaffold(
       body: CustomScrollView(
+        shrinkWrap: true,
         slivers: <Widget>[
           SliverAppBar(
             expandedHeight: 220.0,
@@ -60,26 +95,30 @@ class _SilverdetailItemState extends State<SilverdetailItem> {
               title: Row(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.only(left: 15),
-                    child: Icon(
-                      PropertyIconMapper.mapItemTypeToIcon(
-                          widget.data['category']),
-                      color: Colors.white70,
-                      size: 18,
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 5),
-                    child: Text(
-                      widget.data['category'] ?? ' ',
-                      overflow: TextOverflow.fade,
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500),
-                    ),
-                  ),
+                  widget.data['category'] == null
+                      ? Container()
+                      : Padding(
+                          padding: const EdgeInsets.only(left: 15),
+                          child: Icon(
+                            PropertyIconMapper.mapItemTypeToIcon(
+                                widget.data['category']),
+                            color: Colors.white70,
+                            size: 18,
+                          ),
+                        ),
+                  widget.data['category'] == null
+                      ? Container()
+                      : Padding(
+                          padding: const EdgeInsets.only(left: 5),
+                          child: Text(
+                            widget.data['category'] ?? ' ',
+                            overflow: TextOverflow.fade,
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500),
+                          ),
+                        ),
                   Spacer(),
                   Padding(
                     padding:
@@ -127,47 +166,6 @@ class _SilverdetailItemState extends State<SilverdetailItem> {
                       )),
                 ),
                 Spacer(),
-                // Row(
-                //   children: [
-                //     Text(
-                //       widget.data['likes'].toString(),
-                //       style: TextStyle(
-                //           color: widget.isLiked ? Colors.red : Colors.blueGrey),
-                //     ),
-                //     IconButton(
-                //       icon: widget.isLiked
-                //           ? const Icon(
-                //               Icons.favorite,
-                //               color: Colors.red,
-                //             )
-                //           : const Icon(Icons.favorite_border_outlined,
-                //               color: Colors.blueGrey),
-                //       onPressed: widget.isLiked
-                //           ? () async {
-                //               await FirebaseFirestore.instance
-                //                   .collection('Products')
-                //                   .doc(widget.idDoc)
-                //                   .update({
-                //                 'likes': FieldValue.increment(-1),
-                //                 'usersLike': FieldValue.arrayRemove([userId]),
-                //               });
-                //               setState(() => widget.isLiked = !widget.isLiked);
-                //             }
-                //           : () async {
-                //               await FirebaseFirestore.instance
-                //                   .collection('Products')
-                //                   .doc(widget.idDoc)
-                //                   .update({
-                //                 'likes': FieldValue.increment(1),
-                //                 'usersLike': FieldValue.arrayUnion([userId]),
-                //               });
-                //               setState(() {
-                //                 widget.isLiked = !widget.isLiked;
-                //               });
-                //             },
-                //     ),
-                //   ],
-                // ),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 10),
                   child: Row(
@@ -384,21 +382,6 @@ class _SilverdetailItemState extends State<SilverdetailItem> {
                           ),
                         ),
                       ),
-                // widget.data['levelItem'] == null ||
-                //         widget.data['levelItem'] == ''
-                //     ? Container()
-                //     : Padding(
-                //         padding: new EdgeInsets.symmetric(horizontal: 15.0),
-                //         child: Text(
-                //           'Level : ' +
-                //               widget.data['levelItem'].toString().toUpperCase(),
-                //           style: TextStyle(
-                //             color: Colors.red,
-                //             fontSize: 16,
-                //             fontWeight: FontWeight.w500,
-                //           ),
-                //         ),
-                //       ),
                 widget.data['price'] == null
                     ? Container()
                     : Align(
@@ -478,6 +461,51 @@ class _SilverdetailItemState extends State<SilverdetailItem> {
                           ],
                         ),
                 ),
+                // StreamBuilder<Map<String, dynamic>>(
+                //   stream: positionStream,
+                //   builder: (context, snapshot) {
+                //     if (snapshot.hasData) {
+                //       final double latitude =
+                //           snapshot.data!['position'].latitude;
+                //       final double longitude =
+                //           snapshot.data!['position'].longitude;
+                //       final LatLng position = LatLng(latitude, longitude);
+                //       return FlutterMap(
+                //         options: MapOptions(
+                //           center: position,
+                //           zoom: 16.0,
+                //         ),
+                //         layers: [
+                //           TileLayerOptions(
+                //             minZoom: 1,
+                //             maxZoom: 18,
+                //             backgroundColor: Colors.black,
+                //             urlTemplate:
+                //                 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+                //             subdomains: ['a', 'b', 'c'],
+                //           ),
+                //           MarkerLayerOptions(
+                //             markers: [
+                //               Marker(
+                //                 width: 100,
+                //                 height: 100,
+                //                 point: position,
+                //                 builder: (ctx) => Icon(
+                //                   Icons.location_on,
+                //                   color: Colors.red,
+                //                 ),
+                //               ),
+                //             ],
+                //           ),
+                //         ],
+                //       );
+                //     } else if (snapshot.hasError) {
+                //       return Text('Erreur : ${snapshot.error}');
+                //     } else {
+                //       return CircularProgressIndicator();
+                //     }
+                //   },
+                // ),
                 Padding(
                   padding:
                       const EdgeInsets.symmetric(horizontal: 60, vertical: 10),
@@ -542,54 +570,17 @@ class _SilverdetailItemState extends State<SilverdetailItem> {
               ],
             ),
           ),
-          widget.data['userID'] == userId
+          widget.data['userID'] != userId ||
+                  widget.data['category'] == null ||
+                  widget.data['category'] == '' ||
+                  widget.data['category'].isEmpty
               ? SliverToBoxAdapter(
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(100, 20, 100, 60),
-                    child: ElevatedButton(
-                      style:
-                          ElevatedButton.styleFrom(backgroundColor: Colors.red),
-                      onPressed: () async {
-                        // Get the document from Firestore
-                        docProducts
-                            .doc(widget.idDoc)
-                            .get()
-                            .then((documentSnapshot) async {
-                          print(userId);
-                          print(widget.data['userID']);
-                          if (documentSnapshot.exists) {
-                            // Document exists, check if the field is equal to user ID
-                            var data = documentSnapshot;
-                            final String fieldValue = data['userID'];
-                            if (fieldValue == userId) {
-                              await docProducts
-                                  .doc(widget.idDoc)
-                                  .delete()
-                                  .whenComplete(
-                                      () => Navigator.of(context).pop());
-                            }
-                          } else {
-                            print('tu n\'est pas le proprietaire du document');
-                          }
-                        }).catchError((error) {
-                          // Handle the error
-                        });
-                      },
-                      child: Text(
-                        'Delete',
-                        style: TextStyle(color: Colors.white),
-                      ),
-                    ),
-                  ),
+                  child: Container(),
                 )
               : SliverToBoxAdapter(
-                  child: Container(),
-                ),
-          widget.data['userID'] == userId
-              ? SliverToBoxAdapter(
                   child: Padding(
-                    padding: const EdgeInsets.fromLTRB(100, 20, 100, 60),
-                    child: ElevatedButton(
+                    padding: const EdgeInsets.fromLTRB(100, 10, 100, 10),
+                    child: TextButton.icon(
                       style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.blue),
                       onPressed: () =>
@@ -598,9 +589,119 @@ class _SilverdetailItemState extends State<SilverdetailItem> {
                                     itemId: widget.idDoc,
                                     itemData: widget.data,
                                   ))),
-                      child: Text(
-                        'Edit',
+                      icon: Icon(
+                        Icons.edit,
+                        color: Colors.white,
+                      ),
+                      label: Text(
+                        'Modifier',
                         style: TextStyle(color: Colors.white),
+                      ),
+                    ),
+                  ),
+                ),
+          widget.data['userID'] == userId
+              ? SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(100, 10, 100, 10),
+                    child:
+                        // TextButton(
+                        //   onPressed: () async {
+                        //     // Get the document from Firestore
+                        //     docProducts
+                        //         .doc(widget.idDoc)
+                        //         .get()
+                        //         .then((documentSnapshot) async {
+                        //       print(userId);
+                        //       print(widget.data['userID']);
+                        //       if (documentSnapshot.exists) {
+                        //         // Document exists, check if the field is equal to user ID
+                        //         var data = documentSnapshot;
+                        //         final String fieldValue = data['userID'];
+                        //         if (fieldValue == userId) {
+                        //           await docProducts
+                        //               .doc(widget.idDoc)
+                        //               .delete()
+                        //               .whenComplete(
+                        //                   () => Navigator.of(context).pop());
+                        //         }
+                        //       } else {
+                        //         print('tu n\'est pas le proprietaire du document');
+                        //       }
+                        //     }).catchError((error) {
+                        //       // Handle the error
+                        //     });
+                        //   },
+                        //   child: Text(
+                        //     'Delete',
+                        //     style: TextStyle(color: Colors.red),
+                        //   ),
+                        // ),
+                        TextButton(
+                      onPressed: () async {
+                        bool confirmed = await showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: Text('Confirmation'),
+                              content: Text(
+                                  'Êtes-vous sûr de vouloir supprimer cet élément ?'),
+                              actions: [
+                                TextButton(
+                                  child: Text('Annuler'),
+                                  onPressed: () {
+                                    Navigator.of(context).pop(
+                                        false); // Retourne false pour indiquer l'annulation
+                                  },
+                                ),
+                                TextButton(
+                                  child: Text('Supprimer'),
+                                  onPressed: () {
+                                    Navigator.of(context).pop(
+                                        true); // Retourne true pour indiquer la confirmation
+                                  },
+                                ),
+                              ],
+                            );
+                          },
+                        );
+
+                        if (confirmed ?? false) {
+                          // L'utilisateur a confirmé la suppression, procédez à la suppression de l'élément
+                          // Get the document from Firestore
+                          docProducts
+                              .doc(widget.idDoc)
+                              .get()
+                              .then((documentSnapshot) async {
+                            print(userId);
+                            print(widget.data['userID']);
+                            if (documentSnapshot.exists) {
+                              // Document exists, check if the field is equal to user ID
+                              var data = documentSnapshot;
+                              final String fieldValue = data['userID'];
+                              if (fieldValue == userId) {
+                                await docProducts
+                                    .doc(widget.idDoc)
+                                    .delete()
+                                    .whenComplete(() {
+                                  Navigator.of(context)
+                                      .pop(); // Ferme la boîte de dialogue de confirmation
+                                  Navigator.of(context)
+                                      .pop(); // Ferme la page actuelle
+                                });
+                              }
+                            } else {
+                              print(
+                                  'tu n\'est pas le proprietaire du document');
+                            }
+                          }).catchError((error) {
+                            // Handle the error
+                          });
+                        }
+                      },
+                      child: Text(
+                        'Delete',
+                        style: TextStyle(color: Colors.red),
                       ),
                     ),
                   ),

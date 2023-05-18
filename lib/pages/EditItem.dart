@@ -1,10 +1,21 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+//import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:geocoding/geocoding.dart';
+import 'package:ramzy/map/LocationAppExample.dart';
 import 'package:ramzy/pages/classes.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/widgets.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
+import 'package:cloud_firestore/cloud_firestore.dart' as cloud;
+import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
+
+import 'package:flutter_osm_plugin/flutter_osm_plugin.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:geocoding/geocoding.dart';
+import 'package:ramzy/pages/itemDetails.dart';
 
 class EditItem extends StatefulWidget {
   EditItem({required this.itemId, required this.itemData});
@@ -18,30 +29,35 @@ class EditItem extends StatefulWidget {
 
 class _EditItemState extends State<EditItem> {
   final _formKey = GlobalKey<FormState>();
-  late TextEditingController _categoryController;
-  late TextEditingController _descriptionController;
-  late TextEditingController _itemController;
-  late TextEditingController _priceController;
-  late TextEditingController _phoneController;
+  late TextEditingController _descriptionController =
+      TextEditingController(text: widget.itemData['Description']);
+  late TextEditingController _itemController =
+      TextEditingController(text: widget.itemData['item']);
+  late TextEditingController _priceController =
+      TextEditingController(text: widget.itemData['price'].toString());
+  late TextEditingController _phoneController =
+      TextEditingController(text: widget.itemData['phone'].toString());
 
   bool _isLoading = false;
   String _typeSelected = '';
-  String _locationventeSelected = '';
+  String _categoSelected = '';
   late int selectedRadio;
 
   @override
   void initState() {
     super.initState();
     //  _getItemsA();
-
-    _categoryController = TextEditingController();
-    _descriptionController = TextEditingController();
-    _itemController = TextEditingController();
-    _priceController = TextEditingController();
-    _phoneController = TextEditingController();
-    _typeSelected = '';
-    _locationventeSelected = widget.itemData['category'];
+    _itemController.text = widget.itemData['item'];
+    _priceController.text = widget.itemData['price'].toString();
+    _descriptionController.text = widget.itemData['Description'];
+    _phoneController.text = widget.itemData['phone'].toString();
     selectedRadio = 0;
+    _typeSelected = widget.itemData['type'];
+    _categoSelected = widget.itemData['category'].toString();
+    print(_typeSelected);
+    print(_categoSelected);
+    getAddressFromLatLng(widget.itemData['position'].latitude,
+        widget.itemData['position'].longitude);
   }
 
   // Future<void> _getItemsA() async {
@@ -79,7 +95,9 @@ class _EditItemState extends State<EditItem> {
   //   }
   // }
 
-  Future<void> _updateItem() async {
+  Future<void> _updateItem(geoPoint) async {
+    cloud.GeoPoint geoPoint =
+        cloud.GeoPoint(notifier.value!.latitude, notifier.value!.longitude);
     if (!_formKey.currentState!.validate()) {
       return;
     }
@@ -88,17 +106,19 @@ class _EditItemState extends State<EditItem> {
     });
     try {
       final itemMap = {
-        'category': _categoryController.text,
+        'category': _categoSelected,
+        'type': _typeSelected,
         'Description': _descriptionController.text,
         'item': _itemController.text,
         'price': double.parse(_priceController.text),
-        'phone': _phoneController.text,
+        'phone': int.parse(_phoneController.text),
+        'position': geoPoint,
       };
-      await FirebaseFirestore.instance
+      await cloud.FirebaseFirestore.instance
           .collection('Products')
           .doc(widget.itemId)
           .update(itemMap);
-      Navigator.of(context).pop();
+      //Navigator.of(context).pop();
     } catch (error) {
       print('Error updating item data: $error');
       ScaffoldMessenger.of(context)
@@ -115,7 +135,7 @@ class _EditItemState extends State<EditItem> {
       _isLoading = true;
     });
     try {
-      await FirebaseFirestore.instance
+      await cloud.FirebaseFirestore.instance
           .collection('Products')
           .doc(widget.itemId)
           .delete();
@@ -132,57 +152,141 @@ class _EditItemState extends State<EditItem> {
   }
 
   late bool isSelected = false;
+  late bool isSelectedCatego = false;
   late bool isSwitched = false;
 
+  // @override
+  // // Widget _buildLocationVente(String locavente, _typeSelected) {
+  // //   _typeSelected == 'vente' ? isSelected = true : isSelected = false;
+  // //   return ElevatedButton.icon(
+  // //     onPressed: () {
+  // //       setState(() {
+  // //         _locationventeSelected = locavente;
+  // //         print(locavente.toString());
+  // //       });
+  // //     },
+  // //
+  // //     style: ButtonStyle(
+  // //         animationDuration: const Duration(milliseconds: 500),
+  // //         backgroundColor: _locationventeSelected == locavente
+  // //             ? MaterialStateProperty.all(Colors.green)
+  // //             : null, //MaterialStateProperty.all(Colors.greenAccent),
+  // //         foregroundColor: _locationventeSelected == locavente
+  // //             ? MaterialStateProperty.all(Colors.white)
+  // //             : null),
+  // //     icon: _locationventeSelected == locavente
+  // //         ? const Icon(Icons.check)
+  // //         : Container(), //Icon(Icons.check_box_outline_blank),
+  // //     label: Text(
+  // //       locavente.toUpperCase(), // == false ? 'vente' : 'location',
+  // //       style: const TextStyle(
+  // //         fontSize: 18,
+  // //       ),
+  // //     ),
+  // //   );
+  // // }
+  // Widget _buildLocationVente(String locavente, _typeSelected) {
+  //   return ElevatedButton.icon(
+  //     onPressed: () {
+  //       isSelected = true;
+  //       setState(() {
+  //         _locationventeSelected = locavente;
+  //         print(locavente.toString());
+  //         print(_locationventeSelected.toString());
+  //       });
+  //     },
+  //     style: ButtonStyle(
+  //         animationDuration: const Duration(milliseconds: 500),
+  //         backgroundColor: _locationventeSelected == locavente
+  //             ? MaterialStateProperty.all(Colors.green)
+  //             : null, //MaterialStateProperty.all(Colors.greenAccent),
+  //         foregroundColor: _locationventeSelected == locavente
+  //             ? MaterialStateProperty.all(Colors.white)
+  //             : null),
+  //     icon: _locationventeSelected == locavente
+  //         ? const Icon(Icons.check)
+  //         : Container(),
+  //     label: Text(
+  //       locavente.toUpperCase(),
+  //       style: const TextStyle(
+  //         fontSize: 15,
+  //       ),
+  //     ),
+  //   );
+  // }
   @override
-  Widget _buildLocationVente(String locavente) {
-    return ElevatedButton.icon(
-      onPressed: () {
-        _locationventeSelected == 'vente'
-            ? isSelected = true
-            : isSelected = false;
-        setState(() {
-          _locationventeSelected = locavente;
-          print(locavente.toString());
-        });
-      },
-
-      style: ButtonStyle(
-          animationDuration: const Duration(milliseconds: 500),
-          backgroundColor: _locationventeSelected == locavente
-              ? MaterialStateProperty.all(Colors.green)
-              : null, //MaterialStateProperty.all(Colors.greenAccent),
-          foregroundColor: _locationventeSelected == locavente
-              ? MaterialStateProperty.all(Colors.white)
-              : null),
-      icon: _locationventeSelected == locavente
-          ? const Icon(Icons.check)
-          : Container(), //Icon(Icons.check_box_outline_blank),
-      label: Text(
-        locavente.toUpperCase(), // == false ? 'vente' : 'location',
-        style: const TextStyle(
-          fontSize: 18,
+  Widget _buildType(String catego) {
+    return InkWell(
+      child: Container(
+        //height: 45,
+        width: MediaQuery.of(context).size.width * 0.35,
+        decoration: BoxDecoration(
+          color: _categoSelected == catego ? Colors.green : Colors.orangeAccent,
+          borderRadius: BorderRadius.circular(5),
+        ),
+        child: Center(
+          child: _categoSelected == catego
+              ? Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(
+                      Icons.check,
+                      color: Colors.white,
+                    ),
+                    SizedBox(
+                      width: 3,
+                    ),
+                    Text(
+                      catego,
+                      style: const TextStyle(
+                        fontSize: 18,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ],
+                )
+              : Text(
+                  catego,
+                  style: const TextStyle(
+                    fontSize: 18,
+                    color: Colors.white,
+                  ),
+                ),
         ),
       ),
+      onTap: () {
+        isSelectedCatego = true;
+        setState(() {
+          _categoSelected = catego;
+          print(_categoSelected);
+        });
+      },
     );
+  }
+
+  ValueNotifier<GeoPoint?> notifier = ValueNotifier(null);
+  Future<String> getAddressFromLatLng(double lat, double lng) async {
+    final List<Placemark> placemarks = await placemarkFromCoordinates(lat, lng);
+
+    if (placemarks.isNotEmpty) {
+      final Placemark place = placemarks.first;
+      return "${place.locality}, ${place.country}"; //${place.street}, ${place.postalCode},
+    }
+
+    return "";
   }
 
   @override
   Widget build(BuildContext context) {
-    _categoryController.text = widget.itemData['category'];
-    _itemController.text = widget.itemData['item'];
-    _priceController.text = widget.itemData['price'].toString();
-    _descriptionController.text = widget.itemData['Description'];
-    _phoneController.text = widget.itemData['phone'].toString();
     return Scaffold(
         appBar: AppBar(
           title: Text('Edit Item'),
           actions: [
             IconButton(
                 onPressed: () => Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) =>
-                          PhotoList(widget.itemData['imageUrls']),
-                    )),
+                    builder: (context) => PhotoEditor(
+                          documentId: widget.itemId,
+                        ))),
                 icon: Icon(Icons.photo)),
           ],
         ),
@@ -196,44 +300,158 @@ class _EditItemState extends State<EditItem> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        TextFormField(
-                          decoration: InputDecoration(
-                              labelText: 'Category', filled: false),
-                          controller: _categoryController,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please enter a category';
-                            }
-                            return null;
-                          },
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(0, 15, 0, 10),
+                          child: SizedBox(
+                            height: 35,
+                            child: ListView(
+                              scrollDirection: Axis.horizontal,
+                              children: [
+                                _buildType('Hotel'),
+                                const SizedBox(width: 5),
+                                _buildType('Residence'),
+                                const SizedBox(width: 5),
+                                _buildType('Agence'),
+                                const SizedBox(width: 5),
+                                _buildType('Autres'),
+                                const SizedBox(width: 5),
+                              ],
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          height: 5,
                         ),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
-                            Expanded(
-                                child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: _buildLocationVente('vente'),
-                            )),
-                            // const SizedBox(width: 10),
-                            Expanded(
-                                child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: _buildLocationVente('location'),
-                            )),
+                            ElevatedButton.icon(
+                              onPressed: () {
+                                isSelected = true;
+                                setState(() {
+                                  _typeSelected = 'vente';
+                                  print(_typeSelected);
+                                });
+                              },
+                              style: ButtonStyle(
+                                  animationDuration:
+                                      const Duration(milliseconds: 500),
+                                  backgroundColor: _typeSelected == 'vente'
+                                      ? MaterialStateProperty.all(Colors.green)
+                                      : null, //MaterialStateProperty.all(Colors.greenAccent),
+                                  foregroundColor: _typeSelected == 'vente'
+                                      ? MaterialStateProperty.all(Colors.white)
+                                      : null),
+                              icon: _typeSelected == 'vente'
+                                  ? const Icon(Icons.check)
+                                  : Container(),
+                              label: Text(
+                                'vente'.toUpperCase(),
+                                style: const TextStyle(
+                                  fontSize: 15,
+                                ),
+                              ),
+                            ),
+                            ElevatedButton.icon(
+                              onPressed: () {
+                                isSelected = true;
+                                setState(() {
+                                  _typeSelected = 'location';
+                                  print(_typeSelected);
+                                });
+                              },
+                              style: ButtonStyle(
+                                  animationDuration:
+                                      const Duration(milliseconds: 500),
+                                  backgroundColor: _typeSelected == 'location'
+                                      ? MaterialStateProperty.all(Colors.green)
+                                      : null, //MaterialStateProperty.all(Colors.greenAccent),
+                                  foregroundColor: _typeSelected == 'location'
+                                      ? MaterialStateProperty.all(Colors.white)
+                                      : null),
+                              icon: _typeSelected == 'location'
+                                  ? const Icon(Icons.check)
+                                  : Container(),
+                              label: Text(
+                                'location'.toUpperCase(),
+                                style: const TextStyle(
+                                  fontSize: 15,
+                                ),
+                              ),
+                            ),
                           ],
+                        ),
+                        SizedBox(
+                          height: 20,
+                        ),
+                        Center(child: Text('Modifier La Localisation')),
+                        Center(
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: ValueListenableBuilder<GeoPoint?>(
+                                  valueListenable: notifier,
+                                  builder: (ctx, px, child) {
+                                    return FutureBuilder<String>(
+                                      future: notifier.value == null
+                                          ? getAddressFromLatLng(
+                                              widget.itemData['position']
+                                                  .latitude,
+                                              widget.itemData['position']
+                                                  .longitude)
+                                          : getAddressFromLatLng(
+                                              px!.latitude, px.longitude),
+                                      builder: (BuildContext context,
+                                          AsyncSnapshot<String> snapshot) {
+                                        if (snapshot.hasData) {
+                                          return Text(snapshot.data!);
+                                        } else if (snapshot.hasError) {
+                                          return Text(
+                                              'Erreur: ${snapshot.error}');
+                                        } else {
+                                          return CircularProgressIndicator();
+                                        }
+                                      },
+                                    );
+                                  },
+                                ),
+                              ),
+                              IconButton(
+                                onPressed: () async {
+                                  var p = await Navigator.of(context).push(
+                                      MaterialPageRoute(
+                                          builder: (ctx) => SearchPage()));
+                                  if (p != null) {
+                                    setState(
+                                      () => notifier.value = p as GeoPoint,
+                                    );
+                                  }
+                                  print(notifier.value);
+                                },
+                                icon: Icon(FontAwesomeIcons.location),
+                              ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(
+                          height: 5,
                         ),
                         SizedBox(
                           height: 5,
                         ),
                         TextFormField(
-                          decoration: const InputDecoration(
+                          decoration: InputDecoration(
+                            labelText: 'Item',
                             hintStyle: TextStyle(color: Colors.black26),
-                            fillColor: Colors.white,
-                            hintText: 'Titre',
+                            fillColor: Colors.blue.shade50,
+                            hintText: 'Item',
                             border: InputBorder.none,
                             filled: true,
-                            contentPadding: EdgeInsets.all(5),
+                            contentPadding: EdgeInsets.all(15),
                           ),
                           controller: _itemController,
                           validator: (value) {
@@ -247,13 +465,14 @@ class _EditItemState extends State<EditItem> {
                           height: 5,
                         ),
                         TextFormField(
-                          decoration: const InputDecoration(
+                          decoration: InputDecoration(
+                            labelText: 'Price',
                             hintStyle: TextStyle(color: Colors.black26),
-                            fillColor: Colors.white,
-                            hintText: 'Prix',
+                            fillColor: Colors.blue.shade50,
+                            hintText: 'Price',
                             border: InputBorder.none,
                             filled: true,
-                            contentPadding: EdgeInsets.all(5),
+                            contentPadding: EdgeInsets.all(15),
                           ),
                           controller: _priceController,
                           validator: (value) {
@@ -267,13 +486,14 @@ class _EditItemState extends State<EditItem> {
                           height: 5,
                         ),
                         TextFormField(
-                          decoration: const InputDecoration(
+                          decoration: InputDecoration(
+                            labelText: 'Phone',
                             hintStyle: TextStyle(color: Colors.black26),
-                            fillColor: Colors.white,
+                            fillColor: Colors.blue.shade50,
                             hintText: 'Phone',
                             border: InputBorder.none,
                             filled: true,
-                            contentPadding: EdgeInsets.all(5),
+                            contentPadding: EdgeInsets.all(15),
                           ),
                           controller: _phoneController,
                           keyboardType: TextInputType.number,
@@ -288,13 +508,16 @@ class _EditItemState extends State<EditItem> {
                           height: 5,
                         ),
                         TextFormField(
-                          decoration: const InputDecoration(
+                          decoration: InputDecoration(
+                            //label: Text('Description'),
+                            labelText: 'Description',
+
                             hintStyle: TextStyle(color: Colors.black26),
-                            fillColor: Colors.white,
-                            hintText: 'Description',
+                            fillColor: Colors.blue.shade50,
+                            hintText: 'Titre',
                             border: InputBorder.none,
                             filled: true,
-                            contentPadding: EdgeInsets.all(5),
+                            contentPadding: EdgeInsets.all(15),
                           ),
                           maxLines: 5,
                           controller: _descriptionController,
@@ -307,15 +530,36 @@ class _EditItemState extends State<EditItem> {
                         ),
                         SizedBox(height: 30),
                         ElevatedButton(
-                          onPressed: _isLoading ? null : _updateItem,
-                          child: Text('Save Changes'),
+                          onPressed: _isLoading
+                              ? null
+                              : () => _updateItem(notifier)
+                                  .whenComplete(
+                                      () => Navigator.of(context).pop())
+                                  .then((value) => Navigator.of(context).pop()),
+                          child: _isLoading
+                              ? Center(
+                                  child: CircularProgressIndicator(),
+                                )
+                              : const Text('Publier'),
                         ),
+                        // ElevatedButton(
+                        //   onPressed:
+                        //       _isLoading ? null : () => _updateItem(notifier),
+                        //   child: _isLoading //Text('Save Changes'),
+                        //       ? Center(
+                        //           child: CircularProgressIndicator(),
+                        //         )
+                        //       : const Text('Publier'),
+                        // ),
                         SizedBox(height: 15),
                         ElevatedButton(
                           onPressed: _isLoading ? null : _deleteItem,
                           style: ElevatedButton.styleFrom(primary: Colors.red),
                           child: Text('Delete Item'),
                         ),
+                        Container(
+                          height: 100,
+                        )
                       ],
                     ),
                   ),
@@ -324,162 +568,147 @@ class _EditItemState extends State<EditItem> {
   }
 }
 
-class PhotoList extends StatelessWidget {
-  final List<String> photoUrls;
+class PhotoEditor extends StatefulWidget {
+  final String documentId;
 
-  PhotoList(this.photoUrls);
+  PhotoEditor({required this.documentId});
 
   @override
-  Widget build(BuildContext context) {
-    return ListView.builder(
-      itemCount: photoUrls.length,
-      itemBuilder: (context, index) {
-        return ListTile(
-          leading: Image.network(photoUrls[index]),
-          trailing: IconButton(
-            icon: Icon(Icons.delete),
-            onPressed: () {
-              _deletePhoto(context, photoUrls[index]);
-            },
-          ),
-        );
-      },
-    );
-  }
-
-  void _deletePhoto(BuildContext context, String photoUrl) async {
-    // Supprime la photo de Firebase Storage
-    await FirebaseStorage.instance.refFromURL(photoUrl).delete();
-
-    // Supprime l'URL de la photo de Firestore
-    await FirebaseFirestore.instance
-        .collection('photos')
-        .doc('document_id')
-        .update({
-      'photoUrls': FieldValue.arrayRemove([photoUrl])
-    });
-
-    // Rafraîchit l'interface utilisateur
-    ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('La photo a été supprimée avec succès')));
-  }
+  _PhotoEditorState createState() => _PhotoEditorState();
 }
 
-class AddPhoto extends StatefulWidget {
-  @override
-  _AddPhotoState createState() => _AddPhotoState();
-}
-
-class _AddPhotoState extends State<AddPhoto> {
-  File? _imageFile;
-  final picker = ImagePicker();
+class _PhotoEditorState extends State<PhotoEditor> {
+  late Stream<List<String>> photosStream;
 
   @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        if (_imageFile != null) ...[
-          Image.file(_imageFile!),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              ElevatedButton(
-                onPressed: () {
-                  _uploadPhoto(context);
-                },
-                child: Text('Télécharger'),
-              ),
-              SizedBox(width: 16),
-              ElevatedButton(
-                onPressed: () {
-                  setState(() {
-                    _imageFile = null;
-                  });
-                },
-                child: Text('Annuler'),
-              ),
-            ],
-          ),
-        ] else ...[
-          ElevatedButton(
-            onPressed: () {
-              _selectPhoto(context);
-            },
-            child: Text('Ajouter une photo'),
-          ),
-        ],
-      ],
-    );
+  void initState() {
+    super.initState();
+    photosStream = getPhotosStream();
   }
 
-  Future<void> _selectPhoto(BuildContext context) async {
-    final pickedFile = await picker.getImage(source: ImageSource.gallery);
-    setState(() {
-      if (pickedFile != null) {
-        _imageFile = File(pickedFile.path);
-      } else {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text('Aucune image sélectionnée')));
-      }
+  Stream<List<String>> getPhotosStream() {
+    return cloud.FirebaseFirestore.instance
+        .collection('Products')
+        .doc(widget.documentId)
+        .snapshots()
+        .map((snapshot) {
+      return List<String>.from(snapshot.data()!['imageUrls']);
     });
   }
 
-  Future<void> _uploadPhoto(BuildContext context) async {
-    if (_imageFile == null) {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text('Aucune image sélectionnée')));
-      return;
+  void addPhoto() async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.getImage(
+      source: ImageSource.gallery,
+      maxHeight: 1080,
+      maxWidth: 1920,
+      imageQuality: 40,
+    );
+
+    if (pickedFile != null) {
+      // Téléchargement de l'image dans Firebase Storage
+      String imageName = DateTime.now().toString() + '.jpg';
+      firebase_storage.Reference ref = firebase_storage.FirebaseStorage.instance
+          .ref()
+          .child('images')
+          .child(imageName);
+      firebase_storage.UploadTask uploadTask =
+          ref.putFile(File(pickedFile.path));
+      firebase_storage.TaskSnapshot taskSnapshot =
+          await uploadTask.whenComplete(() => null);
+      String imageUrl = await taskSnapshot.ref.getDownloadURL();
+
+      // Mise à jour de la liste des photos dans Firestore
+      cloud.FirebaseFirestore.instance
+          .collection('Products')
+          .doc(widget.documentId)
+          .update({
+        'imageUrls': cloud.FieldValue.arrayUnion([imageUrl])
+      });
     }
-    final taskSnapshot = await FirebaseStorage.instance
-        .ref()
-        .child('photos')
-        .child(DateTime.now().toString())
-        .putFile(_imageFile!);
+  }
 
-    final photoUrl = await taskSnapshot.ref.getDownloadURL();
+  void removePhoto(int index, String photoUrl) {
+    // Suppression de l'image dans Firebase Storage
+    firebase_storage.Reference ref =
+        firebase_storage.FirebaseStorage.instance.refFromURL(photoUrl);
+    ref.delete();
 
-    await FirebaseFirestore.instance
-        .collection('photos')
-        .doc('document_id')
+    // Mise à jour de la liste des photos dans Firestore
+    cloud.FirebaseFirestore.instance
+        .collection('Products')
+        .doc(widget.documentId)
         .update({
-      'photoUrls': FieldValue.arrayUnion([photoUrl])
-    });
-
-    ScaffoldMessenger.of(context)
-        .showSnackBar(SnackBar(content: Text('La photo a été téléchargée')));
-    setState(() {
-      _imageFile = null;
+      'imageUrls': cloud.FieldValue.arrayRemove([photoUrl])
     });
   }
-}
 
-class MyHomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Gestion de photos')),
-      body: StreamBuilder<DocumentSnapshot>(
-        stream: FirebaseFirestore.instance
-            .collection('photos')
-            .doc('document_id')
-            .snapshots(),
+      appBar: AppBar(
+        title: Text('Éditeur de photos'),
+      ),
+      body: StreamBuilder<List<String>>(
+        stream: photosStream,
         builder: (context, snapshot) {
-          if (!snapshot.hasData) {
-            return Center(child: CircularProgressIndicator());
+          if (snapshot.hasData) {
+            List<String> photos = snapshot.data!;
+            return Column(
+              children: [
+                Expanded(
+                  child: GridView.builder(
+                      gridDelegate:
+                          const SliverGridDelegateWithMaxCrossAxisExtent(
+                              maxCrossAxisExtent: 300,
+                              childAspectRatio: 1 / 1,
+                              crossAxisSpacing: 0,
+                              mainAxisSpacing: 0),
+                      itemCount: photos.length,
+                      itemBuilder: (BuildContext ctx, index) {
+                        return Padding(
+                          padding: const EdgeInsets.all(10.0),
+                          child: Stack(
+                            alignment: AlignmentDirectional.topEnd,
+                            children: [
+                              AspectRatio(
+                                  aspectRatio: 1 / 1,
+                                  child: CachedNetworkImage(
+                                    imageUrl: photos[index],
+                                    fit: BoxFit.cover,
+                                  )),
+                              IconButton(
+                                icon: Icon(
+                                  Icons.delete,
+                                  color: Colors.red,
+                                ),
+                                onPressed: () {
+                                  removePhoto(index, photos[index]);
+                                },
+                              ),
+                            ],
+                          ),
+                        );
+                      }),
+                ),
+                photos.length >= 4
+                    ? Container()
+                    : ElevatedButton(
+                        child: Text('Ajouter une photo'),
+                        onPressed: () {
+                          addPhoto();
+                        },
+                      ),
+                Container(
+                  height: 100,
+                )
+              ],
+            );
+          } else if (snapshot.hasError) {
+            return Text('Une erreur s\'est produite : ${snapshot.error}');
+          } else {
+            return CircularProgressIndicator();
           }
-
-          final photoUrls =
-              List<String>.from(snapshot.data!.get('photoUrls') ?? []);
-
-          return Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Expanded(
-                child: PhotoList(photoUrls),
-              ),
-              AddPhoto(),
-            ],
-          );
         },
       ),
     );
