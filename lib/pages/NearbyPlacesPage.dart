@@ -285,11 +285,32 @@ class _NearbyPlacesPageState extends State<NearbyPlacesPage> {
                                             .toString()
                                             .toUpperCase(),
                                         overflow: TextOverflow.ellipsis,
-                                        style: TextStyle(
-                                            color: Colors.white70,
-                                            fontSize: 28,
-                                            fontWeight: FontWeight.bold),
+                                        textAlign:
+                                            isArabic(itmCarous[index]['item'])
+                                                ? TextAlign.right
+                                                : TextAlign.left,
+                                        style:
+                                            isArabic(itmCarous[index]['item'])
+                                                ? GoogleFonts.cairo(
+                                                    color: Colors.white70,
+                                                    fontSize: 28,
+                                                    fontWeight: FontWeight.bold)
+                                                : TextStyle(
+                                                    color: Colors.white70,
+                                                    fontSize: 28,
+                                                    fontWeight:
+                                                        FontWeight.bold),
                                       ),
+                                      // Text(
+                                      //   itmCarous[index]['item']
+                                      //       .toString()
+                                      //       .toUpperCase(),
+                                      //   overflow: TextOverflow.ellipsis,
+                                      //   style: TextStyle(
+                                      //       color: Colors.white70,
+                                      //       fontSize: 28,
+                                      //       fontWeight: FontWeight.bold),
+                                      // ),
                                     ),
                                   ],
                                 ),

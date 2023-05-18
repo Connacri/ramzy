@@ -737,7 +737,7 @@ class homeList extends StatelessWidget {
                             decoration: BoxDecoration(
                               image: DecorationImage(
                                 image: CachedNetworkImageProvider(
-                                  'https://firebasestorage.googleapis.com/v0/b/adventure-eb4ca.appspot.com/o/wall%2Fwall%20(2).jpg?alt=media&token=c5c01dca-4b32-4b9d-88fe-717e976ac2f5',
+                                  'https://firebasestorage.googleapis.com/v0/b/adventure-eb4ca.appspot.com/o/wall%2Fwall%20(0).jpg?alt=media&token=c5c01dca-4b32-4b9d-88fe-717e976ac2f5',
                                 ),
                                 fit: BoxFit.cover,
                                 alignment: Alignment.topCenter,
@@ -832,7 +832,7 @@ class homeList extends StatelessWidget {
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   children: [
                                     Text(
-                                      'A Ne Pas',
+                                      'A Ne Pas ',
                                       textAlign: TextAlign.start,
                                       style: TextStyle(
                                           shadows: [
