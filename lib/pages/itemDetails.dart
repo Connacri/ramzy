@@ -2,6 +2,8 @@ import 'dart:async';
 import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:calendar_timeline/calendar_timeline.dart';
+import 'package:carousel_slider/carousel_options.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -13,6 +15,7 @@ import 'package:open_location_picker/open_location_picker.dart';
 import 'package:ramzy/pages/EditItem.dart';
 import 'package:ramzy/pages/homeList.dart';
 import 'package:ramzy/pages/insta.dart';
+import 'package:ramzy/pages/itemDetails.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:intl/intl.dart' as intl;
 import 'package:timeago/timeago.dart' as timeago;
@@ -384,25 +387,28 @@ class _SilverdetailItemState extends State<SilverdetailItem> {
                       ),
                 widget.data['price'] == null
                     ? Container()
-                    : Align(
-                        alignment: Alignment.centerRight,
-                        child: Padding(
-                          padding: new EdgeInsets.symmetric(horizontal: 20.0),
-                          child: new Text(
-                            'Prix : ' +
-                                NumberFormat.currency(
-                                        symbol: 'DZD ', decimalDigits: 2)
-                                    .format(widget.data['price']),
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                              //backgroundColor: Colors.black45,
-                              fontSize: 18,
-                              fontWeight: FontWeight.w500,
-                              color: Colors.green,
+                    : widget.data['price'] <= 0
+                        ? Container()
+                        : Align(
+                            alignment: Alignment.centerRight,
+                            child: Padding(
+                              padding:
+                                  new EdgeInsets.symmetric(horizontal: 20.0),
+                              child: new Text(
+                                'Prix : ' +
+                                    NumberFormat.currency(
+                                            symbol: 'DZD ', decimalDigits: 2)
+                                        .format(widget.data['price']),
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  //backgroundColor: Colors.black45,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w500,
+                                  color: Colors.green,
+                                ),
+                              ),
                             ),
                           ),
-                        ),
-                      ),
                 SizedBox(
                   height: 20,
                 ),
@@ -417,7 +423,8 @@ class _SilverdetailItemState extends State<SilverdetailItem> {
                       itemCount: widget.data['imageUrls'].length,
                       itemBuilder: (BuildContext context, int index) {
                         return UnsplashD(
-                            UnsplashUrl: widget.data['imageUrls'][index]);
+                          UnsplashUrl: widget.data['imageUrls'][index],
+                        );
                       },
                     ),
                   ),
@@ -734,38 +741,48 @@ class UnsplashD extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    late TransformationController controller;
+
     return InkWell(
       onTap: () {
         showDialog(
-          context: context,
-          builder: (_) => AlertDialog(
-            backgroundColor: Colors.transparent,
-            contentPadding: EdgeInsets.zero,
-            scrollable: true,
-            content: ShaderMask(
-              shaderCallback: (rect) {
-                return const LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomLeft,
-                  colors: [Colors.transparent, Colors.black],
-                ).createShader(Rect.fromLTRB(0, 0, rect.width, rect.height));
-              },
-              blendMode: BlendMode.darken,
-              child: CachedNetworkImage(
-                fadeInCurve: Curves.easeIn,
-                filterQuality: FilterQuality.high,
-                width: MediaQuery.of(context).size.width,
-                height: MediaQuery.of(context).size.width,
-                fit: BoxFit.contain,
-                imageUrl: UnsplashUrl,
-                errorWidget: (context, url, error) => const Icon(
-                  Icons.error,
-                  color: Colors.red,
-                ),
-              ),
-            ),
-          ),
-        );
+            context: context,
+            builder: (_) => ImageViewerDetail(
+                  UnsplashUrl: UnsplashUrl,
+                ));
+        // showDialog(
+        //     context: context,
+        //     builder: (_) => ImageViewerDetail(
+        //           UnsplashUrl: UnsplashUrl,
+        //         )
+        //     //     AlertDialog(
+        //     //   backgroundColor: Colors.transparent,
+        //     //   contentPadding: EdgeInsets.zero,
+        //     //   scrollable: true,
+        //     //   content: ShaderMask(
+        //     //     shaderCallback: (rect) {
+        //     //       return const LinearGradient(
+        //     //         begin: Alignment.topCenter,
+        //     //         end: Alignment.bottomLeft,
+        //     //         colors: [Colors.transparent, Colors.black],
+        //     //       ).createShader(Rect.fromLTRB(0, 0, rect.width, rect.height));
+        //     //     },
+        //     //     blendMode: BlendMode.darken,
+        //     //     child: CachedNetworkImage(
+        //     //       fadeInCurve: Curves.easeIn,
+        //     //       filterQuality: FilterQuality.high,
+        //     //       width: MediaQuery.of(context).size.width,
+        //     //       height: MediaQuery.of(context).size.width,
+        //     //       fit: BoxFit.contain,
+        //     //       imageUrl: UnsplashUrl,
+        //     //       errorWidget: (context, url, error) => const Icon(
+        //     //         Icons.error,
+        //     //         color: Colors.red,
+        //     //       ),
+        //     //     ),
+        //     //   ),
+        //     // ),
+        //     );
       },
       child: Card(
         shape: RoundedRectangleBorder(
@@ -789,6 +806,91 @@ class UnsplashD extends StatelessWidget {
             errorWidget: (context, url, error) => const Icon(
               Icons.error,
               color: Colors.red,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class ImageViewerDetail extends StatefulWidget {
+  ImageViewerDetail({
+    Key? key,
+    required this.UnsplashUrl,
+  }) : super(key: key);
+
+  final String UnsplashUrl;
+
+  @override
+  State<ImageViewerDetail> createState() => _ImageViewerDetailState();
+}
+
+class _ImageViewerDetailState extends State<ImageViewerDetail> {
+  late TransformationController controller;
+  TapDownDetails? tapDownDetail;
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    controller = TransformationController();
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+
+    controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+          backgroundColor: Colors.transparent, foregroundColor: Colors.white),
+      backgroundColor: Colors.black87,
+      body: GestureDetector(
+        onDoubleTapDown: (detail) => tapDownDetail = detail,
+        onDoubleTap: () {
+          final position = tapDownDetail!.localPosition;
+          final double scale = 1;
+          final x = -position.dx * (scale - 1);
+          final y = position.dy * (scale - 1);
+          final zoomed = Matrix4.identity()
+            ..translate(x, y)
+            ..scale(scale);
+          final value =
+              controller.value.isIdentity() ? zoomed : Matrix4.identity();
+          controller.value = value;
+        },
+        child: InteractiveViewer(
+          transformationController: controller,
+          child: Center(
+            child: FittedBox(
+              fit: BoxFit.cover,
+              //child: ShaderMask(
+              // shaderCallback: (rect) {
+              //   return const LinearGradient(
+              //     begin: Alignment.topCenter,
+              //     end: Alignment.bottomLeft,
+              //     colors: [Colors.transparent, Colors.black],
+              //   ).createShader(Rect.fromLTRB(0, 0, rect.width, rect.height));
+              // },
+              // blendMode: BlendMode.darken,
+              child: CachedNetworkImage(
+                fadeInCurve: Curves.easeIn,
+                filterQuality: FilterQuality.high,
+                // width: MediaQuery.of(context).size.width,
+                // height: MediaQuery.of(context).size.width,
+                //fit: BoxFit.contain,
+                imageUrl: widget.UnsplashUrl,
+                errorWidget: (context, url, error) => const Icon(
+                  Icons.error,
+                  color: Colors.red,
+                ),
+              ),
+              //),
             ),
           ),
         ),

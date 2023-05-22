@@ -648,33 +648,35 @@ class homeList extends StatelessWidget {
                             ),
                             Container(
                               width: 100,
-                              child: Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 4.0),
-                                child: itm[index]['price'] >= 1000
+                              child: itm[index]['price'] <= 0
+                                  ? Container()
+                                  : Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 4.0),
+                                      child: itm[index]['price'] >= 1000
 
-                                    //   iitem.documents[index]['price'] >= 1000
-                                    ? Text(
-                                        intl.NumberFormat.compactCurrency(
-                                                symbol: 'DZD ',
-                                                decimalDigits: 2)
-                                            .format(itm[index]['price']
-                                                //iitem.documents[index]['price']
-                                                ),
-                                        overflow: TextOverflow.ellipsis,
-                                        style: TextStyle(fontSize: 14),
-                                      )
-                                    : Text(
-                                        intl.NumberFormat.currency(
-                                                symbol: 'DZD ',
-                                                decimalDigits: 2)
-                                            .format(itm[index]['price']
-                                                //iitem.documents[index]['price']
-                                                ),
-                                        overflow: TextOverflow.ellipsis,
-                                        style: TextStyle(fontSize: 14),
-                                      ),
-                              ),
+                                          //   iitem.documents[index]['price'] >= 1000
+                                          ? Text(
+                                              intl.NumberFormat.compactCurrency(
+                                                      symbol: 'DZD ',
+                                                      decimalDigits: 2)
+                                                  .format(itm[index]['price']
+                                                      //iitem.documents[index]['price']
+                                                      ),
+                                              overflow: TextOverflow.ellipsis,
+                                              style: TextStyle(fontSize: 14),
+                                            )
+                                          : Text(
+                                              intl.NumberFormat.currency(
+                                                      symbol: 'DZD ',
+                                                      decimalDigits: 2)
+                                                  .format(itm[index]['price']
+                                                      //iitem.documents[index]['price']
+                                                      ),
+                                              overflow: TextOverflow.ellipsis,
+                                              style: TextStyle(fontSize: 14),
+                                            ),
+                                    ),
                             ),
                             Container(
                               width: 100,
@@ -874,48 +876,6 @@ class homeList extends StatelessWidget {
                             Container(
                               padding: EdgeInsets.only(left: 6),
                               height: 200,
-                              // child: ListView.builder(
-                              //   shrinkWrap: true,
-                              //   physics: BouncingScrollPhysics(),
-                              //   scrollDirection: Axis.horizontal,
-                              //   itemCount: 12,
-                              //   itemBuilder:
-                              //       (BuildContext context, int index) {
-                              //     return Card(
-                              //       //  margin: const EdgeInsets.all(5),
-                              //       shape: RoundedRectangleBorder(
-                              //           borderRadius:
-                              //               BorderRadius.circular(10)),
-                              //       clipBehavior: Clip.antiAliasWithSaveLayer,
-                              //       elevation: 2,
-                              //       child: ShaderMask(
-                              //         shaderCallback: (rect) {
-                              //           return const LinearGradient(
-                              //             begin: Alignment.topCenter,
-                              //             end: Alignment.bottomLeft,
-                              //             colors: [
-                              //               Colors.transparent,
-                              //               Colors.black
-                              //             ],
-                              //           ).createShader(Rect.fromLTRB(
-                              //               0, 0, rect.width, rect.height));
-                              //         },
-                              //         blendMode: BlendMode.darken,
-                              //         child: CachedNetworkImage(
-                              //           width: 90,
-                              //           fit: BoxFit.cover,
-                              //           imageUrl:
-                              //               'https://firebasestorage.googleapis.com/v0/b/adventure-eb4ca.appspot.com/o/carre%2Fcarre%20(${index + 1}).jpg?alt=media&token=68e384f1-bb64-47cf-a245-9f7f12202443',
-                              //           errorWidget: (context, url, error) =>
-                              //               const Icon(
-                              //             Icons.error,
-                              //             color: Colors.red,
-                              //           ),
-                              //         ),
-                              //       ),
-                              //     );
-                              //   },
-                              // ),
                               child: ListView.builder(
                                 shrinkWrap: true,
                                 physics: BouncingScrollPhysics(),
@@ -1008,51 +968,58 @@ class homeList extends StatelessWidget {
                                                   ),
                                                 ),
                                               ),
-                                              Padding(
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        horizontal: 4.0),
-                                                child: itmm[index]['price'] >=
-                                                        1000000
+                                              itmm[index]['price'] <= 0
+                                                  ? Container()
+                                                  : Padding(
+                                                      padding: const EdgeInsets
+                                                              .symmetric(
+                                                          horizontal: 4.0),
+                                                      child: itmm[index]
+                                                                  ['price'] >=
+                                                              1000000
 
-                                                    //   iitem.documents[index]['price'] >= 1000
-                                                    ? Text(
-                                                        intl.NumberFormat
-                                                                .compactCurrency(
-                                                                    symbol:
-                                                                        'DZD ',
-                                                                    decimalDigits:
-                                                                        2)
-                                                            .format(itmm[index]
-                                                                    ['price']
-                                                                //iitem.documents[index]['price']
-                                                                ),
-                                                        overflow: TextOverflow
-                                                            .ellipsis,
-                                                        style: TextStyle(
-                                                            fontSize: 14,
-                                                            color: Colors
-                                                                .greenAccent),
-                                                      )
-                                                    : Text(
-                                                        intl.NumberFormat
-                                                                .currency(
-                                                                    symbol:
-                                                                        'DZD ',
-                                                                    decimalDigits:
-                                                                        2)
-                                                            .format(itmm[index]
-                                                                    ['price']
-                                                                //iitem.documents[index]['price']
-                                                                ),
-                                                        overflow: TextOverflow
-                                                            .ellipsis,
-                                                        style: TextStyle(
-                                                            fontSize: 14,
-                                                            color: Colors
-                                                                .greenAccent),
-                                                      ),
-                                              ),
+                                                          //   iitem.documents[index]['price'] >= 1000
+                                                          ? Text(
+                                                              intl.NumberFormat.compactCurrency(
+                                                                      symbol:
+                                                                          'DZD ',
+                                                                      decimalDigits:
+                                                                          2)
+                                                                  .format(
+                                                                      itmm[index]
+                                                                          [
+                                                                          'price']
+                                                                      //iitem.documents[index]['price']
+                                                                      ),
+                                                              overflow:
+                                                                  TextOverflow
+                                                                      .ellipsis,
+                                                              style: TextStyle(
+                                                                  fontSize: 14,
+                                                                  color: Colors
+                                                                      .greenAccent),
+                                                            )
+                                                          : Text(
+                                                              intl.NumberFormat.currency(
+                                                                      symbol:
+                                                                          'DZD ',
+                                                                      decimalDigits:
+                                                                          2)
+                                                                  .format(
+                                                                      itmm[index]
+                                                                          [
+                                                                          'price']
+                                                                      //iitem.documents[index]['price']
+                                                                      ),
+                                                              overflow:
+                                                                  TextOverflow
+                                                                      .ellipsis,
+                                                              style: TextStyle(
+                                                                  fontSize: 14,
+                                                                  color: Colors
+                                                                      .greenAccent),
+                                                            ),
+                                                    ),
                                             ],
                                           ),
                                           Container(
@@ -1522,27 +1489,29 @@ class CardFirestore extends StatelessWidget {
                                   fontWeight: FontWeight.w500),
                         ),
                       ),
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 0.0),
-                        child: Center(
-                          child: Text(
-                            data['price'] >= 1000000.00
-                                ? intl.NumberFormat.compactCurrency(
-                                        symbol: 'DZD ', decimalDigits: 2)
-                                    .format(data['price'])
-                                : intl.NumberFormat.currency(
-                                        symbol: 'DZD ', decimalDigits: 2)
-                                    .format(data['price']),
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                                //backgroundColor: Colors.black45,
-                                fontSize: 16,
-                                fontWeight: FontWeight.w500,
-                                color: Colors.white,
-                                fontFamily: 'oswald'),
-                          ),
-                        ),
-                      ),
+                      data['price'] == 0
+                          ? Container()
+                          : Padding(
+                              padding: const EdgeInsets.only(bottom: 0.0),
+                              child: Center(
+                                child: Text(
+                                  data['price'] >= 1000000.00
+                                      ? intl.NumberFormat.compactCurrency(
+                                              symbol: 'DZD ', decimalDigits: 2)
+                                          .format(data['price'])
+                                      : intl.NumberFormat.currency(
+                                              symbol: 'DZD ', decimalDigits: 2)
+                                          .format(data['price']),
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                      //backgroundColor: Colors.black45,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w500,
+                                      color: Colors.white,
+                                      fontFamily: 'oswald'),
+                                ),
+                              ),
+                            ),
                       Padding(
                         padding: const EdgeInsets.only(left: 5, bottom: 5),
                         child: Text(
