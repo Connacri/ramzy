@@ -12,6 +12,7 @@ import 'package:geocoding/geocoding.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:intl_phone_field/intl_phone_field.dart';
+import 'package:intl_phone_field/phone_number.dart';
 import 'package:path/path.dart' as Path;
 
 import 'package:fluttertoast/fluttertoast.dart';
@@ -19,17 +20,17 @@ import 'package:fluttertoast/fluttertoast.dart';
 import '../Oauth/verifi_auth.dart';
 import '../pages/Aperçu_Item.dart';
 
-class stepper2_widget extends StatefulWidget {
-  stepper2_widget({Key? key, required this.ccollection, required this.userDoc})
+class addAnnonce2 extends StatefulWidget {
+  addAnnonce2({Key? key, required this.ccollection, required this.userDoc})
       : super(key: key);
   String ccollection;
   final userDoc;
 
   @override
-  State<stepper2_widget> createState() => _stepper2_widgetState();
+  State<addAnnonce2> createState() => _addAnnonce2State();
 }
 
-class _stepper2_widgetState extends State<stepper2_widget> {
+class _addAnnonce2State extends State<addAnnonce2> {
   bool uploading = false;
   int currentStep = 0;
 
@@ -39,6 +40,7 @@ class _stepper2_widgetState extends State<stepper2_widget> {
   final TextEditingController _itemController = TextEditingController();
   final TextEditingController _priceController = TextEditingController();
   final TextEditingController _codeController = TextEditingController();
+  final TextEditingController _phoneCodeController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _likesController = TextEditingController();
   final TextEditingController _telContactController = TextEditingController();
@@ -70,9 +72,71 @@ class _stepper2_widgetState extends State<stepper2_widget> {
 
   late bool isSelected = false;
   late bool isSwitched = false;
+  String dropdownValue = 'mois';
 
   final GlobalKey<FormState> _formStepperKey = GlobalKey<FormState>();
   ValueNotifier<GeoPoint?> notifier = ValueNotifier(null);
+
+  @override
+  Widget _buildLocationVente(String locavente) {
+    return ElevatedButton.icon(
+      onPressed: () {
+        isSelected = true;
+        setState(() {
+          _locationventeSelected = locavente;
+          print(locavente.toString());
+        });
+      },
+
+      style: ButtonStyle(
+          animationDuration: const Duration(milliseconds: 500),
+          backgroundColor: _locationventeSelected == locavente
+              ? MaterialStateProperty.all(Colors.green)
+              : null, //MaterialStateProperty.all(Colors.greenAccent),
+          foregroundColor: _locationventeSelected == locavente
+              ? MaterialStateProperty.all(Colors.white)
+              : null),
+      icon: _locationventeSelected == locavente
+          ? const Icon(Icons.check)
+          : Container(), //Icon(Icons.check_box_outline_blank),
+      label: Text(
+        locavente.toUpperCase(), // == false ? 'vente' : 'location',
+        style: const TextStyle(
+          fontSize: 15,
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget _buildType(String catego) {
+    return InkWell(
+      child: Container(
+        //height: 45,
+        width: MediaQuery.of(context).size.width * 0.25,
+        decoration: BoxDecoration(
+          color: _typeSelected == catego
+              ? Colors.green
+              : Theme.of(context).colorScheme.secondary,
+          borderRadius: BorderRadius.circular(5),
+        ),
+        child: Center(
+          child: Text(
+            catego,
+            style: const TextStyle(
+              fontSize: 18,
+              color: Colors.white,
+            ),
+          ),
+        ),
+      ),
+      onTap: () {
+        setState(() {
+          _typeSelected = catego;
+        });
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -94,7 +158,7 @@ class _stepper2_widgetState extends State<stepper2_widget> {
           ),
           title: Row(
             mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.end,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Expanded(
                 child: Text(
@@ -104,7 +168,7 @@ class _stepper2_widgetState extends State<stepper2_widget> {
                 ),
               ),
               const Text(
-                ' Va Publier Un Post',
+                ' Va Publier Une Annonce',
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(fontSize: 17),
               ),
@@ -113,7 +177,7 @@ class _stepper2_widgetState extends State<stepper2_widget> {
       body: ListView(
         children: <Widget>[
           Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(0.0),
             child: _imagesList.length < 4
                 ? Column(
                     children: [
@@ -135,14 +199,14 @@ class _stepper2_widgetState extends State<stepper2_widget> {
                                     _getFromCamera();
                                   },
                                   icon: Icon(Icons.camera_alt_rounded),
-                                  color: Colors.grey.withOpacity(0.5),
+                                  color: Colors.black38,
                                 ),
                                 IconButton(
                                   onPressed: () {
                                     getMultiImagesGallery();
                                   },
                                   icon: Icon(Icons.image),
-                                  color: Colors.grey.withOpacity(0.5),
+                                  color: Colors.black38,
                                 ),
                               ],
                             ),
@@ -231,28 +295,233 @@ class _stepper2_widgetState extends State<stepper2_widget> {
                     // )
                   ),
           ),
-          Form(
-            key: _formStepperKey,
-            child: Column(
-              children: [
-                TextFormField(
+          Padding(
+            padding: const EdgeInsets.all(18.0),
+            child: Form(
+              key: _formStepperKey,
+              child: Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      Expanded(
+                          child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: _buildLocationVente('vente'),
+                      )),
+                      // const SizedBox(width: 10),
+                      Expanded(
+                          child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: _buildLocationVente('location'),
+                      )),
+                    ],
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(0, 15, 0, 10),
+                    child: SizedBox(
+                      height: 35,
+                      child: ListView(
+                        scrollDirection: Axis.horizontal,
+                        children: [
+                          _buildType('Hotel'),
+                          const SizedBox(width: 5),
+                          _buildType('Residence'),
+                          const SizedBox(width: 5),
+                          _buildType('Agence'),
+                          const SizedBox(width: 5),
+                          _buildType('Autres'),
+                          const SizedBox(width: 5),
+                        ],
+                      ),
+                    ),
+                  ),
+                  TextFormField(
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                      fontSize: 18,
+                    ),
+                    keyboardType: TextInputType.text,
+                    controller: _itemController,
+                    decoration: InputDecoration(
+                      hintStyle: TextStyle(color: Colors.black38),
+                      //fillColor: Colors.blue.shade50,
+                      hintText: 'Titre',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(7.0),
+                      ),
+                      //border: InputBorder.none,
+                      filled: true,
+                      contentPadding: EdgeInsets.all(15),
+                    ),
+                    validator: (value) => value != null && value.length < 3
+                        ? 'Entrer min 3 characteres.'
+                        : null,
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Column(
+                    children: [
+                      TextFormField(
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 18,
+                        ),
+                        keyboardType: TextInputType.number,
+                        controller: _priceController,
+                        decoration: InputDecoration(
+                          hintStyle: TextStyle(color: Colors.black38),
+                          //fillColor: Colors.blue.shade50,
+                          hintText: 'Prix En Dinar Sans Virgule',
+                          //border: InputBorder.none,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(7.0),
+                          ),
+                          filled: true,
+                          contentPadding: EdgeInsets.all(15),
+                        ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Prix Réel du Jour';
+                          }
+                          return null;
+                        },
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      _locationventeSelected == 'vente'
+                          ? Container()
+                          : Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  'Paiement Par ',
+                                  style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w500,
+                                      color: Colors.black38),
+                                ),
+                                Container(
+                                  //width: MediaQuery.of(context).size.width / 3,
+                                  child: DropdownButton<String>(
+                                    iconSize: 35,
+
+                                    underline: Container(),
+                                    // Step 3.
+                                    value: dropdownValue,
+                                    // Step 4.
+                                    isDense: false,
+                                    items: <String>[
+                                      'nuitée',
+                                      'mois',
+                                      '06 mois',
+                                      'an'
+                                    ].map<DropdownMenuItem<String>>(
+                                        (String value) {
+                                      return DropdownMenuItem<String>(
+                                        value: value,
+                                        child: Text(
+                                          value.toUpperCase(),
+                                          style: TextStyle(
+                                            fontSize: 18,
+                                            color: Colors.blue,
+                                          ),
+                                        ),
+                                      );
+                                    }).toList(),
+                                    // Step 5.
+                                    onChanged: (String? newValue) {
+                                      setState(() {
+                                        dropdownValue = newValue!;
+                                      });
+                                    },
+                                  ),
+                                ),
+                              ],
+                            ),
+                      //Text(dropdownValue),
+                    ],
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  IntlPhoneField(
+                    controller: _telContactController,
+                    decoration: InputDecoration(
+                      hintStyle: TextStyle(color: Colors.black38),
+                      //fillColor: Colors.blue.shade50,
+                      hintText: '770 00 00 00',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(7.0),
+                      ),
+                      // border: InputBorder.none,
+                      filled: true,
+                      contentPadding: EdgeInsets.all(15),
+                    ),
+                    invalidNumberMessage: 'Corriger Votre Numéro de Tel',
+                    // disableLengthCheck: true,
+                    validator: (value) {
+                      if (value == null) {
+                        return 'Entrer Ton Numero de Tel';
+                      } else {
+                        // validate against your regex pattern
+                        RegExp regex = new RegExp(r'^[567][0-9]{8}$');
+                        if (!regex.hasMatch(value.toString())) {
+                          return 'Entrer Que Ooreddo ou Djezzy ou Mobilis';
+                        }
+                        return null;
+                      }
+                    },
+                    // style: const TextStyle(
+                    //   fontSize: 18,
+                    // ),
+
+                    showDropdownIcon: false,
+                    initialCountryCode: 'DZ',
+
+                    onSaved: (PhoneNumber? phone) {
+                      if (phone != null) {
+                        _telContactController.text = phone.completeNumber;
+                        _phoneCodeController.text = phone.countryCode;
+                      }
+                      print('/////////////');
+                      print(_telContactController.text);
+                      print(_phoneCodeController.text);
+                    },
+                    flagsButtonMargin: EdgeInsets.zero,
+                    flagsButtonPadding: const EdgeInsets.only(left: 15),
+                  ),
+                  TextFormField(
                     keyboardType: TextInputType.multiline,
                     maxLines: 5,
                     textAlign: TextAlign.center,
                     style: const TextStyle(
-                      fontSize: 25,
+                      fontSize: 18,
                     ),
                     controller: _descriptionController,
-                    decoration: const InputDecoration(
+                    decoration: InputDecoration(
                       hintStyle: TextStyle(color: Colors.black38),
-                      fillColor: Colors.white,
-                      hintText: 'Quoi De Neuf ?',
-                      border: InputBorder.none,
+                      hintText: 'Ecrire Une Déscription',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(7.0),
+                      ),
                       filled: true,
                       contentPadding: EdgeInsets.all(15),
                     ),
-                    textInputAction: TextInputAction.next), // description
-              ],
+                    textInputAction: TextInputAction.next,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Vous Devez Ecrire Une Description';
+                      } else if (isSelected == false) {
+                        return 'Vous Devez Choisir Location ou Vente';
+                      }
+                      return null;
+                    },
+                  ),
+                ],
+              ),
             ),
           ),
           Center(
@@ -261,6 +530,7 @@ class _stepper2_widgetState extends State<stepper2_widget> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
+                Text('Lieu'),
                 notifier.value == null
                     ? Container()
                     : Padding(
@@ -331,9 +601,10 @@ class _stepper2_widgetState extends State<stepper2_widget> {
                     ),
                     onPressed: () async {
                       if (_imagesList.isEmpty ||
-                          _descriptionController.text == null ||
-                          _descriptionController.text == '' ||
-                          notifier.value == null) {
+                              _descriptionController.text == null ||
+                              _descriptionController.text == ''
+                          //|| notifier.value == null
+                          ) {
                         return showDialog(
                           context: context,
                           builder: (_) => AlertDialog(
@@ -394,10 +665,19 @@ class _stepper2_widgetState extends State<stepper2_widget> {
                       if (uploading) return;
                       setState(() => uploading = true);
 
-                      uploadFile2(imgRef).whenComplete(() => Navigator.push(
-                              context, MaterialPageRoute(builder: (_) {
-                            return verifi_auth();
-                          })));
+                      uploadFilePost(
+                              imgRef,
+                              _typeSelected,
+                              _locationventeSelected,
+                              _itemController.text,
+                              _priceController.text,
+                              _telContactController.text,
+                              _phoneCodeController.text,
+                              dropdownValue)
+                          .whenComplete(() => Navigator.push(context,
+                                  MaterialPageRoute(builder: (_) {
+                                return verifi_auth();
+                              })));
                     },
                     child: uploading == false
                         ? const Text('Publier')
@@ -598,6 +878,78 @@ class _stepper2_widgetState extends State<stepper2_widget> {
       'viewed_by': [],
       'views': 0,
     });
+  }
+
+  Future uploadFilePost(
+      cloud.CollectionReference<Object?> imgRef,
+      String typeSelected,
+      String locationventeSelected,
+      String itemController,
+      String priceController,
+      String phoneController,
+      String phoneCodeController,
+      String modePayment) async {
+    int i = 1;
+    cloud.GeoPoint geoPoint =
+        cloud.GeoPoint(notifier.value!.latitude, notifier.value!.longitude);
+    String description = _descriptionController.text;
+
+    //String typeSelected = typeSelected;
+    String locationvente = locationventeSelected;
+    String item = itemController;
+    int price = int.parse(priceController);
+    String phone = phoneController.toString(); //0687451524;
+    String phoneCode = phoneCodeController.toString();
+    // String modePayment =  modePayment.toString();
+
+    List usersLike = ['sans'];
+    List<String> imageFiles = []; //****************
+
+    var _image = _imagesList;
+    for (var img in _image) {
+      setState(() {
+        val = i / _image.length;
+      });
+      ref = firebase_storage.FirebaseStorage.instance
+          .ref()
+          .child('images/${Path.basename(img.path)}');
+
+      await ref.putFile(img).whenComplete(() async {
+        //*****************************************
+        await ref.getDownloadURL().then((value) {
+          imageFiles.add(value);
+          i++;
+        });
+      });
+    }
+    print(geoPoint);
+    imgRef.add({
+      'userID': FirebaseAuth.instance.currentUser!.uid,
+      'themb': imageFiles.first,
+      'imageUrls': imageFiles,
+      'createdAt': cloud.Timestamp.now(), //now.toString(),
+      'Description': description,
+      'likes': 0, //likes,
+      'usersLike': usersLike,
+      'dateDebut': DateTime.now().add(const Duration(days: 3)),
+      'dateFin': DateTime.now().add(const Duration(days: 11)),
+      'levelItem': 'free',
+      'position': geoPoint,
+      'viewed_by': [],
+      'views': 0,
+      'type': locationvente,
+      "item": item,
+      'price': price, // + '.00 dzd ',
+      'modePayment': modePayment,
+      'category': typeSelected,
+      'phone': phone,
+      'phoneCode': phoneCode,
+    });
+    userRef.doc(user!.uid).update(
+      {
+        'userItemsNbr': cloud.FieldValue.increment(1),
+      },
+    );
   }
 
   Future<String> getAddressFromLatLng(double lat, double lng) async {
@@ -862,17 +1214,3 @@ class _TopSearchWidgetState extends State<TopSearchWidget> {
     );
   }
 }
-
-// class LocationResult {
-//   final double latitude;
-//   final double longitude;
-//   final double? bearing;
-//   final double? zoom;
-//
-//   LocationResult({
-//     required this.latitude,
-//     required this.longitude,
-//     this.bearing,
-//     this.zoom,
-//   });
-// }

@@ -47,7 +47,8 @@ class _instaState extends State<insta> {
 
     final iitem = Provider.of<Collection1Data>(context);
 
-    final carouss = Provider.of<Collection3Data>(context);
+    final carouss = Provider.of<CollectionCarousselInsta>(context);
+
     //final iiitem = iitem.goldItems;
     var premiumUsers = uusers.documents
         .where((element) => element['plan'] == 'premium')

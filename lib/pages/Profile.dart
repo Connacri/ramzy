@@ -419,8 +419,9 @@ class _ProfileState extends State<Profile> with TickerProviderStateMixin {
                                   onPressed: () async {
                                     Navigator.of(context)
                                         .push(MaterialPageRoute(
-                                      builder: (context) =>
-                                          uploading_functions(), //upload_random(),
+                                      builder: (context) => uploading_functions(
+                                        userDoc: data,
+                                      ), //upload_random(),
                                     ));
                                   },
                                 ),

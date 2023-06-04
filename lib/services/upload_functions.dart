@@ -4,11 +4,13 @@ import 'package:dart_date/dart_date.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:ramzy/pages/addAnnonce2.dart';
 import '../pages/classes.dart';
 
 class uploading_functions extends StatefulWidget {
-  const uploading_functions({Key? key}) : super(key: key);
-
+  const uploading_functions({Key? key, required this.userDoc})
+      : super(key: key);
+  final userDoc;
   @override
   State<uploading_functions> createState() => _uploading_functionsState();
 }
@@ -50,8 +52,67 @@ class _uploading_functionsState extends State<uploading_functions> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
+              // Row(
+              //   mainAxisAlignment: MainAxisAlignment.center,
+              //   children: [
+              //     DropdownButton<String>(
+              //       // Step 3.
+              //       value: collection, //dropdownValue,
+              //       // Step 4.
+              //       items: <String>[
+              //         'Products',
+              //         'Instalives',
+              //         'Caroussel',
+              //         'PubArea'
+              //       ].map<DropdownMenuItem<String>>((String value) {
+              //         return DropdownMenuItem<String>(
+              //           value: value,
+              //           child: Text(
+              //             value,
+              //             style: TextStyle(fontSize: 30),
+              //           ),
+              //         );
+              //       }).toList(),
+              //       // Step 5.
+              //       onChanged: (String? newValue) {
+              //         setState(() {
+              //           //dropdownValue
+              //           collection = newValue!;
+              //         });
+              //       },
+              //     ),
+              //     SizedBox(
+              //       width: MediaQuery.of(context).size.width * 0.25,
+              //       child: TextFormField(
+              //         textAlign: TextAlign.center,
+              //         style: const TextStyle(
+              //           fontSize: 25,
+              //         ),
+              //         keyboardType: TextInputType.number,
+              //         controller: _ItemsNumController,
+              //         decoration: const InputDecoration(
+              //           hintStyle: TextStyle(color: Colors.black26),
+              //           fillColor: Colors.white,
+              //           hintText: '00',
+              //           border: InputBorder.none,
+              //           filled: true,
+              //           contentPadding: EdgeInsets.all(15),
+              //         ),
+              //       ),
+              //     ),
+              //     IconButton(
+              //       onPressed: () {
+              //         _ItemsNumController.text.isEmpty
+              //             ? itemsNum = 1
+              //             : itemsNum = int.parse(_ItemsNumController.text);
+              //         uploadRandom(itemsNum, collection);
+              //       },
+              //       icon: const Icon(FontAwesomeIcons.add),
+              //     ),
+              //   ],
+              // ),
+
               Row(
-                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   DropdownButton<String>(
                     // Step 3.
@@ -61,6 +122,7 @@ class _uploading_functionsState extends State<uploading_functions> {
                       'Products',
                       'Instalives',
                       'Caroussel',
+                      'CarousselInsta',
                       'PubArea'
                     ].map<DropdownMenuItem<String>>((String value) {
                       return DropdownMenuItem<String>(
@@ -79,32 +141,15 @@ class _uploading_functionsState extends State<uploading_functions> {
                       });
                     },
                   ),
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.25,
-                    child: TextFormField(
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(
-                        fontSize: 25,
-                      ),
-                      keyboardType: TextInputType.number,
-                      controller: _ItemsNumController,
-                      decoration: const InputDecoration(
-                        hintStyle: TextStyle(color: Colors.black26),
-                        fillColor: Colors.white,
-                        hintText: '00',
-                        border: InputBorder.none,
-                        filled: true,
-                        contentPadding: EdgeInsets.all(15),
+                  IconButton(
+                    onPressed: () => Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => addAnnonce2(
+                          ccollection: collection,
+                          userDoc: widget.userDoc,
+                        ),
                       ),
                     ),
-                  ),
-                  IconButton(
-                    onPressed: () {
-                      _ItemsNumController.text.isEmpty
-                          ? itemsNum = 1
-                          : itemsNum = int.parse(_ItemsNumController.text);
-                      uploadRandom(itemsNum, collection);
-                    },
                     icon: const Icon(FontAwesomeIcons.add),
                   ),
                 ],

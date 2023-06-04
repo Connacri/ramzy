@@ -5,6 +5,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:infinite_marquee/infinite_marquee.dart';
 import 'package:marquee/marquee.dart';
+import 'package:ramzy/pages/addAnnonce2.dart';
 import 'package:ramzy/pages/addPost_Insta.dart';
 import '../Oauth/getFCM.dart';
 import '../pages/NearbyPlacesPage.dart';
@@ -359,6 +360,102 @@ class homeList extends StatelessWidget {
                 ],
               ),
               Padding(
+                padding: const EdgeInsets.all(18.0),
+                child: TextFormField(
+                  readOnly: true,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    fontSize: 16,
+                  ),
+                  keyboardType: TextInputType.text,
+                  decoration: InputDecoration(
+                    prefixIcon: Padding(
+                      padding: const EdgeInsets.all(10),
+                      child: ClipRRect(
+                          clipBehavior: Clip.hardEdge,
+                          borderRadius: BorderRadius.circular(200),
+                          child: CachedNetworkImage(
+                            imageUrl: userDoc['avatar'],
+                            fit: BoxFit.cover,
+                            height: 30,
+                            width: 30,
+                          )),
+                    ),
+                    hintStyle: TextStyle(color: Colors.black54),
+                    //fillColor: Colors.blue.shade50,
+                    hintText: 'Publier Une Annonce ?',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(25.0),
+                    ),
+                    //border: InputBorder.none,
+                    filled: true,
+                    contentPadding: EdgeInsets.all(15),
+                  ),
+                  validator: (value) => value != null && value.length < 3
+                      ? 'Entrer min 3 characteres.'
+                      : null,
+                  onTap: () {
+                    determinePosition()
+                        .whenComplete(() => Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) => addAnnonce2(
+                                  ccollection: 'Products',
+                                  userDoc: userDoc,
+                                ),
+                              ),
+                            ));
+                  },
+                ),
+              ),
+              // Padding(
+              //   padding:
+              //       const EdgeInsets.symmetric(horizontal: 40.0, vertical: 10),
+              //   child: GestureDetector(
+              //     //onTap: () => getFcm(),
+              //     onTap: () {
+              //       determinePosition()
+              //           .whenComplete(() => Navigator.of(context).push(
+              //                 MaterialPageRoute(
+              //                   builder: (context) => addAnnonce2(
+              //                     ccollection: 'Products',
+              //                     userDoc: userDoc,
+              //                   ),
+              //                 ),
+              //               ));
+              //     },
+              //     child: Card(
+              //       // margin: const EdgeInsets.all(5),
+              //       shape: RoundedRectangleBorder(
+              //           borderRadius: BorderRadius.circular(15)),
+              //       clipBehavior: Clip.antiAliasWithSaveLayer,
+              //       elevation: 2,
+              //       child: Padding(
+              //         padding: const EdgeInsets.all(8.0),
+              //         child: Center(
+              //           child: Row(
+              //             mainAxisAlignment: MainAxisAlignment.center,
+              //             children: [
+              //               Icon(
+              //                 Icons.add,
+              //                 color: Colors.black87,
+              //               ),
+              //               Text(
+              //                 'Ajouter Une Annonce ',
+              //                 textAlign: TextAlign.start,
+              //                 style: TextStyle(
+              //                     fontStyle: FontStyle.italic,
+              //                     fontSize: 20,
+              //                     fontWeight: FontWeight.bold,
+              //                     color: Colors.red),
+              //               ),
+              //             ],
+              //           ),
+              //         ),
+              //       ),
+              //     ),
+              //   ),
+              // ),
+              Padding(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 40.0, vertical: 10),
                 child: GestureDetector(
@@ -395,7 +492,7 @@ class homeList extends StatelessWidget {
                             decoration: BoxDecoration(
                               image: DecorationImage(
                                 image: CachedNetworkImageProvider(
-                                  'https://source.unsplash.com/random',
+                                  'https://unsplash.it/640/425?random',
                                 ),
                                 fit: BoxFit.cover,
                                 alignment: Alignment.topCenter,
@@ -461,54 +558,7 @@ class homeList extends StatelessWidget {
                   ),
                 ),
               ),
-              Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 40.0, vertical: 10),
-                child: GestureDetector(
-                  //onTap: () => getFcm(),
-                  onTap: () {
-                    determinePosition()
-                        .whenComplete(() => Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (context) => stepper2_widget(
-                                  ccollection: 'Products',
-                                  userDoc: userDoc,
-                                ),
-                              ),
-                            ));
-                  },
-                  child: Card(
-                    // margin: const EdgeInsets.all(5),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(15)),
-                    clipBehavior: Clip.antiAliasWithSaveLayer,
-                    elevation: 2,
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Center(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.add,
-                              color: Colors.black87,
-                            ),
-                            Text(
-                              'Ajouter Une Annonce ',
-                              textAlign: TextAlign.start,
-                              style: TextStyle(
-                                  fontStyle: FontStyle.italic,
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.red),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
+
               Padding(
                 padding: const EdgeInsets.fromLTRB(18, 18, 18, 0),
                 child: Row(

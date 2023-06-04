@@ -35,6 +35,18 @@ class Collection3Data {
   }
 }
 
+class CollectionCarousselInsta {
+  final List<DocumentSnapshot> documents;
+
+  CollectionCarousselInsta(this.documents);
+
+  Query<Object?> fromListOfDocumentSnapshots(List<DocumentSnapshot> documents) {
+    return FirebaseFirestore.instance.collection('CarousselInsta').where(
+        FieldPath.documentId,
+        whereIn: documents.map((d) => d.id).toList());
+  }
+}
+
 class Collection2Data {
   final List<DocumentSnapshot> documents;
 
@@ -149,6 +161,14 @@ class MyApp extends StatelessWidget {
               .snapshots()
               .map((querySnapshot) => CollectionPubArea(querySnapshot.docs)),
           initialData: CollectionPubArea([]),
+        ),
+        StreamProvider<CollectionCarousselInsta>(
+          create: (_) => FirebaseFirestore.instance
+              .collection("CarousselInsta")
+              .snapshots()
+              .map((querySnapshot) =>
+                  CollectionCarousselInsta(querySnapshot.docs)),
+          initialData: CollectionCarousselInsta([]),
         ),
       ],
       child: bottomNavigation(
