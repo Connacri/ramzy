@@ -29,6 +29,7 @@ class page_detail extends StatefulWidget {
     required this.descriptionController,
     required this.user,
     required this.geoLocation,
+    required this.modePayment,
   })  : _imagesList = imagesList,
 
         //**************
@@ -44,6 +45,7 @@ class page_detail extends StatefulWidget {
   String phoneController;
   String descriptionController;
   ValueNotifier<GeoPoint?> geoLocation;
+  String modePayment;
 
   @override
   State<page_detail> createState() => _page_detailState();
@@ -84,10 +86,10 @@ class _page_detailState extends State<page_detail> {
                       ? 'ItemTitleVide'
                       : widget.typeSelected.toString().toUpperCase(),
                   style: const TextStyle(
-                      fontSize: 15,
-                      color: Colors.yellowAccent,
-                      fontWeight: FontWeight.bold,
-                      fontFamily: 'oswald'),
+                    fontSize: 15,
+                    color: Colors.blue,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 expandedHeight: 250,
                 //stretch: true,
@@ -182,25 +184,23 @@ class _page_detailState extends State<page_detail> {
                   ),
                 ),
               ),
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      Text(
-                        widget.geoLocation.value!.longitude.toString(),
-                        style: TextStyle(fontFamily: 'oswald'),
-                      ),
-                      Text(
-                        widget.geoLocation.value!.latitude.toString(),
-                        style: TextStyle(fontFamily: 'oswald'),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
+              // SliverToBoxAdapter(
+              //   child: Padding(
+              //     padding:
+              //         const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              //     child: Row(
+              //       mainAxisAlignment: MainAxisAlignment.spaceAround,
+              //       children: [
+              //         Text(
+              //           widget.geoLocation.value!.longitude.toString(),
+              //          ),
+              //         Text(
+              //           widget.geoLocation.value!.latitude.toString(),
+              //          ),
+              //       ],
+              //     ),
+              //   ),
+              // ),
               SliverToBoxAdapter(
                 child: Padding(
                   padding: const EdgeInsets.symmetric(
@@ -266,7 +266,12 @@ class _page_detailState extends State<page_detail> {
                           priceController: widget.priceController,
                           telContactController: widget.phoneController,
                           phoneCodeController: widget.phoneCodeController,
-                          descriptionController: widget.descriptionController)),
+                          descriptionController: widget.descriptionController)
+                      // child: Center(
+                      //     child: Text(
+                      //   widget.phoneCodeController,
+                      // )),
+                      ),
                 ),
               ),
               SliverToBoxAdapter(
@@ -387,6 +392,8 @@ class _page_detailState extends State<page_detail> {
     int userItemsNbr = 0;
     String phone = // widget.phoneCodeController.toString();
         widget.phoneController.toString(); //0687451524;
+    String phoneCode = widget.phoneCodeController.toString();
+    String modePayment = widget.modePayment.toString();
     print(
         'objectobjectobjectobjectobjectobjectobjectobjectobjectobjectobjectobjectobjectobjectobject');
     print(phone);
@@ -428,6 +435,7 @@ class _page_detailState extends State<page_detail> {
       'imageUrls': imageFiles,
       "item": item,
       'price': price, // + '.00 dzd ',
+      'modePayment': modePayment,
       'category': typeSelected,
       'createdAt': cloud.Timestamp.now(), //now.toString(),
       'Description': description,
@@ -437,6 +445,7 @@ class _page_detailState extends State<page_detail> {
       'dateFin': DateTime.now().add(const Duration(days: 11)),
       'levelItem': 'free',
       'phone': phone,
+      'phoneCode': phoneCode,
       'position': geoPoint,
       'viewed_by': [],
       'views': 0,
@@ -597,13 +606,17 @@ class TicketData extends StatelessWidget {
         Center(
           child: Text(
             '${phoneCodeController.toUpperCase()} ${telContactController.toUpperCase()}',
-            style: const TextStyle(color: Colors.black, fontFamily: 'oswald'),
+            style: const TextStyle(
+              color: Colors.black,
+            ),
           ),
         ),
         Center(
           child: Text(
             user['displayName'].toString().toUpperCase(),
-            style: const TextStyle(color: Colors.black, fontFamily: 'oswald'),
+            style: const TextStyle(
+              color: Colors.black,
+            ),
           ),
         ),
         const SizedBox(height: 5),

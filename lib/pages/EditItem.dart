@@ -1,21 +1,21 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-//import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:geocoding/geocoding.dart';
+import 'package:open_location_picker/open_location_picker.dart' as open;
 import 'package:ramzy/map/LocationAppExample.dart';
-import 'package:ramzy/pages/classes.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/widgets.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 import 'package:cloud_firestore/cloud_firestore.dart' as cloud;
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
-
+import 'package:flutter_osm_plugin/flutter_osm_plugin.dart';
+import 'dart:async';
+import 'package:flutter/material.dart';
 import 'package:flutter_osm_plugin/flutter_osm_plugin.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:geocoding/geocoding.dart';
-import 'package:ramzy/pages/itemDetails.dart';
+import 'package:open_location_picker/open_location_picker.dart' as open;
+import 'package:ramzy/map/LocationAppExample2.dart';
 
 class EditItem extends StatefulWidget {
   EditItem({required this.itemId, required this.itemData});
@@ -95,7 +95,7 @@ class _EditItemState extends State<EditItem> {
   //   }
   // }
 
-  Future<void> _updateItem(geoPoint) async {
+  Future<void> _updateItem(notifier) async {
     cloud.GeoPoint geoPoint =
         cloud.GeoPoint(notifier.value!.latitude, notifier.value!.longitude);
     if (!_formKey.currentState!.validate()) {
@@ -104,16 +104,51 @@ class _EditItemState extends State<EditItem> {
     setState(() {
       _isLoading = true;
     });
+
+    final itemMap = {
+      'category': _categoSelected,
+      'type': _typeSelected,
+      'Description': _descriptionController.text,
+      'item': _itemController.text,
+      'price': double.parse(_priceController.text),
+      'phone': int.parse(_phoneController.text),
+      'position': geoPoint,
+    };
     try {
-      final itemMap = {
-        'category': _categoSelected,
-        'type': _typeSelected,
-        'Description': _descriptionController.text,
-        'item': _itemController.text,
-        'price': double.parse(_priceController.text),
-        'phone': int.parse(_phoneController.text),
-        'position': geoPoint,
-      };
+      await cloud.FirebaseFirestore.instance
+          .collection('Products')
+          .doc(widget.itemId)
+          .update(itemMap);
+      //Navigator.of(context).pop();
+    } catch (error) {
+      print('Error updating item data: $error');
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('Failed to update item data')));
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  Future<void> _updateItem2() async {
+    if (!_formKey.currentState!.validate()) {
+      return;
+    }
+    setState(() {
+      _isLoading = true;
+    });
+
+    final itemMap = {
+      'category': _categoSelected,
+      'type': _typeSelected,
+      'Description': _descriptionController.text,
+      'item': _itemController.text,
+      'price': double.parse(_priceController.text),
+      'phone': int.parse(_phoneController.text),
+    };
+
+    try {
       await cloud.FirebaseFirestore.instance
           .collection('Products')
           .doc(widget.itemId)
@@ -155,65 +190,6 @@ class _EditItemState extends State<EditItem> {
   late bool isSelectedCatego = false;
   late bool isSwitched = false;
 
-  // @override
-  // // Widget _buildLocationVente(String locavente, _typeSelected) {
-  // //   _typeSelected == 'vente' ? isSelected = true : isSelected = false;
-  // //   return ElevatedButton.icon(
-  // //     onPressed: () {
-  // //       setState(() {
-  // //         _locationventeSelected = locavente;
-  // //         print(locavente.toString());
-  // //       });
-  // //     },
-  // //
-  // //     style: ButtonStyle(
-  // //         animationDuration: const Duration(milliseconds: 500),
-  // //         backgroundColor: _locationventeSelected == locavente
-  // //             ? MaterialStateProperty.all(Colors.green)
-  // //             : null, //MaterialStateProperty.all(Colors.greenAccent),
-  // //         foregroundColor: _locationventeSelected == locavente
-  // //             ? MaterialStateProperty.all(Colors.white)
-  // //             : null),
-  // //     icon: _locationventeSelected == locavente
-  // //         ? const Icon(Icons.check)
-  // //         : Container(), //Icon(Icons.check_box_outline_blank),
-  // //     label: Text(
-  // //       locavente.toUpperCase(), // == false ? 'vente' : 'location',
-  // //       style: const TextStyle(
-  // //         fontSize: 18,
-  // //       ),
-  // //     ),
-  // //   );
-  // // }
-  // Widget _buildLocationVente(String locavente, _typeSelected) {
-  //   return ElevatedButton.icon(
-  //     onPressed: () {
-  //       isSelected = true;
-  //       setState(() {
-  //         _locationventeSelected = locavente;
-  //         print(locavente.toString());
-  //         print(_locationventeSelected.toString());
-  //       });
-  //     },
-  //     style: ButtonStyle(
-  //         animationDuration: const Duration(milliseconds: 500),
-  //         backgroundColor: _locationventeSelected == locavente
-  //             ? MaterialStateProperty.all(Colors.green)
-  //             : null, //MaterialStateProperty.all(Colors.greenAccent),
-  //         foregroundColor: _locationventeSelected == locavente
-  //             ? MaterialStateProperty.all(Colors.white)
-  //             : null),
-  //     icon: _locationventeSelected == locavente
-  //         ? const Icon(Icons.check)
-  //         : Container(),
-  //     label: Text(
-  //       locavente.toUpperCase(),
-  //       style: const TextStyle(
-  //         fontSize: 15,
-  //       ),
-  //     ),
-  //   );
-  // }
   @override
   Widget _buildType(String catego) {
     return InkWell(
@@ -420,25 +396,38 @@ class _EditItemState extends State<EditItem> {
                                   },
                                 ),
                               ),
+                              // IconButton(
+                              //   onPressed: () async {
+                              //     var p = await Navigator.of(context).push(
+                              //         MaterialPageRoute(
+                              //             builder: (ctx) => SearchPage()));
+                              //     if (p != null) {
+                              //       setState(
+                              //         () => notifier.value = p as GeoPoint,
+                              //       );
+                              //     }
+                              //     print(notifier.value);
+                              //   },
+                              //   icon: Icon(FontAwesomeIcons.location),
+                              // ),
                               IconButton(
                                 onPressed: () async {
                                   var p = await Navigator.of(context).push(
                                       MaterialPageRoute(
-                                          builder: (ctx) => SearchPage()));
+                                          builder: (ctx) => SearchPage2(
+                                              position: widget
+                                                  .itemData['position'])));
                                   if (p != null) {
                                     setState(
                                       () => notifier.value = p as GeoPoint,
                                     );
                                   }
-                                  print(notifier.value);
+                                  print('p jdida : ' + p.toString());
                                 },
                                 icon: Icon(FontAwesomeIcons.location),
                               ),
                             ],
                           ),
-                        ),
-                        SizedBox(
-                          height: 5,
                         ),
                         SizedBox(
                           height: 5,
@@ -465,6 +454,7 @@ class _EditItemState extends State<EditItem> {
                           height: 5,
                         ),
                         TextFormField(
+                          keyboardType: TextInputType.number,
                           decoration: InputDecoration(
                             labelText: 'Price',
                             hintStyle: TextStyle(color: Colors.black26),
@@ -496,7 +486,7 @@ class _EditItemState extends State<EditItem> {
                             contentPadding: EdgeInsets.all(15),
                           ),
                           controller: _phoneController,
-                          keyboardType: TextInputType.number,
+                          keyboardType: TextInputType.phone,
                           validator: (value) {
                             if (value == null || value.isEmpty) {
                               return 'Please enter the Phone';
@@ -532,25 +522,25 @@ class _EditItemState extends State<EditItem> {
                         ElevatedButton(
                           onPressed: _isLoading
                               ? null
-                              : () => _updateItem(notifier)
-                                  .whenComplete(
-                                      () => Navigator.of(context).pop())
-                                  .then((value) => Navigator.of(context).pop()),
+                              : notifier.value != null
+                                  ? () => _updateItem(notifier)
+                                      .whenComplete(
+                                          () => Navigator.of(context).pop())
+                                      .then((value) =>
+                                          Navigator.of(context).pop())
+                                  : () => _updateItem2()
+                                      .whenComplete(
+                                          () => Navigator.of(context).pop())
+                                      .then((value) =>
+                                          Navigator.of(context).pop()),
+                          // ? () => debugPrint('1' + notifier.toString())
+                          // : () => debugPrint('2' + notifier.toString()),
                           child: _isLoading
                               ? Center(
                                   child: CircularProgressIndicator(),
                                 )
                               : const Text('Publier'),
                         ),
-                        // ElevatedButton(
-                        //   onPressed:
-                        //       _isLoading ? null : () => _updateItem(notifier),
-                        //   child: _isLoading //Text('Save Changes'),
-                        //       ? Center(
-                        //           child: CircularProgressIndicator(),
-                        //         )
-                        //       : const Text('Publier'),
-                        // ),
                         SizedBox(height: 15),
                         ElevatedButton(
                           onPressed: _isLoading ? null : _deleteItem,

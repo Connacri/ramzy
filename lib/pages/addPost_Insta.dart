@@ -109,76 +109,125 @@ class _stepper2_widgetState extends State<stepper2_widget> {
           )),
       body: ListView(
         children: <Widget>[
-          _imagesList.isEmpty
-              ? Center(
-                  child: Container(
-                  height: 50,
-                  width: double.infinity,
-                  child: InkWell(
-                    onTap: () {
-                      getMultiImagesGallery();
-                    },
-                    child: Center(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: _imagesList.length < 4
+                ? Column(
+                    children: [
+                      Center(
+                          child: Container(
+                        height: 50,
+                        width: double.infinity,
+                        child: InkWell(
+                          onTap: () {
+                            getMultiImagesGallery();
+                          },
+                          child: Center(
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                IconButton(
+                                  onPressed: () {
+                                    _getFromCamera();
+                                  },
+                                  icon: Icon(Icons.camera_alt_rounded),
+                                  color: Colors.grey.withOpacity(0.5),
+                                ),
+                                IconButton(
+                                  onPressed: () {
+                                    getMultiImagesGallery();
+                                  },
+                                  icon: Icon(Icons.image),
+                                  color: Colors.grey.withOpacity(0.5),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      )),
+                      _imagesList.isEmpty
+                          ? Container()
+                          : GridView.builder(
+                              key: UniqueKey(),
+                              shrinkWrap: true,
+                              itemCount:
+                                  _imagesList.isEmpty ? 2 : _imagesList.length,
+                              gridDelegate:
+                                  const SliverGridDelegateWithFixedCrossAxisCount(
+                                      crossAxisCount: 4),
+                              itemBuilder: (context, index) => Card(
+                                child: Stack(
+                                  fit: StackFit.expand,
+                                  children: [
+                                    Image.file(
+                                      File(_imagesList[index].path),
+                                      fit: BoxFit.cover,
+                                    ),
+                                    Positioned(
+                                        right: -10,
+                                        top: -10,
+                                        child: Container(
+                                          // color: const Colors.,
+                                          child: IconButton(
+                                            icon: const Icon(
+                                              Icons.delete,
+                                              size: 20,
+                                            ),
+                                            color: Colors.red,
+                                            onPressed: () {
+                                              _imagesList.removeAt(index);
+                                              setState(() {});
+                                            },
+                                          ),
+                                        ))
+                                  ],
+                                ),
+                              ),
+
+                              // )
+                            ),
+                    ],
+                  )
+                : GridView.builder(
+                    key: UniqueKey(),
+                    shrinkWrap: true,
+                    itemCount: _imagesList.isEmpty ? 2 : _imagesList.length,
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 4),
+                    itemBuilder: (context, index) => Card(
+                      child: Stack(
+                        fit: StackFit.expand,
                         children: [
-                          IconButton(
-                            onPressed: () {
-                              _getFromCamera();
-                            },
-                            icon: Icon(Icons.camera_alt_rounded),
-                            color: Colors.grey.withOpacity(0.5),
+                          Image.file(
+                            File(_imagesList[index].path),
+                            fit: BoxFit.cover,
                           ),
-                          IconButton(
-                            onPressed: () {
-                              getMultiImagesGallery();
-                            },
-                            icon: Icon(Icons.image),
-                            color: Colors.grey.withOpacity(0.5),
-                          ),
+                          Positioned(
+                              right: -10,
+                              top: -10,
+                              child: Container(
+                                // color: const Colors.,
+                                child: IconButton(
+                                  icon: const Icon(
+                                    Icons.delete,
+                                    size: 20,
+                                  ),
+                                  color: Colors.red,
+                                  onPressed: () {
+                                    _imagesList.removeAt(index);
+                                    setState(() {});
+                                  },
+                                ),
+                              ))
                         ],
                       ),
                     ),
-                  ),
-                ))
-              : GridView.builder(
-                  key: UniqueKey(),
-                  shrinkWrap: true,
-                  itemCount: _imagesList.isEmpty ? 2 : _imagesList.length,
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 4),
-                  itemBuilder: (context, index) => Card(
-                    child: Stack(
-                      fit: StackFit.expand,
-                      children: [
-                        Image.file(
-                          File(_imagesList[index].path),
-                          fit: BoxFit.cover,
-                        ),
-                        Positioned(
-                            right: -10,
-                            top: -10,
-                            child: Container(
-                              // color: const Colors.,
-                              child: IconButton(
-                                icon: const Icon(
-                                  Icons.delete,
-                                  size: 20,
-                                ),
-                                color: Colors.red,
-                                onPressed: () {
-                                  _imagesList.removeAt(index);
-                                  setState(() {});
-                                },
-                              ),
-                            ))
-                      ],
-                    ),
-                  ),
 
-                  // )
-                ),
+                    // )
+                  ),
+          ),
           Form(
             key: _formStepperKey,
             child: Column(

@@ -476,15 +476,15 @@ class _NearbyPlacesPageState extends State<NearbyPlacesPage> {
           'Item 40',
         ];
 
-        if ((intex + 1) % 5 == 0) {
-          int listIndex = ((intex + 1) ~/ 5) - 1;
-          if (listIndex < list3.length) {
-            return BannerNearBy5(
-              randomPhoto: randomPhoto,
-              label: list3[listIndex],
-            );
-          }
-        }
+        // if ((intex + 1) % 5 == 0) {
+        //   int listIndex = ((intex + 1) ~/ 5) - 1;
+        //   if (listIndex < list3.length) {
+        //     return BannerNearBy5(
+        //       randomPhoto: randomPhoto,
+        //       label: list3[listIndex],
+        //     );
+        //   }
+        // }
         return _buildListItem(place, distance);
       },
       //separator: Divider(),

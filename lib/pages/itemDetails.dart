@@ -385,30 +385,89 @@ class _SilverdetailItemState extends State<SilverdetailItem> {
                           ),
                         ),
                       ),
-                widget.data['price'] == null
-                    ? Container()
-                    : widget.data['price'] <= 0
-                        ? Container()
-                        : Align(
-                            alignment: Alignment.centerRight,
-                            child: Padding(
-                              padding:
-                                  new EdgeInsets.symmetric(horizontal: 20.0),
-                              child: new Text(
-                                'Prix : ' +
-                                    NumberFormat.currency(
-                                            symbol: 'DZD ', decimalDigits: 2)
-                                        .format(widget.data['price']),
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(
-                                  //backgroundColor: Colors.black45,
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w500,
-                                  color: Colors.green,
+                // widget.data['price'] == null
+                //     ? Container()
+                //     : widget.data['price'] <= 0
+                //         ? Container()
+                //         : Align(
+                //             alignment: Alignment.centerRight,
+                //             child: Padding(
+                //               padding:
+                //                   new EdgeInsets.symmetric(horizontal: 20.0),
+                //               child: new Text(
+                //                 'Prix : ' +
+                //                     NumberFormat.currency(
+                //                             symbol: 'DZD ', decimalDigits: 2)
+                //                         .format(widget.data['price']),
+                //                 overflow: TextOverflow.ellipsis,
+                //                 style: TextStyle(
+                //                   //backgroundColor: Colors.black45,
+                //                   fontSize: 18,
+                //                   fontWeight: FontWeight.w500,
+                //                   color: Colors.green,
+                //                 ),
+                //               ),
+                //             ),
+                //           ),
+                widget.data['price'] == 0
+                    ? Text('')
+                    : widget.data['price'] == null
+                        ? Text('')
+                        : Padding(
+                            padding: const EdgeInsets.only(right: 10.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                Text(
+                                  widget.data['price'] >= 1000000.00
+                                      ? intl.NumberFormat.compactCurrency(
+                                              symbol: 'Da ', decimalDigits: 2)
+                                          .format(widget.data['price'])
+                                      : intl.NumberFormat.currency(
+                                              symbol: 'Da ', decimalDigits: 2)
+                                          .format(widget.data['price']),
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                    //backgroundColor: Colors.black45,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w500,
+                                    color: Colors.green,
+                                  ),
                                 ),
-                              ),
+                                widget.data['type'] == 'location'
+                                    ? widget.data['modePayment'] != null &&
+                                            widget.data['modePayment'] != ''
+                                        ? Text(
+                                            '/' +
+                                                widget.data['modePayment']
+                                                    .toString()
+                                                    .toUpperCase(),
+                                            overflow: TextOverflow.ellipsis,
+                                            style: TextStyle(
+                                              //backgroundColor: Colors.black45,
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.w500,
+                                              color: Colors.green,
+                                            ),
+                                          )
+                                        : Text('')
+                                    : Text(
+                                        widget.data['modePayment']
+                                            .toString()
+                                            .toUpperCase(),
+                                        overflow: TextOverflow.ellipsis,
+                                        style: TextStyle(
+                                          //backgroundColor: Colors.black45,
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w500,
+                                          color: Colors.green,
+                                        ),
+                                      ),
+                              ],
                             ),
                           ),
+
                 SizedBox(
                   height: 20,
                 ),
@@ -693,8 +752,8 @@ class _SilverdetailItemState extends State<SilverdetailItem> {
                                     .whenComplete(() {
                                   Navigator.of(context)
                                       .pop(); // Ferme la boîte de dialogue de confirmation
-                                  Navigator.of(context)
-                                      .pop(); // Ferme la page actuelle
+                                  // Navigator.of(context)
+                                  //     .pop(); // Ferme la page actuelle
                                 });
                               }
                             } else {

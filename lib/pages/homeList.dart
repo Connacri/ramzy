@@ -5,6 +5,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:infinite_marquee/infinite_marquee.dart';
 import 'package:marquee/marquee.dart';
+import 'package:ramzy/pages/addPost_Insta.dart';
 import '../Oauth/getFCM.dart';
 import '../pages/NearbyPlacesPage.dart';
 import '../pages/SearchPage.dart';
@@ -461,6 +462,54 @@ class homeList extends StatelessWidget {
                 ),
               ),
               Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 40.0, vertical: 10),
+                child: GestureDetector(
+                  //onTap: () => getFcm(),
+                  onTap: () {
+                    determinePosition()
+                        .whenComplete(() => Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) => stepper2_widget(
+                                  ccollection: 'Products',
+                                  userDoc: userDoc,
+                                ),
+                              ),
+                            ));
+                  },
+                  child: Card(
+                    // margin: const EdgeInsets.all(5),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15)),
+                    clipBehavior: Clip.antiAliasWithSaveLayer,
+                    elevation: 2,
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Center(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.add,
+                              color: Colors.black87,
+                            ),
+                            Text(
+                              'Ajouter Une Annonce ',
+                              textAlign: TextAlign.start,
+                              style: TextStyle(
+                                  fontStyle: FontStyle.italic,
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.red),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              Padding(
                 padding: const EdgeInsets.fromLTRB(18, 18, 18, 0),
                 child: Row(
                   children: [
@@ -649,7 +698,7 @@ class homeList extends StatelessWidget {
                             Container(
                               width: 100,
                               child: itm[index]['price'] <= 0
-                                  ? Container()
+                                  ? Text('')
                                   : Padding(
                                       padding: const EdgeInsets.symmetric(
                                           horizontal: 4.0),
@@ -658,7 +707,7 @@ class homeList extends StatelessWidget {
                                           //   iitem.documents[index]['price'] >= 1000
                                           ? Text(
                                               intl.NumberFormat.compactCurrency(
-                                                      symbol: 'DZD ',
+                                                      symbol: 'Da ',
                                                       decimalDigits: 2)
                                                   .format(itm[index]['price']
                                                       //iitem.documents[index]['price']
@@ -668,7 +717,7 @@ class homeList extends StatelessWidget {
                                             )
                                           : Text(
                                               intl.NumberFormat.currency(
-                                                      symbol: 'DZD ',
+                                                      symbol: 'Da ',
                                                       decimalDigits: 2)
                                                   .format(itm[index]['price']
                                                       //iitem.documents[index]['price']
@@ -756,76 +805,6 @@ class homeList extends StatelessWidget {
                         ),
                         Column(
                           children: [
-                            // Padding(
-                            //   padding: const EdgeInsets.symmetric(
-                            //       horizontal: 20.0, vertical: 10),
-                            //   child: Card(
-                            //     // margin: const EdgeInsets.all(5),
-                            //     shape: RoundedRectangleBorder(
-                            //         borderRadius: BorderRadius.circular(15)),
-                            //     clipBehavior: Clip.antiAliasWithSaveLayer,
-                            //     elevation: 2,
-                            //     child: Stack(
-                            //       alignment: Alignment.center,
-                            //       children: [
-                            //         // ShaderMask(
-                            //         //   shaderCallback: (rect) {
-                            //         //     return const LinearGradient(
-                            //         //       begin: Alignment.topCenter,
-                            //         //       end: Alignment.bottomLeft,
-                            //         //       colors: [
-                            //         //         Colors.transparent,
-                            //         //         Colors.black
-                            //         //       ],
-                            //         //     ).createShader(Rect.fromLTRB(
-                            //         //         0, 0, rect.width, rect.height));
-                            //         //   },
-                            //         //   blendMode: BlendMode.darken,
-                            //         //   // child: Container(
-                            //         //   //   height: 50,
-                            //         //   //   decoration: BoxDecoration(
-                            //         //   //     image: DecorationImage(
-                            //         //   //       image: CachedNetworkImageProvider(
-                            //         //   //         'https://firebasestorage.googleapis.com/v0/b/adventure-eb4ca.appspot.com/o/wall%2Fwall%20(3).jpg?alt=media&token=c5c01dca-4b32-4b9d-88fe-717e976ac2f5',
-                            //         //   //       ),
-                            //         //   //       fit: BoxFit.cover,
-                            //         //   //       alignment: Alignment.topCenter,
-                            //         //   //     ),
-                            //         //   //   ),
-                            //         //   // ),
-                            //         // ),
-                            //         Center(
-                            //           child: Row(
-                            //             mainAxisAlignment:
-                            //                 MainAxisAlignment.center,
-                            //             crossAxisAlignment:
-                            //                 CrossAxisAlignment.center,
-                            //             children: [
-                            //               Text(
-                            //                 'Affaire',
-                            //                 textAlign: TextAlign.start,
-                            //                 style: TextStyle(
-                            //                     fontStyle: FontStyle.italic,
-                            //                     fontSize: 20,
-                            //                     fontWeight: FontWeight.bold,
-                            //                     color: Colors.white),
-                            //               ),
-                            //               Text(
-                            //                 'Jahde',
-                            //                 textAlign: TextAlign.center,
-                            //                 style: TextStyle(
-                            //                     fontStyle: FontStyle.italic,
-                            //                     fontSize: 20,
-                            //                     fontWeight: FontWeight.bold,
-                            //                     color: Colors.black),
-                            //               ),
-                            //             ],
-                            //           ),
-                            //         ),
-                            //       ],
-                            //     ),
-                            //   ),
-                            // ),
                             Padding(
                               padding: const EdgeInsets.all(15.0),
                               child: Center(
@@ -969,7 +948,7 @@ class homeList extends StatelessWidget {
                                                 ),
                                               ),
                                               itmm[index]['price'] <= 0
-                                                  ? Container()
+                                                  ? Text('')
                                                   : Padding(
                                                       padding: const EdgeInsets
                                                               .symmetric(
@@ -982,7 +961,7 @@ class homeList extends StatelessWidget {
                                                           ? Text(
                                                               intl.NumberFormat.compactCurrency(
                                                                       symbol:
-                                                                          'DZD ',
+                                                                          'Da ',
                                                                       decimalDigits:
                                                                           2)
                                                                   .format(
@@ -1002,7 +981,7 @@ class homeList extends StatelessWidget {
                                                           : Text(
                                                               intl.NumberFormat.currency(
                                                                       symbol:
-                                                                          'DZD ',
+                                                                          'Da ',
                                                                       decimalDigits:
                                                                           2)
                                                                   .format(
@@ -1126,50 +1105,20 @@ class homeList extends StatelessWidget {
           var randomNumber = random.nextInt(27);
           String randomPhoto =
               'https://firebasestorage.googleapis.com/v0/b/wahrane-a42eb.appspot.com/o/pub%2Fpub(${randomNumber}).jpg?alt=media&token=5d9e0764-23f6-4b18-95f4-e085736659cc';
-          List<String> list2 = ['A', 'B', 'C', 'D', 'E'];
 
           List<String> list3 = [
-            'Item 1',
-            'Item 2',
-            'Item 3',
-            'Item 4',
-            'Item 5',
-            'Item 6',
-            'Item 7',
-            'Item 8',
-            'Item 9',
-            'Item 10',
-            'Item 11',
-            'Item 12',
-            'Item 13',
-            'Item 14',
-            'Item 15',
-            'Item 16',
-            'Item 17',
-            'Item 18',
-            'Item 19',
-            'Item 20',
-            'Item 21',
-            'Item 22',
-            'Item 23',
-            'Item 24',
-            'Item 25',
-            'Item 26',
-            'Item 27',
-            'Item 28',
-            'Item 29',
-            'Item 30',
-            'Item 31',
-            'Item 32',
-            'Item 33',
-            'Item 34',
-            'Item 35',
-            'Item 36',
-            'Item 37',
-            'Item 38',
-            'Item 39',
-            'Item 40',
+            'Area 1',
+            'Area 2',
+            'Area 3',
+            'Area 4',
+            'Area 5',
+            'Area 6',
+            'Area 7',
+            'Area 8',
+            'Area 9',
+            'Area 10',
           ];
+
           if ((intex + 1) % 5 == 0) {
             int listIndex = ((intex + 1) ~/ 5) - 1;
             if (listIndex < list3.length) {
@@ -1188,42 +1137,8 @@ class homeList extends StatelessWidget {
             isLiked: isLiked,
             dataid: dataid,
           );
-          ///////////////////////////////////////////////////////////////
-          // if (int % 5 == 0 && int != 0) {
-          //   return CardPubArea(
-          //     randomPhoto: randomPhoto,
-          //     label: 'null',
-          //   );
-          // }
-          //
-          // final bool isLiked =
-          //     data!['usersLike'].toString().contains(user!.uid);
-          // return CardFirestore(
-          //     user: user, data: data, isLiked: isLiked, dataid: dataid);
-          ///////////////////////////////////////////////////////////////
         },
       ),
-
-      // itemBuilder: (BuildContext, DocumentSnapshot, int) {
-      //   var data = DocumentSnapshot[int].data() as Map?;
-      //   String dataid = DocumentSnapshot[int].id;
-      //   Random random = new Random();
-      //   var randomNumber = random.nextInt(27);
-      //   String randomPhoto =
-      //       'https://firebasestorage.googleapis.com/v0/b/wahrane-a42eb.appspot.com/o/pub%2Fpub(${randomNumber}).jpg?alt=media&token=5d9e0764-23f6-4b18-95f4-e085736659cc';
-      //   List<String> list2 = ['A', 'B', 'C', 'D', 'E'];
-      //   if (int % 5 == 0 && int != 0) {
-      //     return CardPubArea(
-      //       randomPhoto: randomPhoto,
-      //       label: 'null',
-      //     );
-      //   }
-      //
-      //   final bool isLiked =
-      //       data!['usersLike'].toString().contains(user!.uid);
-      //   return CardFirestore(
-      //       user: user, data: data, isLiked: isLiked, dataid: dataid);
-      // }),
     );
   }
 
@@ -1470,45 +1385,85 @@ class CardFirestore extends StatelessWidget {
                   Spacer(),
                   Column(
                     children: [
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 5),
-                        child: Text(
-                          data['item'].toString().toUpperCase(),
-                          overflow: TextOverflow.ellipsis,
-                          textAlign: isArabic(data['item'])
-                              ? TextAlign.right
-                              : TextAlign.left,
-                          style: isArabic(data['item'])
-                              ? GoogleFonts.cairo(
-                                  color: Colors.white70,
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w500)
-                              : TextStyle(
-                                  color: Colors.white70,
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w500),
+                      Center(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 5),
+                          child: Text(
+                            data['item'].toString().toUpperCase(),
+                            overflow: TextOverflow.ellipsis,
+                            textAlign: isArabic(data['item'])
+                                ? TextAlign.right
+                                : TextAlign.left,
+                            style: isArabic(data['item'])
+                                ? GoogleFonts.cairo(
+                                    color: Colors.white70,
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w500)
+                                : TextStyle(
+                                    color: Colors.white70,
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w500),
+                          ),
                         ),
                       ),
                       data['price'] == 0
-                          ? Container()
+                          ? Text('')
                           : Padding(
                               padding: const EdgeInsets.only(bottom: 0.0),
                               child: Center(
-                                child: Text(
-                                  data['price'] >= 1000000.00
-                                      ? intl.NumberFormat.compactCurrency(
-                                              symbol: 'DZD ', decimalDigits: 2)
-                                          .format(data['price'])
-                                      : intl.NumberFormat.currency(
-                                              symbol: 'DZD ', decimalDigits: 2)
-                                          .format(data['price']),
-                                  overflow: TextOverflow.ellipsis,
-                                  style: TextStyle(
-                                      //backgroundColor: Colors.black45,
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w500,
-                                      color: Colors.white,
-                                      fontFamily: 'oswald'),
+                                child: FittedBox(
+                                  child: Row(
+                                    children: [
+                                      Text(
+                                        data['price'] >= 1000000.00
+                                            ? intl.NumberFormat.compactCurrency(
+                                                    symbol: 'Da ',
+                                                    decimalDigits: 2)
+                                                .format(data['price'])
+                                            : intl.NumberFormat.currency(
+                                                    symbol: 'Da ',
+                                                    decimalDigits: 2)
+                                                .format(data['price']),
+                                        overflow: TextOverflow.ellipsis,
+                                        style: TextStyle(
+                                          //backgroundColor: Colors.black45,
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w500,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                      data['type'] == 'location'
+                                          ? data['modePayment'] != null &&
+                                                  data['modePayment'] != ''
+                                              ? Text(
+                                                  '/' +
+                                                      data['modePayment']
+                                                          .toString()
+                                                          .toUpperCase(),
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  style: TextStyle(
+                                                    //backgroundColor: Colors.black45,
+                                                    fontSize: 16,
+                                                    fontWeight: FontWeight.w500,
+                                                    color: Colors.white,
+                                                  ),
+                                                )
+                                              : Text('')
+                                          : Text(
+                                              data['modePayment']
+                                                  .toString()
+                                                  .toUpperCase(),
+                                              overflow: TextOverflow.ellipsis,
+                                              style: TextStyle(
+                                                //backgroundColor: Colors.black45,
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.w500,
+                                                color: Colors.white,
+                                              ),
+                                            ),
+                                    ],
+                                  ),
                                 ),
                               ),
                             ),
@@ -1522,7 +1477,6 @@ class CardFirestore extends StatelessWidget {
                               color: Colors.white70,
                               fontWeight: FontWeight.normal,
                               fontSize: 12,
-                              fontFamily: 'Oswald',
                             )),
                       ),
                     ],
@@ -1570,7 +1524,7 @@ class CardPubArea extends StatelessWidget {
             child: Center(
               child: FittedBox(
                 child: Text(
-                  'PubArea-$label',
+                  'Pub-$label',
                   textAlign: TextAlign.justify,
                   style: TextStyle(
                       shadows: [

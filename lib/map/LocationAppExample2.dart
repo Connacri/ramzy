@@ -4,89 +4,19 @@ import 'package:flutter_osm_plugin/flutter_osm_plugin.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:open_location_picker/open_location_picker.dart' as open;
 
-class LocationAppExample2 extends StatefulWidget {
+class SearchPage2 extends StatefulWidget {
+  SearchPage2({
+    required this.position,
+  });
+
+  final position;
+
   @override
-  State<StatefulWidget> createState() => _LocationAppExample2State();
+  State<StatefulWidget> createState() => _SearchPage2State();
 }
 
-class _LocationAppExample2State extends State<LocationAppExample2> {
-  ValueNotifier<GeoPoint?> notifier = ValueNotifier(null);
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("search picker example"),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            ValueListenableBuilder<GeoPoint?>(
-              valueListenable: notifier,
-              builder: (ctx, p, child) {
-                return Center(
-                  child: Text(
-                    "${p?.toString() ?? ""}",
-                    textAlign: TextAlign.center,
-                  ),
-                );
-              },
-            ),
-            Column(
-              children: [
-                ElevatedButton(
-                  onPressed: () async {
-                    var p = await Navigator.of(context).push(
-                        MaterialPageRoute(builder: (ctx) => SearchPage()));
-                    if (p != null) {
-                      notifier.value = p as GeoPoint;
-                    }
-                  },
-                  child: Text("pick address"),
-                ),
-                ElevatedButton(
-                  onPressed: () async {
-                    var p = await showSimplePickerLocation(
-                      context: context,
-                      isDismissible: true,
-                      title: "location picker",
-                      textConfirmPicker: "pick",
-                      initCurrentUserPosition: false,
-                      initZoom: 17,
-                      initPosition: GeoPoint(
-                        latitude: 47.4358055,
-                        longitude: 8.4737324,
-                      ),
-                      radius: 8.0,
-                    );
-                    if (p != null) {
-                      notifier.value = p;
-                    }
-                  },
-                  child: Text("show picker address"),
-                )
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class SearchPage extends StatefulWidget {
-  @override
-  State<StatefulWidget> createState() => _SearchPageState();
-}
-
-class _SearchPageState extends State<SearchPage> {
+class _SearchPage2State extends State<SearchPage2> {
   late TextEditingController textEditingController = TextEditingController();
-  late PickerMapController controller = PickerMapController(
-    initMapWithUserPosition: true,
-  );
 
   @override
   void initState() {
@@ -95,7 +25,7 @@ class _SearchPageState extends State<SearchPage> {
   }
 
   void textOnChanged() {
-    controller.setSearchableText(textEditingController.text);
+    // controller.setSearchableText(textEditingController.text);
   }
 
   @override
@@ -106,6 +36,12 @@ class _SearchPageState extends State<SearchPage> {
 
   @override
   Widget build(BuildContext context) {
+    PickerMapController controller = PickerMapController(
+      initMapWithUserPosition: false,
+      initPosition: GeoPoint(
+          latitude: widget.position.latitude,
+          longitude: widget.position.longitude),
+    );
     return Scaffold(
       body: CustomPickerLocation(
         controller: controller,
@@ -113,63 +49,56 @@ class _SearchPageState extends State<SearchPage> {
           padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 60),
           child: Column(
             children: [
-              Row(
-                children: [
-                  // TextButton(
-                  //   style: TextButton.styleFrom(),
-                  //   onPressed: () => Navigator.of(context).pop(),
-                  //   child: Icon(
-                  //     Icons.arrow_back_ios,
-                  //   ),
-                  // ),
-                  Expanded(
-                    child: TextField(
-                      controller: textEditingController,
-                      onEditingComplete: () async {
-                        FocusScope.of(context).requestFocus(new FocusNode());
-                      },
-                      decoration: InputDecoration(
-                        prefixIcon: Icon(
-                          Icons.search,
-                          color: Colors.black,
-                        ),
-                        suffix: ValueListenableBuilder<TextEditingValue>(
-                          valueListenable: textEditingController,
-                          builder: (ctx, text, child) {
-                            if (text.text.isNotEmpty) {
-                              return child!;
-                            }
-                            return SizedBox.shrink();
-                          },
-                          child: InkWell(
-                            focusNode: FocusNode(),
-                            onTap: () {
-                              textEditingController.clear();
-                              controller.setSearchableText("");
-                              FocusScope.of(context)
-                                  .requestFocus(new FocusNode());
-                            },
-                            child: Icon(
-                              Icons.close,
-                              size: 16,
-                              color: Colors.black,
-                            ),
-                          ),
-                        ),
-                        focusColor: Colors.black,
-                        filled: true,
-                        hintText: "Rechercher Adresse",
-                        border: InputBorder.none,
-                        enabledBorder: InputBorder.none,
-                        fillColor: Colors.grey[300],
-                        errorBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.red),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+              // Row(
+              //   children: [
+              //     Expanded(
+              //       child: TextField(
+              //         controller: textEditingController,
+              //         onEditingComplete: () async {
+              //           FocusScope.of(context).requestFocus(new FocusNode());
+              //         },
+              //         decoration: InputDecoration(
+              //           prefixIcon: Icon(
+              //             Icons.search,
+              //             color: Colors.black,
+              //           ),
+              //           suffix: ValueListenableBuilder<TextEditingValue>(
+              //             valueListenable: textEditingController,
+              //             builder: (ctx, text, child) {
+              //               if (text.text.isNotEmpty) {
+              //                 return child!;
+              //               }
+              //               return SizedBox.shrink();
+              //             },
+              //             child: InkWell(
+              //               focusNode: FocusNode(),
+              //               onTap: () {
+              //                 textEditingController.clear();
+              //                 controller.setSearchableText("");
+              //                 FocusScope.of(context)
+              //                     .requestFocus(new FocusNode());
+              //               },
+              //               child: Icon(
+              //                 Icons.close,
+              //                 size: 16,
+              //                 color: Colors.black,
+              //               ),
+              //             ),
+              //           ),
+              //           focusColor: Colors.black,
+              //           filled: true,
+              //           hintText: "Rechercher Adresse",
+              //           border: InputBorder.none,
+              //           enabledBorder: InputBorder.none,
+              //           fillColor: Colors.grey[300],
+              //           errorBorder: OutlineInputBorder(
+              //             borderSide: BorderSide(color: Colors.red),
+              //           ),
+              //         ),
+              //       ),
+              //     ),
+              //   ],
+              // ),
               TopSearchWidget()
             ],
           ),

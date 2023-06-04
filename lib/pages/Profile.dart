@@ -797,7 +797,7 @@ class PostListOfMyProfil extends StatelessWidget {
                     ),
                   ),
                   title: Text(
-                    data['item'].toString().toUpperCase() ?? '',
+                    data['Description'].toString().toUpperCase() ?? '',
                     overflow: TextOverflow.ellipsis,
                     textAlign: isArabic(data['Description'])
                         ? TextAlign.right

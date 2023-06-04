@@ -301,6 +301,7 @@ class _stepper_widgetState extends State<stepper_widget> {
                                                 _descriptionController.text,
                                             phoneController:
                                                 _telContactController.text,
+                                            modePayment: dropdownValue,
                                           );
                                         }));
                                       }
@@ -858,7 +859,7 @@ class _stepper_widgetState extends State<stepper_widget> {
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
                             Text(
-                              'Paiement Par',
+                              'Prix Par',
                               style: TextStyle(
                                   fontSize: 25,
                                   fontWeight: FontWeight.w500,
@@ -960,7 +961,7 @@ class _stepper_widgetState extends State<stepper_widget> {
                   filled: true,
                   contentPadding: EdgeInsets.all(15),
                 ),
-                invalidNumberMessage: 'Entrer Que Ooreddo ou Djezzy ou Mobilis',
+                invalidNumberMessage: 'Corriger Votre Numéro de Tel',
                 // disableLengthCheck: true,
                 validator: (value) {
                   if (value == null) {
