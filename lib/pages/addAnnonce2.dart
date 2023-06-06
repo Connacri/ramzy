@@ -601,10 +601,9 @@ class _addAnnonce2State extends State<addAnnonce2> {
                     ),
                     onPressed: () async {
                       if (_imagesList.isEmpty ||
-                              _descriptionController.text == null ||
-                              _descriptionController.text == ''
-                          //|| notifier.value == null
-                          ) {
+                          _descriptionController.text == null ||
+                          _descriptionController.text == '' ||
+                          notifier.value == null) {
                         return showDialog(
                           context: context,
                           builder: (_) => AlertDialog(
