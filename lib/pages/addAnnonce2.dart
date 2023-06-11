@@ -783,47 +783,6 @@ class _addAnnonce2State extends State<addAnnonce2> {
     });
   }
 
-  Future getMultiImagesCamera() async {
-    final List<XFile>? selectedImages = await multiPicker.pickMultiImage(
-      maxHeight: 1080,
-      maxWidth: 1920,
-      imageQuality: 40,
-    );
-
-    setState(() {
-      if (_imagesList.length <= 4) {
-        if (selectedImages!.length <= (4 - _imagesList.length)) {
-          // _imagesList.addAll(selectedImages);
-          _imagesList.addAll(
-              selectedImages.map<File>((XFile) => File(XFile.path)).toList());
-          return print('PLUS QUE 4');
-        } else {
-          print('No Images Selected ');
-          Fluttertoast.showToast(
-              msg: (4 - _imagesList.length) == 1
-                  ? 'Selectionner 1 Photo'
-                  : 'Selectionner ${4 - _imagesList.length} Photo(s) ou Moins',
-              toastLength: Toast.LENGTH_LONG,
-              gravity: ToastGravity.CENTER,
-              timeInSecForIosWeb: 1,
-              backgroundColor: Colors.redAccent,
-              textColor: Colors.white,
-              fontSize: 14.0);
-        }
-      } else {
-        Fluttertoast.showToast(
-            msg: 'Pas De 4 Photos',
-            toastLength: Toast.LENGTH_LONG,
-            gravity: ToastGravity.CENTER,
-            timeInSecForIosWeb: 1,
-            backgroundColor: Colors.blue,
-            textColor: Colors.white,
-            fontSize: 14.0);
-        return print('PAS PLUS QUE 4');
-      }
-    });
-  }
-
   Future uploadFile2(cloud.CollectionReference<Object?> imgRef) async {
     int i = 1;
     cloud.GeoPoint geoPoint =

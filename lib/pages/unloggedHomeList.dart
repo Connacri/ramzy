@@ -1105,57 +1105,57 @@ class _unloggedHomeListState extends State<unloggedHomeList> {
             var randomNumber = random.nextInt(27);
             String randomPhoto =
                 'https://firebasestorage.googleapis.com/v0/b/wahrane-a42eb.appspot.com/o/pub%2Fpub(${randomNumber}).jpg?alt=media&token=5d9e0764-23f6-4b18-95f4-e085736659cc';
-            if (int % 5 == 0 && int != 0) {
-              return GestureDetector(
-                onTap: () => Navigator.of(context)
-                    .push(MaterialPageRoute(builder: (context) => AuthPage())),
-                child: Card(
-                  //  margin: const EdgeInsets.all(5),
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10)),
-                  clipBehavior: Clip.antiAliasWithSaveLayer,
-                  elevation: 5,
-                  child: Stack(
-                    alignment: Alignment.center,
-                    fit: StackFit.passthrough,
-                    children: [
-                      Container(
-                        // decoration: BoxDecoration(
-                        //   image: DecorationImage(
-                        //     image: CachedNetworkImageProvider(
-                        //       randomPhoto,
-                        //     ),
-                        //     fit: BoxFit.cover,
-                        //     alignment: Alignment.topCenter,
-                        //   ),
-                        // ),
-                        child: CachedNetworkImage(
-                          fit: BoxFit.cover,
-                          imageUrl: randomPhoto,
-                        ),
-                      ),
-                      Center(
-                        child: Text(
-                          'PubArea',
-                          style: TextStyle(
-                              shadows: [
-                                Shadow(
-                                  blurRadius: 10.0, // shadow blur
-                                  color: Colors.black54, // shadow color
-                                  offset: Offset(2.0,
-                                      2.0), // how much shadow will be shown
-                                ),
-                              ],
-                              fontSize: 40,
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold),
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-              );
-            }
+            // if (int % 5 == 0 && int != 0) {
+            //   return GestureDetector(
+            //     onTap: () => Navigator.of(context)
+            //         .push(MaterialPageRoute(builder: (context) => AuthPage())),
+            //     child: Card(
+            //       //  margin: const EdgeInsets.all(5),
+            //       shape: RoundedRectangleBorder(
+            //           borderRadius: BorderRadius.circular(10)),
+            //       clipBehavior: Clip.antiAliasWithSaveLayer,
+            //       elevation: 5,
+            //       child: Stack(
+            //         alignment: Alignment.center,
+            //         fit: StackFit.passthrough,
+            //         children: [
+            //           Container(
+            //             // decoration: BoxDecoration(
+            //             //   image: DecorationImage(
+            //             //     image: CachedNetworkImageProvider(
+            //             //       randomPhoto,
+            //             //     ),
+            //             //     fit: BoxFit.cover,
+            //             //     alignment: Alignment.topCenter,
+            //             //   ),
+            //             // ),
+            //             child: CachedNetworkImage(
+            //               fit: BoxFit.cover,
+            //               imageUrl: randomPhoto,
+            //             ),
+            //           ),
+            //           Center(
+            //             child: Text(
+            //               'PubArea',
+            //               style: TextStyle(
+            //                   shadows: [
+            //                     Shadow(
+            //                       blurRadius: 10.0, // shadow blur
+            //                       color: Colors.black54, // shadow color
+            //                       offset: Offset(2.0,
+            //                           2.0), // how much shadow will be shown
+            //                     ),
+            //                   ],
+            //                   fontSize: 40,
+            //                   color: Colors.white,
+            //                   fontWeight: FontWeight.bold),
+            //             ),
+            //           )
+            //         ],
+            //       ),
+            //     ),
+            //   );
+            // }
 
             return GestureDetector(
               onTap: () => Navigator.of(context)

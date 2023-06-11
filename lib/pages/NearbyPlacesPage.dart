@@ -620,8 +620,8 @@ class _NearbyPlacesPageState extends State<NearbyPlacesPage> {
                                     textAlign: TextAlign.start,
                                     style: TextStyle(
                                       color: data['type'] == 'vente'
-                                          ? Colors.green
-                                          : Colors.lightBlue,
+                                          ? Colors.lightBlue
+                                          : Colors.green,
                                       fontWeight: FontWeight.normal,
                                       fontSize: 12,
                                     )),
@@ -784,7 +784,9 @@ class _NearbyPlacesPageState extends State<NearbyPlacesPage> {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
-                                Padding(
+                                data['price'] <=0
+                                    ? Text('')
+                                    : Padding(
                                   padding: const EdgeInsets.symmetric(
                                       horizontal: 15),
                                   child: Text(

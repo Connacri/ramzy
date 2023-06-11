@@ -3,10 +3,12 @@ import 'dart:ui';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:google_mobile_ads/src/ad_containers.dart';
 import 'package:infinite_marquee/infinite_marquee.dart';
 import 'package:marquee/marquee.dart';
 import 'package:ramzy/pages/addAnnonce2.dart';
 import 'package:ramzy/pages/addPost_Insta.dart';
+import 'package:ramzy/services/ad_mob_service.dart';
 import '../Oauth/getFCM.dart';
 import '../pages/NearbyPlacesPage.dart';
 import '../pages/SearchPage.dart';
@@ -38,8 +40,13 @@ import 'addAnnonce.dart';
 import 'itemDetails.dart';
 
 class homeList extends StatelessWidget {
-  homeList({Key? key, required this.userDoc}) : super(key: key);
+  homeList({
+    Key? key,
+    required this.userDoc,
+    required this.ad,
+  }) : super(key: key);
   final userDoc;
+  final BannerAd? ad;
 
 // Assuming you have a reference to your Firestore instance
   final CollectionReference locationsRef =
@@ -50,6 +57,17 @@ class homeList extends StatelessWidget {
   bool isArabic(String text) {
     return RegExp(r'[\u0600-\u06FF]').hasMatch(text);
   }
+
+  // BannerAd? _banner;
+  //
+  // void _createBannerAd() {
+  //   _banner = BannerAd(
+  //     size: AdSize.fullBanner,
+  //     adUnitId: AdMobService.bannerAdUnitId!,
+  //     listener: AdMobService.bannerListener,
+  //     request: const AdRequest(),
+  //   )..load();
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -306,6 +324,7 @@ class homeList extends StatelessWidget {
                         decelerationCurve: Curves.easeOut,
                       ),
                     ),
+
               Padding(
                 padding:
                     const EdgeInsets.symmetric(vertical: 8.0, horizontal: 40),
@@ -394,8 +413,8 @@ class homeList extends StatelessWidget {
                   validator: (value) => value != null && value.length < 3
                       ? 'Entrer min 3 characteres.'
                       : null,
-                  onTap: () {
-                    determinePosition()
+                  onTap: () async {
+                    await determinePosition()
                         .whenComplete(() => Navigator.of(context).push(
                               MaterialPageRoute(
                                 builder: (context) => addAnnonce2(
@@ -407,6 +426,7 @@ class homeList extends StatelessWidget {
                   },
                 ),
               ),
+
               // Padding(
               //   padding:
               //       const EdgeInsets.symmetric(horizontal: 40.0, vertical: 10),
@@ -455,6 +475,13 @@ class homeList extends StatelessWidget {
               //     ),
               //   ),
               // ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Container(
+                    height: 80,
+                    width: double.infinity,
+                    child: AdWidget(ad: ad!)),
+              ),
               Padding(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 40.0, vertical: 10),
@@ -1169,15 +1196,15 @@ class homeList extends StatelessWidget {
             'Area 10',
           ];
 
-          if ((intex + 1) % 5 == 0) {
-            int listIndex = ((intex + 1) ~/ 5) - 1;
-            if (listIndex < list3.length) {
-              return CardPubArea(
-                randomPhoto: randomPhoto,
-                label: list3[listIndex],
-              );
-            }
-          }
+          // if ((intex + 1) % 5 == 0) {
+          //   int listIndex = ((intex + 1) ~/ 5) - 1;
+          //   if (listIndex < list3.length) {
+          //     return CardPubArea(
+          //       randomPhoto: randomPhoto,
+          //       label: list3[listIndex],
+          //     );
+          //   }
+          // }
 
           final bool isLiked =
               data!['usersLike'].toString().contains(user!.uid);

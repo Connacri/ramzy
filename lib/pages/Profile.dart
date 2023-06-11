@@ -129,6 +129,30 @@ class _ProfileState extends State<Profile> with TickerProviderStateMixin {
             bool uploading = false;
             return CustomScrollView(slivers: <Widget>[
               SliverAppBar(
+                actions: [
+                  IconButton(
+                      onPressed: () async {
+                        FirebaseAuth.instance.signOut();
+                        final provider = Provider.of<googleSignInProvider>(
+                            context,
+                            listen: false);
+                        await provider.logouta();
+// Navigator.of(context).pop();
+                        Navigator.pop(context, true);
+                      },
+                      icon: ClipOval(
+                        child: Container(
+                          color: Colors.black87,
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Icon(
+                              Icons.logout,
+                              color: Colors.red,
+                            ),
+                          ),
+                        ),
+                      )),
+                ],
                 expandedHeight: 220.0,
                 floating: true,
                 pinned: true,
@@ -165,7 +189,6 @@ class _ProfileState extends State<Profile> with TickerProviderStateMixin {
                             data['displayName'].toString().toUpperCase(),
                             overflow: TextOverflow.ellipsis,
                             style: TextStyle(
-                                fontFamily: 'oswald',
                                 color: Colors.white,
                                 fontSize: 16,
                                 fontWeight: FontWeight.w500),
@@ -263,6 +286,36 @@ class _ProfileState extends State<Profile> with TickerProviderStateMixin {
                   delegate: SliverChildListDelegate([
                 Column(
                   children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          'Wallet',
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                              color: Colors.brown,
+                              fontSize: 20,
+                              fontWeight: FontWeight.w500),
+                        ),
+                        Text(
+                          'Coins : ',
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                              color: Colors.brown,
+                              fontSize: 20,
+                              fontWeight: FontWeight.w300),
+                        ),
+                        Text(
+                          NumberFormat.currency(symbol: '', decimalDigits: 2)
+                              .format(data['coins']),
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                              color: Colors.black54,
+                              fontSize: 20,
+                              fontWeight: FontWeight.w400),
+                        ),
+                      ],
+                    ),
                     Stack(
                       children: [
                         AvatarGlow(
@@ -338,57 +391,27 @@ class _ProfileState extends State<Profile> with TickerProviderStateMixin {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          'Wallet',
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                              color: Colors.brown,
-                              fontSize: 20,
-                              fontWeight: FontWeight.w500),
+                          data['displayName'].toString().capitalize(),
+                          style: TextStyle(fontSize: 30),
                         ),
-                        Text(
-                          'Coins : ',
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                              color: Colors.brown,
-                              fontSize: 20,
-                              fontWeight: FontWeight.w300),
+                        SizedBox(
+                          width: 5,
                         ),
-                        Text(
-                          NumberFormat.currency(symbol: '', decimalDigits: 2)
-                              .format(data['coins']),
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                              color: Colors.black54,
-                              fontSize: 20,
-                              fontWeight: FontWeight.w400),
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) => profile_edit(
+                                userDoc: data,
+                              ), //MainPageAuth(),
+                              //  AuthPage(),
+                            ));
+                          },
+                          child: Icon(
+                            Icons.mode_edit,
+                            size: 16,
+                          ),
                         ),
                       ],
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            data['displayName'].toString().capitalize(),
-                            style: TextStyle(fontSize: 20),
-                          ),
-                          GestureDetector(
-                            onTap: () {
-                              Navigator.of(context).push(MaterialPageRoute(
-                                builder: (context) => profile_edit(
-                                  userDoc: data,
-                                ), //MainPageAuth(),
-                                //  AuthPage(),
-                              ));
-                            },
-                            child: Icon(
-                              Icons.mode_edit,
-                              size: 16,
-                            ),
-                          ),
-                        ],
-                      ),
                     ),
                     data['email'] == 'forslog@gmail.com'
                         ? Padding(
@@ -429,23 +452,8 @@ class _ProfileState extends State<Profile> with TickerProviderStateMixin {
                             ),
                           )
                         : Container(),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        Text(
-                          'Niveau : ' + '${data['levelUser']}'.capitalize(),
-                          textAlign: TextAlign.justify,
-                          style: TextStyle(fontSize: 20),
-                        ),
-                        Text(
-                          'Role : ' + '${data['role']}'.capitalize(),
-                          textAlign: TextAlign.justify,
-                          style: TextStyle(fontSize: 20),
-                        ),
-                      ],
-                    ),
                     Padding(
-                      padding: const EdgeInsets.only(top: 16.0),
+                      padding: const EdgeInsets.only(top: 5.0),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.center,
@@ -463,9 +471,9 @@ class _ProfileState extends State<Profile> with TickerProviderStateMixin {
                         ],
                       ),
                     ),
-                    Text(userGoo?.emailVerified != true
-                        ? 'Email Not Verified'
-                        : ''),
+                    userGoo?.emailVerified != true
+                        ? Text('Email Not Verified')
+                        : Container(),
                     data['phone'] == null || data['phone'] == 0
                         ? Container()
                         : Center(
@@ -475,37 +483,43 @@ class _ProfileState extends State<Profile> with TickerProviderStateMixin {
                                     style: const TextStyle())
                                 : Text('+213 ${data['phone']}'),
                           ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: NumbersWidget(
+                        data: data,
+                      ),
+                    ),
                   ],
                 ),
-                Padding(
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 20, horizontal: 100),
-                  child: ElevatedButton.icon(
-                    style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.red,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(15)),
-                        elevation: 4.0,
-                        minimumSize: const Size.fromHeight(50)),
-                    icon: Icon(
-                      Icons.logout,
-                      color: Colors.white,
-                    ),
-                    label: const Text(
-                      'Deconnexion',
-                      style: TextStyle(color: Colors.white),
-                    ),
-                    onPressed: () async {
-                      FirebaseAuth.instance.signOut();
-                      final provider = Provider.of<googleSignInProvider>(
-                          context,
-                          listen: false);
-                      await provider.logouta();
-// Navigator.of(context).pop();
-                      Navigator.pop(context, true);
-                    },
-                  ),
-                ),
+//                 Padding(
+//                   padding:
+//                       const EdgeInsets.symmetric(vertical: 20, horizontal: 100),
+//                   child: ElevatedButton.icon(
+//                     style: ElevatedButton.styleFrom(
+//                         backgroundColor: Colors.red,
+//                         shape: RoundedRectangleBorder(
+//                             borderRadius: BorderRadius.circular(15)),
+//                         elevation: 4.0,
+//                         minimumSize: const Size.fromHeight(50)),
+//                     icon: Icon(
+//                       Icons.logout,
+//                       color: Colors.white,
+//                     ),
+//                     label: const Text(
+//                       'Deconnexion',
+//                       style: TextStyle(color: Colors.white),
+//                     ),
+//                     onPressed: () async {
+//                       FirebaseAuth.instance.signOut();
+//                       final provider = Provider.of<googleSignInProvider>(
+//                           context,
+//                           listen: false);
+//                       await provider.logouta();
+// // Navigator.of(context).pop();
+//                       Navigator.pop(context, true);
+//                     },
+//                   ),
+//                 ),
                 data['email'] == 'forslog@gmail.com'
                     ? Padding(
                         padding: const EdgeInsets.symmetric(
@@ -733,6 +747,60 @@ class _ProfileState extends State<Profile> with TickerProviderStateMixin {
       ),
     );
   }
+}
+
+class NumbersWidget extends StatelessWidget {
+  final data;
+
+  NumbersWidget({
+    Key? key,
+    required this.data,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final birthday = data['birthday'];
+
+    // final int age =
+    //     ((DateTime.now().difference(birthday.toDate()).inDays) / 365).toInt();
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        buildButton(context, data['levelUser'].toString(), 'Niveau'),
+        buildDivider(),
+        buildButton(context, data['role'].toString(), 'Role'),
+        buildDivider(),
+        buildButton(context, data['plan'].toString(), 'Plan'),
+      ],
+    );
+  }
+
+  Widget buildDivider() => Container(
+        height: 24,
+        child: VerticalDivider(),
+      );
+
+  Widget buildButton(BuildContext context, String value, String text) =>
+      MaterialButton(
+        padding: EdgeInsets.symmetric(vertical: 4),
+        onPressed: () {},
+        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: <Widget>[
+            Text(
+              value.capitalize(),
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
+            ),
+            SizedBox(height: 2),
+            Text(
+              text,
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+          ],
+        ),
+      );
 }
 
 class PostListOfMyProfil extends StatelessWidget {

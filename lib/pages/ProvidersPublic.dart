@@ -4,8 +4,10 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
 import 'package:ramzy/pages/classes.dart';
+import 'package:ramzy/services/ad_mob_service.dart';
 import 'homeList.dart';
 import 'insta.dart';
 import '../services/upload_random.dart';
@@ -189,9 +191,20 @@ class bottomNavigation extends StatefulWidget {
 }
 
 class _bottomNavigationState extends State<bottomNavigation> {
+  BannerAd? _banner;
   @override
   void initState() {
     super.initState();
+    _createBannerAd();
+  }
+
+  void _createBannerAd() {
+    _banner = BannerAd(
+      size: AdSize.fullBanner,
+      adUnitId: AdMobService.bannerAdUnitId!,
+      listener: AdMobService.bannerListener,
+      request: const AdRequest(),
+    )..load();
   }
 
   @override
@@ -204,8 +217,11 @@ class _bottomNavigationState extends State<bottomNavigation> {
   @override
   Widget build(BuildContext context) {
     final uusers = Provider.of<Collection2Data>(context);
+
     return Scaffold(
-      bottomNavigationBar: NavigationBar(
+      bottomNavigationBar: // _banner == null
+          // ?
+          NavigationBar(
         height: 60,
         onDestinationSelected: (int index) {
           setState(() {
@@ -235,10 +251,16 @@ class _bottomNavigationState extends State<bottomNavigation> {
             label: widget.userDoc['displayName'].toString().capitalize(),
           ),
         ],
-      ),
+      )
+      // : Container(
+      //     height: 260,
+      //     child: AdWidget(ad: _banner!),
+      //   ),
+      ,
       body: <Widget>[
         homeList(
           userDoc: widget.userDoc,
+          ad: _banner,
         ),
         insta(
           userDoc: widget.userDoc,

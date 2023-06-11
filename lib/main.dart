@@ -1,4 +1,5 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:ramzy/pages/booking.dart';
 import 'package:ramzy/pages/booking2.dart';
 
@@ -19,6 +20,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  MobileAds.instance.initialize(); ////////////////////////////////ads
   await Firebase.initializeApp(
       //options: DefaultFirebaseOptions.currentPlatform,
       );
