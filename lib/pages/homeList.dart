@@ -379,7 +379,7 @@ class homeList extends StatelessWidget {
                 ],
               ),
               Padding(
-                padding: const EdgeInsets.all(18.0),
+                padding: const EdgeInsets.fromLTRB(18, 18, 18, 0),
                 child: TextFormField(
                   readOnly: true,
                   textAlign: TextAlign.center,
@@ -475,16 +475,11 @@ class homeList extends StatelessWidget {
               //     ),
               //   ),
               // ),
+              Container(
+                  height: 80, width: double.infinity, child: AdWidget(ad: ad!)),
+
               Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Container(
-                    height: 80,
-                    width: double.infinity,
-                    child: AdWidget(ad: ad!)),
-              ),
-              Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 40.0, vertical: 10),
+                padding: const EdgeInsets.fromLTRB(18, 0, 18, 18),
                 child: GestureDetector(
                   //onTap: () => getFcm(),
                   onTap: () {
