@@ -1,3 +1,5 @@
+import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:firebase_in_app_messaging/firebase_in_app_messaging.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:ramzy/pages/booking.dart';
@@ -49,6 +51,9 @@ class MyApp extends StatelessWidget {
   static const String _title = 'Oran ';
   final GoogleUser2 = FirebaseAuth.instance.currentUser;
   final GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
+
+  static FirebaseAnalytics analytics = FirebaseAnalytics.instance;
+  static FirebaseInAppMessaging fiam = FirebaseInAppMessaging.instance;
 
   @override
   Widget build(BuildContext context) {

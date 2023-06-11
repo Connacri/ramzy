@@ -475,8 +475,12 @@ class homeList extends StatelessWidget {
               //     ),
               //   ),
               // ),
-              Container(
-                  height: 80, width: double.infinity, child: AdWidget(ad: ad!)),
+              ad == null
+                  ? Container()
+                  : Container(
+                      height: 80,
+                      width: double.infinity,
+                      child: AdWidget(ad: ad!)),
 
               Padding(
                 padding: const EdgeInsets.fromLTRB(18, 0, 18, 18),

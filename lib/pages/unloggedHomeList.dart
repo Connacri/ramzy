@@ -1,6 +1,9 @@
 import 'dart:math';
 import 'dart:ui';
 
+import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:ramzy/services/ad_mob_service.dart';
+
 import '../pages/unloggerPublicPage.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
@@ -35,6 +38,22 @@ class _unloggedHomeListState extends State<unloggedHomeList> {
     final querySnapshot =
         await FirebaseFirestore.instance.collection(collection).get();
     return querySnapshot.docs;
+  }
+
+  BannerAd? _banner;
+  @override
+  void initState() {
+    super.initState();
+    _createBannerAd();
+  }
+
+  void _createBannerAd() {
+    _banner = BannerAd(
+      size: AdSize.fullBanner,
+      adUnitId: AdMobService.bannerAdUnitId!,
+      listener: AdMobService.bannerListener,
+      request: const AdRequest(),
+    )..load();
   }
 
   @override
@@ -247,6 +266,12 @@ class _unloggedHomeListState extends State<unloggedHomeList> {
                     ),
                   ),
                 ),
+                _banner == null
+                    ? Container()
+                    : Container(
+                        height: 80,
+                        width: double.infinity,
+                        child: AdWidget(ad: _banner!)),
 
                 // Padding(
                 //   padding: const EdgeInsets.fromLTRB(18, 5, 18, 0),

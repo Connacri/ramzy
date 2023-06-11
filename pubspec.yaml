@@ -18,6 +18,7 @@ dependencies:
   firebase_core: ^2.4.1
   firebase_auth: ^4.2.5
   firebase_storage: any
+  firebase_analytics:
   google_sign_in: ^5.4.4
   cached_network_image: ^3.2.3
   flutter_slidable: ^2.0.0
@@ -78,6 +79,7 @@ dependencies:
   google_mobile_ads:
   #######################################################################
   cupertino_icons: ^1.0.2
+  firebase_in_app_messaging: ^0.7.3+2
 
 dev_dependencies:
   flutter_test:
