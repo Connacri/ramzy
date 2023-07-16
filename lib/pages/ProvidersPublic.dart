@@ -7,6 +7,9 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
 import 'package:ramzy/pages/classes.dart';
+import 'package:ramzy/pages/homeList_StateFull.dart';
+import 'package:ramzy/pages/homeList_StateFull_staggered.dart';
+import 'package:ramzy/pages/messenger/ChatListScreen.dart';
 import 'package:ramzy/services/ad_mob_service.dart';
 import 'homeList.dart';
 import 'insta.dart';
@@ -192,10 +195,13 @@ class bottomNavigation extends StatefulWidget {
 
 class _bottomNavigationState extends State<bottomNavigation> {
   BannerAd? _banner;
+  InterstitialAd? _interstitialAd;
   @override
   void initState() {
     super.initState();
     _createBannerAd();
+    // _createInterstitialAd();
+    // _showInterstitialAd();
   }
 
   void _createBannerAd() {
@@ -235,6 +241,14 @@ class _bottomNavigationState extends State<bottomNavigation> {
             label: 'Home',
           ),
           NavigationDestination(
+            icon: Icon(FontAwesomeIcons.facebookMessenger),
+            label: 'Messenges',
+          ),
+          NavigationDestination(
+            icon: Icon(FontAwesomeIcons.airbnb),
+            label: 'Staggered',
+          ),
+          NavigationDestination(
             icon: Icon(FontAwesomeIcons.list),
             label: 'Lives',
           ),
@@ -258,12 +272,18 @@ class _bottomNavigationState extends State<bottomNavigation> {
       //   ),
       ,
       body: <Widget>[
-        homeList(
-          userDoc: widget.userDoc,
-          ad: _banner,
-        ),
+        homeList_StateFull(userDoc: widget.userDoc),
+        ChatListScreen(),
+        homelist_staggered(userDoc: widget.userDoc),
+
+        // homeList(
+        //   userDoc: widget.userDoc,
+        //   ad: _banner,
+        //   //showInterstitialAd: _showInterstitialAd,
+        // ),
         insta(
           userDoc: widget.userDoc,
+          //showInterstitialAd: _showInterstitialAd,
         ),
         //HotelAvailability(),
         //HotelAvailabilityScreen(),

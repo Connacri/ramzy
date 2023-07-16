@@ -11,11 +11,14 @@ import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:intl/intl.dart' as intl;
 import 'package:provider/provider.dart';
 import 'package:ramzy/pages/ProvidersPublic.dart';
 import 'package:ramzy/pages/homeList.dart';
+import 'package:ramzy/pages/homeList_StateFull.dart';
 import 'package:ramzy/pages/itemDetails.dart';
+import 'package:ramzy/services/ad_mob_service.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
 class NearbyPlacesPage extends StatefulWidget {
@@ -34,6 +37,14 @@ class _NearbyPlacesPageState extends State<NearbyPlacesPage> {
     determinePosition();
     _getCurrentLocation();
     _getCarouselItems();
+    // _createBannerAd();
+    // _createInterstitialAd();
+    // _showInterstitialAd();
+    //
+    // MobileAds.instance.initialize();
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+    //   _createInterstitialAd();
+    // });
   }
 
 //////////////////////////////////////////////////////////////
@@ -105,6 +116,53 @@ class _NearbyPlacesPageState extends State<NearbyPlacesPage> {
     print(itmCarous.length);
   }
 
+////////////////////////////interstitial ads/////////////////////////////
+//   BannerAd? _banner;
+//   InterstitialAd? _interstitialAd;
+//
+//   void _createBannerAd() {
+//     _banner = BannerAd(
+//       size: AdSize.largeBanner,
+//       adUnitId: AdMobService.bannerAdUnitId!,
+//       listener: AdMobService.bannerListener,
+//       request: const AdRequest(),
+//     )..load();
+//   }
+//
+//   void _showInterstitialAd() {
+//     if (_interstitialAd != null) {
+//       _interstitialAd!.fullScreenContentCallback =
+//           FullScreenContentCallback(onAdDismissedFullScreenContent: (ad) {
+//         ad.dispose();
+//         _createInterstitialAd();
+//       }, onAdFailedToShowFullScreenContent: (ad, error) {
+//         ad.dispose();
+//         _createInterstitialAd();
+//       });
+//       _interstitialAd!.show();
+//       _interstitialAd = null;
+//     }
+//   }
+//
+//   void _createInterstitialAd() {
+//     InterstitialAd.load(
+//         adUnitId: AdMobService.interstatitialAdUnitId!,
+//         request: const AdRequest(),
+//         adLoadCallback: InterstitialAdLoadCallback(
+//             onAdLoaded: (ad) => _interstitialAd = ad,
+//             onAdFailedToLoad: (LoadAdError error) => _interstitialAd = null));
+//   }
+//
+//   int clickCount = 0;
+//   final int interstitialFrequency =
+//       4; // Affichez l'interstitial ad après chaque 4 clics
+
+  @override
+  void dispose() {
+    //_interstitialAd?.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -123,34 +181,34 @@ class _NearbyPlacesPageState extends State<NearbyPlacesPage> {
     );
   }
 
-  Widget _buildPlacesList() {
-    return ListView.builder(
-      itemCount: _places.length,
-      itemBuilder: (BuildContext context, int index) {
-        _places.sort((a, b) => _calculateDistance(
-              _currentLocationp!.latitude,
-              _currentLocationp!.longitude,
-              a['position'].latitude,
-              a['position'].longitude,
-            ).compareTo(
-              _calculateDistance(
-                _currentLocationp!.latitude,
-                _currentLocationp!.longitude,
-                b['position'].latitude,
-                b['position'].longitude,
-              ),
-            ));
-        final place = _places[index];
-        final distance = _calculateDistance(
-          _currentLocationp!.latitude,
-          _currentLocationp!.longitude,
-          place['position'].latitude,
-          place['position'].longitude,
-        );
-        return _buildListItem(place, distance);
-      },
-    );
-  }
+  // Widget _buildPlacesList() {
+  //   return ListView.builder(
+  //     itemCount: _places.length,
+  //     itemBuilder: (BuildContext context, int index) {
+  //       _places.sort((a, b) => _calculateDistance(
+  //             _currentLocationp!.latitude,
+  //             _currentLocationp!.longitude,
+  //             a['position'].latitude,
+  //             a['position'].longitude,
+  //           ).compareTo(
+  //             _calculateDistance(
+  //               _currentLocationp!.latitude,
+  //               _currentLocationp!.longitude,
+  //               b['position'].latitude,
+  //               b['position'].longitude,
+  //             ),
+  //           ));
+  //       final place = _places[index];
+  //       final distance = _calculateDistance(
+  //         _currentLocationp!.latitude,
+  //         _currentLocationp!.longitude,
+  //         place['position'].latitude,
+  //         place['position'].longitude,
+  //       );
+  //       return _buildListItem(place, distance);
+  //     },
+  //   );
+  // }
 
   Widget _buildPlacesListyy() {
     var user = FirebaseAuth.instance.currentUser;
@@ -339,6 +397,15 @@ class _NearbyPlacesPageState extends State<NearbyPlacesPage> {
                       ),
                     ),
                   ),
+            // Center(
+            //   child: _banner == null
+            //       ? Container()
+            //       : Container(
+            //           height: _banner!.size.height.toDouble(),
+            //           width: _banner!.size.width.toDouble(),
+            //           child: AdWidget(ad: _banner!)),
+            // ),
+
             Center(
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(18, 18, 18, 8),
@@ -399,10 +466,26 @@ class _NearbyPlacesPageState extends State<NearbyPlacesPage> {
           ],
         ),
       ),
+      footer: SliverToBoxAdapter(
+        child: Container(
+          height: 100,
+        ),
+      ),
       itemsPerPage: 10000,
       shrinkWrap: true,
       isLive: true,
       query: FirebaseFirestore.instance.collection('Products'),
+      //separator: Divider(),
+      onEmpty: Center(
+          child: Container(
+        height: 100,
+        child: Text(
+          'No places found.',
+          style: TextStyle(fontSize: 35),
+        ),
+      )),
+      onError: (error) => Center(child: Text('Error: $error')),
+      itemBuilderType: PaginateBuilderType.listView,
       itemBuilder: (BuildContext, DocumentSnapshot, intex) {
         DocumentSnapshot.sort((a, b) => _calculateDistance(
               _currentLocationp!.latitude,
@@ -479,22 +562,23 @@ class _NearbyPlacesPageState extends State<NearbyPlacesPage> {
         // if ((intex + 1) % 5 == 0) {
         //   int listIndex = ((intex + 1) ~/ 5) - 1;
         //   if (listIndex < list3.length) {
-        //     return BannerNearBy5(
-        //       randomPhoto: randomPhoto,
-        //       label: list3[listIndex],
+        //     return Center(
+        //       child: _banner == null
+        //           ? Container()
+        //           : Builder(builder: (context) {
+        //               return Container(
+        //                   height: _banner!.size.height.toDouble(),
+        //                   width: _banner!.size.width.toDouble(),
+        //                   child: AdWidget(
+        //                     ad: _banner!,
+        //                     key: UniqueKey(),
+        //                   ));
+        //             }),
         //     );
         //   }
         // }
         return _buildListItem(place, distance);
       },
-      //separator: Divider(),
-      onEmpty: Center(
-          child: Text(
-        'No places found.',
-        style: TextStyle(fontSize: 35),
-      )),
-      onError: (error) => Center(child: Text('Error: $error')),
-      itemBuilderType: PaginateBuilderType.listView,
     );
   }
 
@@ -509,8 +593,15 @@ class _NearbyPlacesPageState extends State<NearbyPlacesPage> {
     var datas = data.data() as Map?;
     final bool isLiked = data['usersLike'].toString().contains(user!.uid);
     return GestureDetector(
-      onTap: () {
-        updateViewsAndUserList(
+      onTap: () async {
+        // _showInterstitialAd();
+        // clickCount++;
+        //
+        // if (clickCount % interstitialFrequency == 0) {
+        //   _interstitialAd?.show();
+        //   _createInterstitialAd(); // Chargez un nouvel interstitial ad après l'affichage
+        // }
+        await updateViewsAndUserList(
           'Products',
           dataid,
           user.uid,
@@ -784,31 +875,32 @@ class _NearbyPlacesPageState extends State<NearbyPlacesPage> {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
-                                data['price'] <=0
+                                data['price'] <= 0
                                     ? Text('')
                                     : Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 15),
-                                  child: Text(
-                                    data['price'] >= 1000000.00
-                                        ? intl.NumberFormat.compactCurrency(
-                                                symbol: 'DZD ',
-                                                decimalDigits: 2)
-                                            .format(data['price'])
-                                        : intl.NumberFormat.currency(
-                                                symbol: 'DZD ',
-                                                decimalDigits: 2)
-                                            .format(data['price']),
-                                    overflow: TextOverflow.ellipsis,
-                                    textAlign: TextAlign.end,
-                                    style: TextStyle(
-                                      //backgroundColor: Colors.black45,
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w500,
-                                      color: Colors.green,
-                                    ),
-                                  ),
-                                ),
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 15),
+                                        child: Text(
+                                          data['price'] >= 1000000.00
+                                              ? intl.NumberFormat
+                                                      .compactCurrency(
+                                                          symbol: 'DZD ',
+                                                          decimalDigits: 2)
+                                                  .format(data['price'])
+                                              : intl.NumberFormat.currency(
+                                                      symbol: 'DZD ',
+                                                      decimalDigits: 2)
+                                                  .format(data['price']),
+                                          overflow: TextOverflow.ellipsis,
+                                          textAlign: TextAlign.end,
+                                          style: TextStyle(
+                                            //backgroundColor: Colors.black45,
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w500,
+                                            color: Colors.green,
+                                          ),
+                                        ),
+                                      ),
                               ],
                             ),
                             Padding(

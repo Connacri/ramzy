@@ -50,16 +50,23 @@ class CheckRole extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Text('Marhba Bik'),
+                  Padding(
+                    padding: const EdgeInsets.all(22.0),
+                    child: Text(
+                      'Bienvenue à Oran Veuillez\nSe Deconnecter & Reconnecter avec ton  Email & ton Mot de passe ou ton Compte Google',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontSize: 20),
+                    ),
+                  ),
                   // ElevatedButton(
                   //     onPressed: () => Navigator.pushNamedAndRemoveUntil(
                   //         context, '/', (_) => false),
                   //     child: Text('aya nebdou')),
                   Padding(
-                    padding: const EdgeInsets.all(28.0),
+                    padding: const EdgeInsets.all(80.0),
                     child: ElevatedButton.icon(
                       style: ElevatedButton.styleFrom(
-                          primary: Colors.black54,
+                          primary: Colors.black38,
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(15)),
                           elevation: 4.0,
@@ -70,7 +77,7 @@ class CheckRole extends StatelessWidget {
                       ),
                       label: const Text(
                         'Deconnexion',
-                        style: TextStyle(fontSize: 24, color: Colors.white),
+                        style: TextStyle(fontSize: 20, color: Colors.white),
                       ),
                       onPressed: () async {
                         FirebaseAuth.instance.signOut();
