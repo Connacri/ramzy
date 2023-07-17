@@ -1,10 +1,12 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:calendar_timeline/calendar_timeline.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:ramzy/pages/UsersListScreen.dart';
+import 'package:timeago/timeago.dart' as timeago;
 
 class ChatListScreen extends StatefulWidget {
   const ChatListScreen({
@@ -32,6 +34,8 @@ class _ChatListScreenState extends State<ChatListScreen> {
 
   @override
   Widget build(BuildContext context) {
+    timeago.setLocaleMessages('fr', timeago.FrMessages());
+
     return Scaffold(
         appBar: AppBar(
           title: Text('Chat List'),
@@ -76,6 +80,8 @@ class _ChatListScreenState extends State<ChatListScreen> {
                                 if (chatData != null) {
                                   final lastMessageSent =
                                       chatData['lastMessage'] as String?;
+                                  final lastSender =
+                                      chatData['lastSender'] as String?;
                                   final timeStampChats =
                                       chatData['timestamp'] as int?;
                                   final members = chatData['members']
@@ -132,17 +138,73 @@ class _ChatListScreenState extends State<ChatListScreen> {
                                             leading: CircleAvatar(
                                                 backgroundImage: NetworkImage(
                                                     avatarUrl ?? '')),
-                                            title: Text(lastMessageSent,
+                                            title: Text(
+                                                userData['displayName']
+                                                    .toString()
+                                                    .capitalize(),
                                                 overflow:
                                                     TextOverflow.ellipsis),
-                                            subtitle: Text(
-                                              DateTime.fromMillisecondsSinceEpoch(
-                                                      timeStampChats)
-                                                  .toString(),
-                                              textAlign: TextAlign.end,
-                                              style: TextStyle(
-                                                  color: Colors.blueAccent,
-                                                  fontSize: 10),
+                                            subtitle: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.start,
+                                              children: [
+                                                Expanded(
+                                                  child: Text(
+                                                    lastSender == currentUserId
+                                                        ? 'vous : '
+                                                                .toString()
+                                                                .capitalize() +
+                                                            lastMessageSent
+                                                                .toString()
+                                                                .capitalize()
+                                                        : userData['displayName']
+                                                                .toString()
+                                                                .capitalize() +
+                                                            ' : ' +
+                                                            lastMessageSent
+                                                                .toString()
+                                                                .capitalize(),
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                    textAlign: TextAlign.start,
+                                                    style: const TextStyle(
+                                                      color: Colors.black38,
+                                                      fontWeight:
+                                                          FontWeight.normal,
+                                                      fontSize: 12,
+                                                      fontStyle:
+                                                          FontStyle.italic,
+                                                    ),
+                                                  ),
+                                                ),
+                                                // Text(
+                                                //   DateTime.fromMillisecondsSinceEpoch(
+                                                //           timeStampChats)
+                                                //       .toString(),
+                                                //   textAlign: TextAlign.end,
+                                                //   style: TextStyle(
+                                                //       color: Colors.blueAccent,
+                                                //       fontSize: 10),
+                                                // ),
+                                                SizedBox(
+                                                  width: 10,
+                                                ),
+                                                Text(
+                                                  timeago.format(
+                                                    DateTime
+                                                        .fromMillisecondsSinceEpoch(
+                                                            timeStampChats),
+                                                    locale: 'fr',
+                                                  ),
+                                                  textAlign: TextAlign.end,
+                                                  style: const TextStyle(
+                                                    color: Colors.black45,
+                                                    fontWeight:
+                                                        FontWeight.normal,
+                                                    fontSize: 12,
+                                                  ),
+                                                ),
+                                              ],
                                             ),
                                           );
                                         }
@@ -195,9 +257,13 @@ class _ChatScreenIndividuelState extends State<ChatScreenIndividuel> {
   final currentUser = FirebaseAuth.instance.currentUser!.uid;
   final DatabaseReference _usersRef =
       FirebaseDatabase.instance.ref().child('users');
+  final DatabaseReference _messagesRef =
+      FirebaseDatabase.instance.ref().child('messages');
+
   List<UserRealTime> usersList = [];
   TextEditingController _messageController = TextEditingController();
   String? chatId;
+  ScrollController _scrollController = new ScrollController();
 
   @override
   void initState() {
@@ -206,6 +272,10 @@ class _ChatScreenIndividuelState extends State<ChatScreenIndividuel> {
       setState(() {
         chatId = value;
       });
+    });
+    _scrollController = ScrollController();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      autoScroll_toEnd(); // Scroll to the end of the chat
     });
   }
 
@@ -237,7 +307,8 @@ class _ChatScreenIndividuelState extends State<ChatScreenIndividuel> {
           print('Message sent successfully!');
           _messageController.clear();
           updateChatLastMessage(chatId!, messageText, now);
-          setState(() {}); // Trigger a rebuild to update messages
+          // setState(() {}); // Trigger a rebuild to update messages
+          autoScroll_toEnd(); // Scroll to the end of the chat
         }).catchError((error) {
           print('Failed to send message: $error');
         });
@@ -258,6 +329,7 @@ class _ChatScreenIndividuelState extends State<ChatScreenIndividuel> {
             selectedUserId: true,
           },
           'lastMessage': messageText,
+          'lastSender': currentUser,
           'timestamp': now.millisecondsSinceEpoch,
         };
 
@@ -284,6 +356,7 @@ class _ChatScreenIndividuelState extends State<ChatScreenIndividuel> {
               _chatsRef.child(chatId!).set(chatData).then((value) {
                 print('New chat created successfully!');
                 setState(() {}); // Trigger a rebuild to show the chat
+                autoScroll_toEnd(); // Scroll to the end of the chat
               }).catchError((error) {
                 print('Failed to create chat: $error');
               });
@@ -336,13 +409,14 @@ class _ChatScreenIndividuelState extends State<ChatScreenIndividuel> {
 
   ////////////////////////////////////////////////////////////////////////
 
-  final ScrollController _scrollController = new ScrollController();
   void autoScroll_toEnd() {
-    if (_scrollController.hasClients) {
-      _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
-    } else {
-      setState(() => null);
-    }
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _scrollController.animateTo(
+        _scrollController.position.maxScrollExtent,
+        duration: Duration(milliseconds: 300),
+        curve: Curves.easeOut,
+      );
+    });
   }
 
   @override
@@ -387,16 +461,16 @@ class _ChatScreenIndividuelState extends State<ChatScreenIndividuel> {
                   ),
                   Expanded(
                       child: TextField(
-                    onChanged: (text) {
-                      if (text.length > 0)
-                        setState(() {
-                          haveText = true;
-                        });
-                      else
-                        setState(() {
-                          haveText = false;
-                        });
-                    },
+                    // onSubmitted: (text) {
+                    //   if (text.length > 0)
+                    //     setState(() {
+                    //       haveText = true;
+                    //     });
+                    //   else
+                    //     setState(() {
+                    //       haveText = false;
+                    //     });
+                    // },
                     controller: _messageController,
                     decoration: InputDecoration(
                         hintText: 'Type message', border: InputBorder.none),
@@ -447,109 +521,223 @@ class _ChatScreenIndividuelState extends State<ChatScreenIndividuel> {
     );
   }
 
+  Future<void> deleteMessage(String messageId) async {
+    try {
+      await _messagesRef.child(chatId!).child(messageId).update({
+        'isDeleted': true,
+      });
+      setState(() {
+        // Trigger a rebuild to update the UI
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Message deleted'),
+        ),
+      );
+    } catch (error) {
+      print('Failed to delete message: $error');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Failed to delete message'),
+        ),
+      );
+    }
+  }
+
+  Widget buildMessageItem(
+    Map<dynamic, dynamic> chatMessageData,
+    String messageId,
+  ) {
+    final message = chatMessageData['message'] as String;
+    final nameId = chatMessageData['name'] as String;
+    final isDeleted = chatMessageData['isDeleted'] as bool? ?? false;
+
+    if (isDeleted) {
+      return Text('Message deleted');
+    } else {
+      return ListTile(
+        title: Text(message),
+        trailing: IconButton(
+          icon: Icon(Icons.delete),
+          onPressed: () => deleteMessage(messageId),
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(chatId == null ? 'Nouvelle Chat' : 'Les Messages'),
-      ),
-      body: //SingleChildScrollView(
-          //child:
-          Column(
-        mainAxisSize: MainAxisSize.min, // Set mainAxisSize to MainAxisSize.min
-        children: [
-          Expanded(
-            // fit: FlexFit.loose,
-            child: chatId == null
-                ? Center(
-                    child: Text('No chat found for the selected user.'),
-                  )
-                : StreamBuilder(
-                    stream: _dataref.child('messages').child(chatId!).onValue,
-                    builder: (context, snapshot) {
-                      if (snapshot.hasData) {
-                        final chatMessagesSnapshot = snapshot.data!;
-                        final chatMessagesData = chatMessagesSnapshot
-                            .snapshot.value as Map<dynamic, dynamic>?;
+    return SafeArea(
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(chatId == null ? 'Nouvelle Chat' : 'Les Messages'),
+        ),
+        body: //SingleChildScrollView(
+            //child:
+            Column(
+          mainAxisSize:
+              MainAxisSize.min, // Set mainAxisSize to MainAxisSize.min
+          children: [
+            Expanded(
+              // fit: FlexFit.loose,
+              child: chatId == null
+                  ? Center(
+                      child: Text('No chat found for the selected user.'),
+                    )
+                  : StreamBuilder(
+                      stream: _dataref.child('messages').child(chatId!).onValue,
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData) {
+                          final chatMessagesSnapshot = snapshot.data!;
+                          final chatMessagesData = chatMessagesSnapshot
+                              .snapshot.value as Map<dynamic, dynamic>?;
 
-                        if (chatMessagesData != null) {
-                          final chatMessages = chatMessagesData.values.toList();
-                          chatMessages.sort((a, b) {
-                            final timestampA =
-                                DateTime.fromMillisecondsSinceEpoch(
-                                    a['timestamp']);
-                            final timestampB =
-                                DateTime.fromMillisecondsSinceEpoch(
-                                    b['timestamp']);
-                            return timestampA.compareTo(timestampB);
-                          });
+                          if (chatMessagesData != null) {
+                            final chatMessages =
+                                chatMessagesData.entries.toList();
+                            chatMessages.sort((a, b) {
+                              final timestampA =
+                                  DateTime.fromMillisecondsSinceEpoch(
+                                      a.value['timestamp']);
+                              final timestampB =
+                                  DateTime.fromMillisecondsSinceEpoch(
+                                      b.value['timestamp']);
+                              return timestampA.compareTo(timestampB);
+                            });
 
-                          return ListView.builder(
-                            //physics: NeverScrollableScrollPhysics(),
-                            shrinkWrap: true,
-                            itemCount: chatMessages.length,
-                            itemBuilder: (context, index) {
-                              final chatMessageData =
-                                  chatMessages[index] as Map<dynamic, dynamic>;
-                              final message =
-                                  chatMessageData['message'] as String;
-                              final nameId = chatMessageData['name'] as String;
+                            return ListView.builder(
+                              controller: _scrollController,
+                              physics: AlwaysScrollableScrollPhysics(),
+                              shrinkWrap: true,
+                              itemCount: chatMessages.length,
+                              itemBuilder: (context, index) {
+                                final chatMessageEntry = chatMessages[index];
+                                final chatMessageData = chatMessageEntry.value;
+                                final message =
+                                    chatMessageData['message'] as String;
+                                final nameId =
+                                    chatMessageData['name'] as String;
+                                final messageId =
+                                    chatMessageEntry.key as String;
+                                final timestamp =
+                                    chatMessageData['timestamp'] as int;
 
-                              return FutureBuilder<DocumentSnapshot>(
-                                future: FirebaseFirestore.instance
-                                    .collection('Users')
-                                    .doc(nameId)
-                                    .get(),
-                                builder: (context, snapshot) {
-                                  if (snapshot.connectionState ==
-                                      ConnectionState.waiting) {
-                                    return Center(
-                                        child: Padding(
-                                      padding: const EdgeInsets.all(38.0),
-                                      child: LinearProgressIndicator(),
-                                    ));
-                                  } else if (snapshot.hasData) {
-                                    final userSnapshot = snapshot.data!;
-                                    final userData = userSnapshot.data()
-                                        as Map<String, dynamic>;
-                                    final avatarUrl =
-                                        userData['avatar'] as String?;
+                                final bool isCurrentUserMessage =
+                                    nameId == currentUser;
+                                final bool isWithinTimeLimit = DateTime.now()
+                                        .difference(
+                                            DateTime.fromMillisecondsSinceEpoch(
+                                                timestamp))
+                                        .inMinutes <=
+                                    5;
 
-                                    return Align(
-                                      alignment: nameId == currentUser
-                                          ? Alignment.centerRight
-                                          : Alignment.centerLeft,
-                                      child: nameId == currentUser
-                                          ? itemMessage_Sender(message: message)
-                                          : itemMessage_receiver(
-                                              photo: avatarUrl ??
-                                                  '', // Use the avatarUrl from the Firestore document
-                                              message: message,
+                                return Dismissible(
+                                  key: Key(messageId),
+                                  direction:
+                                      // (isCurrentUserMessage == true &&
+                                      //         isWithinTimeLimit)
+                                      //     ?
+                                      DismissDirection.endToStart,
+                                  //: DismissDirection.none,
+                                  onDismissed: (direction) {
+                                    if (isCurrentUserMessage == true &&
+                                        isWithinTimeLimit) {
+                                      // Delete the message from the database
+                                      _messagesRef
+                                          .child(chatId!)
+                                          .child(messageId)
+                                          .remove()
+                                          .then(
+                                        (_) {
+                                          print(
+                                              'Message deleted successfully!');
+                                          ScaffoldMessenger.of(context)
+                                              .showSnackBar(
+                                            SnackBar(
+                                              backgroundColor: Colors.green,
+                                              content: Text(
+                                                  'Message deleted successfully!'),
                                             ),
-                                    );
-                                  } else if (snapshot.hasError) {
-                                    return Text('Error: ${snapshot.error}');
-                                  }
+                                          );
+                                        },
+                                      ).catchError((error) {
+                                        print(
+                                            'Failed to delete message: $error');
+                                      });
+                                    } else {
+                                      // Re-insert the dismissed item back into the list
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        SnackBar(
+                                          content: Text('delais dépassé'),
+                                        ),
+                                      );
+                                    }
+                                  },
+                                  background: Container(
+                                    color: Colors.red,
+                                    alignment: Alignment.centerRight,
+                                    padding: EdgeInsets.only(right: 16.0),
+                                    child: Icon(
+                                      Icons.delete,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                  child: FutureBuilder<DocumentSnapshot>(
+                                    future: FirebaseFirestore.instance
+                                        .collection('Users')
+                                        .doc(nameId)
+                                        .get(),
+                                    builder: (context, snapshot) {
+                                      if (snapshot.connectionState ==
+                                          ConnectionState.waiting) {
+                                        return Center(
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(38.0),
+                                            child: LinearProgressIndicator(),
+                                          ),
+                                        );
+                                      } else if (snapshot.hasData) {
+                                        final userSnapshot = snapshot.data!;
+                                        final userData = userSnapshot.data()
+                                            as Map<String, dynamic>;
+                                        final avatarUrl =
+                                            userData['avatar'] as String?;
 
-                                  return SizedBox();
-                                },
-                              );
-                            },
-                          );
+                                        return Align(
+                                          alignment: nameId == currentUser
+                                              ? Alignment.centerRight
+                                              : Alignment.centerLeft,
+                                          child: nameId == currentUser
+                                              ? itemMessage_Sender(
+                                                  message: message)
+                                              : itemMessage_receiver(
+                                                  photo: avatarUrl ?? '',
+                                                  message: message,
+                                                ),
+                                        );
+                                      } else if (snapshot.hasError) {
+                                        return Text('Error: ${snapshot.error}');
+                                      }
+
+                                      return SizedBox();
+                                    },
+                                  ),
+                                );
+                              },
+                            );
+                          }
                         }
-                      }
 
-                      return Center(child: CircularProgressIndicator());
-                    },
-                  ),
-          ),
-          chatInputField(widget.selectedUserId!),
-          SizedBox(
-            height: 50,
-          )
-        ],
+                        return Center(child: CircularProgressIndicator());
+                      },
+                    ),
+            ),
+            chatInputField(widget.selectedUserId!),
+          ],
+        ),
+        // ),
       ),
-      // ),
     );
   }
 }
@@ -559,38 +747,48 @@ class itemMessage_Sender extends StatelessWidget {
   final String message;
 
   const itemMessage_Sender({Key? key, required this.message}) : super(key: key);
+  bool isArabic(String text) {
+    return RegExp(r'[\u0600-\u06FF]').hasMatch(text);
+  }
 
   @override
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.only(right: 10, top: 20, bottom: 10),
       child: Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            Expanded(
-              child: Container(
-                decoration: BoxDecoration(
-                    color: Colors.blue,
-                    borderRadius: BorderRadius.all(Radius.circular(20))),
-                child: Padding(
-                  padding: const EdgeInsets.all(11.0),
-                  child: Text(
-                    message,
-                    style: TextStyle(color: Colors.white, fontSize: 15),
-                  ),
+        mainAxisAlignment: MainAxisAlignment.end,
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          SizedBox(
+            width: 70,
+          ),
+          Flexible(
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.blue,
+                borderRadius: BorderRadius.all(Radius.circular(20)),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(11.0),
+                child: Text(
+                  message,
+                  textAlign:
+                      isArabic(message) ? TextAlign.right : TextAlign.left,
+                  style: TextStyle(color: Colors.white, fontSize: 15),
                 ),
               ),
             ),
-            SizedBox(
-              width: 10,
-            ),
-            Icon(
-              Icons.check_circle,
-              color: Color.fromARGB(255, 35, 156, 255),
-              size: 14,
-            )
-          ]),
+          ),
+          SizedBox(
+            width: 10,
+          ),
+          Icon(
+            Icons.check_circle,
+            color: Color.fromARGB(255, 35, 156, 255),
+            size: 14,
+          )
+        ],
+      ),
     );
   }
 }
@@ -602,6 +800,9 @@ class itemMessage_receiver extends StatelessWidget {
   const itemMessage_receiver(
       {Key? key, required this.message, required this.photo})
       : super(key: key);
+  bool isArabic(String text) {
+    return RegExp(r'[\u0600-\u06FF]').hasMatch(text);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -615,21 +816,23 @@ class itemMessage_receiver extends StatelessWidget {
             backgroundImage: NetworkImage(photo),
             radius: 22,
           ),
-          SizedBox(width: 15),
-          Expanded(
+          SizedBox(width: 10),
+          Flexible(
             child: Container(
               decoration: BoxDecoration(
                 color: Colors.grey.withOpacity(0.3),
                 borderRadius: BorderRadius.circular(20),
               ),
-              padding: const EdgeInsets.all(12.0),
+              padding: const EdgeInsets.all(12),
               child: Text(
                 message,
+                textAlign: isArabic(message) ? TextAlign.right : TextAlign.left,
                 softWrap: true,
                 style: TextStyle(color: Colors.black, fontSize: 15),
               ),
             ),
           ),
+          SizedBox(width: 70),
         ],
       ),
     );
