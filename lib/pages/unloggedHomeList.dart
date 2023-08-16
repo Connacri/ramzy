@@ -40,124 +40,39 @@ class _unloggedHomeListState extends State<unloggedHomeList> {
     return querySnapshot.docs;
   }
 
-  // BannerAd? _banner;
-  // InterstitialAd? _interstitialAd;
+  BannerAd? _banner;
   @override
   void initState() {
     super.initState();
-    // _createBannerAd();
-    // _createInterstitialAd();
-    // _showInterstitialAd();
-
-    //  MobileAds.instance.initialize();
-    // _createInterstitialAd2();
-    // WidgetsBinding.instance.addPostFrameCallback((_) {
-    //   _createInterstitialAd();
-    // });
+    _createBannerAd();
   }
 
-  // void _createBannerAd() {
-  //   _banner = BannerAd(
-  //     size: AdSize.largeBanner,
-  //     adUnitId: AdMobService.bannerAdUnitId!,
-  //     listener: AdMobService.bannerListener,
-  //     request: const AdRequest(),
-  //   )..load();
-  // }
-
-  // void _showInterstitialAd() {
-  //   if (_interstitialAd != null) {
-  //     _interstitialAd!.fullScreenContentCallback =
-  //         FullScreenContentCallback(onAdDismissedFullScreenContent: (ad) {
-  //       ad.dispose();
-  //       _createInterstitialAd();
-  //     }, onAdFailedToShowFullScreenContent: (ad, error) {
-  //       ad.dispose();
-  //       _createInterstitialAd();
-  //     });
-  //     _interstitialAd!.show();
-  //     _interstitialAd = null;
-  //   }
-  // }
-  //
-  // void _createInterstitialAd() {
-  //   InterstitialAd.load(
-  //       adUnitId: AdMobService.interstatitialAdUnitId!,
-  //       request: const AdRequest(),
-  //       adLoadCallback: InterstitialAdLoadCallback(
-  //           onAdLoaded: (ad) => _interstitialAd = ad,
-  //           onAdFailedToLoad: (LoadAdError error) => _interstitialAd = null));
-  // }
-
-  // int clickCount = 0;
-  // final int interstitialFrequency =
-  //     4; // Affichez l'interstitial ad après chaque 4 clics
-  //
-  // Future<void> _createInterstitialAd2() async {
-  //   final adUnitId = AdMobService
-  //       .interstatitialAdUnitId!; // Remplacez cet ID par votre ID d'unité d'annonce réelle
-  //
-  //   // InterstitialAd.load(
-  //   //   adUnitId: adUnitId,
-  //   //   request: AdRequest(),
-  //   //   adLoadCallback: InterstitialAdLoadCallback(
-  //   //     onAdLoaded: (InterstitialAd ad) {
-  //   //       _interstitialAd = ad;
-  //   //     },
-  //   //     onAdFailedToLoad: (LoadAdError error) {
-  //   //       print('InterstitialAd failed to load: $error');
-  //   //     },
-  //   //   ),
-  //   // );
-  // }
-
-  // void handleButtonPress() {
-  //   clickCount++;
-  //
-  //   if (clickCount % interstitialFrequency == 0) {
-  //     _interstitialAd?.show();
-  //     _createInterstitialAd(); // Chargez un nouvel interstitial ad après l'affichage
-  //   }
-  //
-  //   // Votre code de traitement supplémentaire ici
-  //   Navigator.push(context, MaterialPageRoute(builder: (_) {
-  //     return AuthPage();
-  //   }));
-  // }
-
-  @override
-  void dispose() {
-    // _interstitialAd?.dispose();
-    super.dispose();
+  void _createBannerAd() {
+    _banner = BannerAd(
+      size: AdSize.fullBanner,
+      adUnitId: AdMobService.bannerAdUnitId!,
+      listener: AdMobService.bannerListener,
+      request: const AdRequest(),
+    )..load();
   }
-
-  // Future<void> _createInterstitialAdcallback() async {
-  //   final adUnitId = InterstitialAd
-  //       .testAdUnitId; // Remplacez cet ID par votre ID d'unité d'annonce réelle
-  //
-  //   _interstitialAd = InterstitialAd(
-  //     adUnitId: adUnitId,
-  //     request: AdRequest(),
-  //     listener: AdListener(
-  //       onAdLoaded: (Ad ad) {
-  //         print('InterstitialAd loaded.');
-  //       },
-  //       onAdFailedToLoad: (Ad ad, LoadAdError error) {
-  //         print('InterstitialAd failed to load: $error');
-  //       },
-  //       onAdClosed: (Ad ad) {
-  //         print('InterstitialAd closed.');
-  //         _interstitialAd?.dispose();
-  //       },
-  //     ),
-  //   );
-  //
-  //   await _interstitialAd!.load();
-  // }
 
   @override
   Widget build(BuildContext context) {
+    var user = FirebaseAuth.instance.currentUser;
+
     return Scaffold(
+      floatingActionButton: FloatingActionButton(
+        foregroundColor: Colors.transparent,
+        onPressed: () {
+          Navigator.push(context, MaterialPageRoute(builder: (_) {
+            return AuthPage();
+          }));
+        },
+        child: const Icon(
+          FontAwesomeIcons.add,
+          color: Colors.black54,
+        ),
+      ),
       body: PaginateFirestore(
           header: SliverToBoxAdapter(
             child: Column(
@@ -267,10 +182,7 @@ class _unloggedHomeListState extends State<unloggedHomeList> {
                   padding: const EdgeInsets.symmetric(
                       horizontal: 20.0, vertical: 10),
                   child: GestureDetector(
-                    // onTap: handleButtonPress,
                     // //onTap: () => getFcm(),
-                    //onTap: _showInterstitialAd,
-
                     onTap: () {
                       Navigator.push(context, MaterialPageRoute(builder: (_) {
                         return AuthPage();
@@ -354,26 +266,12 @@ class _unloggedHomeListState extends State<unloggedHomeList> {
                     ),
                   ),
                 ),
-                // ElevatedButton(
-                //   child: Text('Go to Another Page'),
-                //   onPressed: () {
-                //     Navigator.push(
-                //       context,
-                //       MaterialPageRoute(builder: (context) => AnotherPage()),
-                //     ).then((value) {
-                //       // Lorsque vous revenez à cette page après avoir quitté l'autre page
-                //       _interstitialAd?.show();
-                //     });
-                //   },
-                // ),
-                // Center(
-                //   child: _banner == null
-                //       ? Container()
-                //       : Container(
-                //           height: _banner!.size.height.toDouble(),
-                //           width: _banner!.size.width.toDouble(),
-                //           child: AdWidget(ad: _banner!)),
-                // ),
+                _banner == null
+                    ? Container()
+                    : Container(
+                        height: 80,
+                        width: double.infinity,
+                        child: AdWidget(ad: _banner!)),
 
                 // Padding(
                 //   padding: const EdgeInsets.fromLTRB(18, 5, 18, 0),

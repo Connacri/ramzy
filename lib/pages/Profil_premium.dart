@@ -6,10 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:ramzy/pages/ProfileOthers.dart';
-import 'package:ramzy/pages/UsersListScreen.dart';
 import 'package:ramzy/pages/itemDetails.dart';
-import 'package:ramzy/pages/messenger/ChatListScreen.dart';
-import 'package:ramzy/pages/messenger/ChatScreen.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import 'package:url_launcher/url_launcher.dart';
 
@@ -22,8 +19,6 @@ class Profil_premium extends StatelessWidget {
         super(key: key);
 
   final Map? datauser;
-
-  Object get currentUserId => FirebaseAuth.instance.currentUser!.uid;
 
   @override
   Widget build(BuildContext context) {
@@ -95,15 +90,6 @@ class Profil_premium extends StatelessWidget {
                       fontWeight: FontWeight.w500),
                 ),
               ),
-              // Center(
-              //   child: Text(
-              //     datauser!['id'],
-              //     style: TextStyle(
-              //       color: Colors.white70,
-              //       fontSize: 12,
-              //     ),
-              //   ),
-              // ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 8),
                 child: Row(
@@ -174,32 +160,6 @@ class Profil_premium extends StatelessWidget {
                           print("Unable to open whatsapp");
                         }
                       }),
-                  SizedBox(
-                    width: 10,
-                  ),
-                  datauser!['id'] == currentUserId
-                      ? Container()
-                      : IconButton(
-                          icon: Icon(
-                            FontAwesomeIcons.facebookMessenger,
-                            color: Colors.white,
-                          ),
-                          onPressed: () async {
-                            print(
-                                '////////////////////////////////////////////////');
-                            print('selectedUser : ' + datauser!['id']);
-                            print('currentUser: ' + currentUserId.toString());
-
-                            await Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (context) => ChatScreenIndividuel(
-                                  currentUserId: currentUserId.toString(),
-                                  selectedUserId: datauser!['id'],
-                                ),
-                              ),
-                            );
-                          },
-                        ),
                 ],
               ),
               Padding(
@@ -556,7 +516,7 @@ class PostListOfUserPremium extends StatelessWidget {
                                     fadeInDuration: Duration(seconds: 2),
                                     fit: BoxFit.cover,
                                     width: size,
-                                    height: 110,
+                                    height: 120,
                                     imageUrl: data['themb'],
                                     //iitem.documents[index]['themb'],
                                     // 'https://firebasestorage.googleapis.com/v0/b/adventure-eb4ca.appspot.com/o/carre%2Fcarre%20(${index + 1}).jpg?alt=media&token=68e384f1-bb64-47cf-a245-9f7f12202443',

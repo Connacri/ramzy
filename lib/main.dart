@@ -4,7 +4,6 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:ramzy/pages/booking.dart';
 import 'package:ramzy/pages/booking2.dart';
-import 'package:upgrader/upgrader.dart';
 
 import 'services/upload_random.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -27,9 +26,6 @@ Future<void> main() async {
   await Firebase.initializeApp(
       //options: DefaultFirebaseOptions.currentPlatform,
       );
-
-  // Only call clearSavedSettings() during testing to reset internal values.
-  // await Upgrader.clearSavedSettings(); // REMOVE this for release builds
 
   // splash.FlutterNativeSplash.removeAfter(initialization);
   //WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
@@ -87,7 +83,7 @@ class MyApp extends StatelessWidget {
           home: // upload_random(),
               //gantt_chart(),
 
-              UpgradeAlert(child: verifi_auth()),
+              verifi_auth(),
         ));
   }
 }

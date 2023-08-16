@@ -11,11 +11,8 @@ import 'package:flutterflow_paginate_firestore/paginate_firestore.dart';
 import 'package:flutterflow_paginate_firestore/widgets/bottom_loader.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
 import 'package:ramzy/pages/Profil_premium.dart';
-import 'package:ramzy/pages/homeList_StateFull.dart';
-import 'package:ramzy/services/ad_mob_service.dart';
 import 'package:readmore/readmore.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import '../Oauth/AuthPage.dart';
@@ -38,52 +35,6 @@ class insta extends StatefulWidget {
 
 class _instaState extends State<insta> {
   final PageStorageBucket _bucket = PageStorageBucket();
-  // BannerAd? _banner;
-  //InterstitialAd? _interstitialAd;
-  @override
-  void initState() {
-    super.initState();
-    // _createBannerAd();
-    // _showInterstitialAd();
-  }
-
-  // void _createBannerAd() {
-  //   _banner = BannerAd(
-  //     size: AdSize.fullBanner,
-  //     adUnitId: AdMobService.bannerAdUnitId!,
-  //     listener: AdMobService.bannerListener,
-  //     request: const AdRequest(),
-  //   )..load();
-  // }
-
-  // void _showInterstitialAd() {
-  //   if (_interstitialAd != null) {
-  //     _interstitialAd!.fullScreenContentCallback =
-  //         FullScreenContentCallback(onAdDismissedFullScreenContent: (ad) {
-  //       ad.dispose();
-  //       _createInterstitialAd();
-  //     }, onAdFailedToShowFullScreenContent: (ad, error) {
-  //       ad.dispose();
-  //       _createInterstitialAd();
-  //     });
-  //     _interstitialAd!.show();
-  //     _interstitialAd = null;
-  //   }
-  // }
-  //
-  // void _createInterstitialAd() {
-  //   InterstitialAd.load(
-  //       adUnitId: AdMobService.interstatitialAdUnitId!,
-  //       request: const AdRequest(),
-  //       adLoadCallback: InterstitialAdLoadCallback(
-  //           onAdLoaded: (ad) => _interstitialAd = ad,
-  //           onAdFailedToLoad: (LoadAdError error) => _interstitialAd = null));
-  // }
-
-  @override
-  void dispose() {
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -102,9 +53,6 @@ class _instaState extends State<insta> {
     var premiumUsers = uusers.documents
         .where((element) => element['plan'] == 'premium')
         .toList();
-    var allUsers = uusers.documents
-        // .where((element) => element['plan'] == 'premium')
-        .toList();
     var itmCarous = carouss.documents
         // .where((element) => element['levelItem'] == 'carou')
         .toList();
@@ -117,8 +65,8 @@ class _instaState extends State<insta> {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         foregroundColor: Colors.transparent,
-        onPressed: () async {
-          await Navigator.push(context, MaterialPageRoute(builder: (_) {
+        onPressed: () {
+          Navigator.push(context, MaterialPageRoute(builder: (_) {
             return stepper2_widget(
               userDoc: widget.userDoc,
               ccollection: 'Instalives',
@@ -302,14 +250,6 @@ class _instaState extends State<insta> {
                     ),
                   ),
                 ),
-                // Center(
-                //   child: _banner == null
-                //       ? Container()
-                //       : Container(
-                //           height: _banner!.size.height.toDouble(),
-                //           width: _banner!.size.width.toDouble(),
-                //           child: AdWidget(ad: _banner!)),
-                // ),
                 Padding(
                   padding:
                       const EdgeInsets.symmetric(vertical: 8.0, horizontal: 40),
@@ -951,7 +891,7 @@ class _instaState extends State<insta> {
               ],
             ),
           ),
-          footer: const SliverToBoxAdapter(child: Center(child: Text(''))),
+          footer: const SliverToBoxAdapter(child: Center(child: Text('Fin.'))),
           itemsPerPage: 10000,
           isLive: true,
           //scrollController: _scrollController,
@@ -1407,7 +1347,7 @@ class _like_instagramState extends State<like_instagram> {
                             const Padding(
                               padding: EdgeInsets.all(6.0),
                               child: Text(
-                                'Unknow',
+                                'NADA',
                                 style: TextStyle(
                                     fontSize: 15,
                                     fontWeight: FontWeight.normal,

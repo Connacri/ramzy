@@ -13,7 +13,7 @@ class AdMobService {
 
   static String? get interstatitialAdUnitId {
     if (Platform.isAndroid) {
-      return 'ca-app-pub-2282149611905342/2904502264';
+      return '';
     }
     return null;
   }

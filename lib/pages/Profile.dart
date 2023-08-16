@@ -16,7 +16,6 @@ import 'package:flutterflow_paginate_firestore/widgets/initial_loader.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import 'package:ramzy/Oauth/users_authentification.dart';
@@ -24,8 +23,6 @@ import 'package:ramzy/pages/booking.dart';
 import 'package:ramzy/pages/booking3.dart';
 import 'package:ramzy/pages/profile_edit.dart';
 import 'package:path/path.dart' as Path;
-import 'package:ramzy/services/DeleteAccountButton.dart';
-import 'package:ramzy/services/ad_mob_service.dart';
 import 'package:ramzy/services/upload_functions.dart';
 import 'package:ramzy/tests/paginate.dart';
 import '../Oauth/Ogoogle/googleSignInProvider.dart';
@@ -49,12 +46,11 @@ class _ProfileState extends State<Profile> with TickerProviderStateMixin {
   late TabController _tabController;
   final userGoo = FirebaseAuth.instance.currentUser;
   late firebase_storage.Reference ref;
-  //BannerAd? _banner;
+
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
-    // _createBannerAd();
   }
 
   @override
@@ -107,24 +103,9 @@ class _ProfileState extends State<Profile> with TickerProviderStateMixin {
     await firestoreRef.update({field: _imageUrl});
   }
 
-  // void _createBannerAd() {
-  //   _banner = BannerAd(
-  //     size: AdSize.fullBanner,
-  //     adUnitId: AdMobService.bannerAdUnitId!,
-  //     listener: AdMobService.bannerListener,
-  //     request: const AdRequest(),
-  //   )..load();
-  // }
-
   @override
   Widget build(BuildContext context) {
     TabController _tabController = TabController(length: 2, vsync: this);
-
-    // @override
-    // void dispose() {
-    //   super.dispose();
-    // }
-
     return Scaffold(
       backgroundColor: Colors.white,
       body: FutureBuilder<DocumentSnapshot>(
@@ -305,12 +286,6 @@ class _ProfileState extends State<Profile> with TickerProviderStateMixin {
                   delegate: SliverChildListDelegate([
                 Column(
                   children: [
-                    // _banner == null
-                    //     ? Container()
-                    //     : Container(
-                    //         height: _banner!.size.height.toDouble(),
-                    //         width: _banner!.size.width.toDouble(),
-                    //         child: AdWidget(ad: _banner!)),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -744,9 +719,6 @@ class _ProfileState extends State<Profile> with TickerProviderStateMixin {
                   ],
                 ),
               ),
-              SliverToBoxAdapter(
-                child: DeleteAccountButton(),
-              )
               // SliverToBoxAdapter(
               //   child: Padding(
               //     padding: const EdgeInsets.only(bottom: 20),
