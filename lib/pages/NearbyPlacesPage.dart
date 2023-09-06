@@ -1,5 +1,4 @@
 import 'dart:math';
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -15,6 +14,7 @@ import 'package:intl/intl.dart' as intl;
 import 'package:provider/provider.dart';
 import 'package:ramzy/pages/ProvidersPublic.dart';
 import 'package:ramzy/pages/homeList.dart';
+import 'package:ramzy/pages/homeList_StateFull.dart';
 import 'package:ramzy/pages/itemDetails.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
@@ -784,31 +784,32 @@ class _NearbyPlacesPageState extends State<NearbyPlacesPage> {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
-                                data['price'] <=0
+                                data['price'] <= 0
                                     ? Text('')
                                     : Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 15),
-                                  child: Text(
-                                    data['price'] >= 1000000.00
-                                        ? intl.NumberFormat.compactCurrency(
-                                                symbol: 'DZD ',
-                                                decimalDigits: 2)
-                                            .format(data['price'])
-                                        : intl.NumberFormat.currency(
-                                                symbol: 'DZD ',
-                                                decimalDigits: 2)
-                                            .format(data['price']),
-                                    overflow: TextOverflow.ellipsis,
-                                    textAlign: TextAlign.end,
-                                    style: TextStyle(
-                                      //backgroundColor: Colors.black45,
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w500,
-                                      color: Colors.green,
-                                    ),
-                                  ),
-                                ),
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 15),
+                                        child: Text(
+                                          data['price'] >= 1000000.00
+                                              ? intl.NumberFormat
+                                                      .compactCurrency(
+                                                          symbol: 'DZD ',
+                                                          decimalDigits: 2)
+                                                  .format(data['price'])
+                                              : intl.NumberFormat.currency(
+                                                      symbol: 'DZD ',
+                                                      decimalDigits: 2)
+                                                  .format(data['price']),
+                                          overflow: TextOverflow.ellipsis,
+                                          textAlign: TextAlign.end,
+                                          style: TextStyle(
+                                            //backgroundColor: Colors.black45,
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w500,
+                                            color: Colors.green,
+                                          ),
+                                        ),
+                                      ),
                               ],
                             ),
                             Padding(

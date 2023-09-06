@@ -6,8 +6,15 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
-import 'package:ramzy/pages/classes.dart';
-import 'package:ramzy/services/ad_mob_service.dart';
+import 'package:ramzy/food/MyTabCategories.dart';
+import 'package:ramzy/food/home_screen_food.dart';
+import 'package:ramzy/food/webScrab.dart';
+import 'package:ramzy/food2/main.dart';
+import '../pages/homeList_StateFull.dart';
+import '../pages/homeList_StateFull_staggered.dart';
+import '../messenger/ChatListScreen.dart';
+import '../pages/classes.dart';
+import '../services/ad_mob_service.dart';
 import 'homeList.dart';
 import 'insta.dart';
 import '../services/upload_random.dart';
@@ -230,9 +237,21 @@ class _bottomNavigationState extends State<bottomNavigation> {
         },
         selectedIndex: currentPageIndex,
         destinations: <Widget>[
+          // NavigationDestination(
+          //   icon: Icon(FontAwesomeIcons.home),
+          //   label: 'Home',
+          // ),
           NavigationDestination(
             icon: Icon(FontAwesomeIcons.home),
             label: 'Home',
+          ),
+          NavigationDestination(
+            icon: Icon(FontAwesomeIcons.facebookMessenger),
+            label: 'Messenges',
+          ),
+          NavigationDestination(
+            icon: Icon(FontAwesomeIcons.airbnb),
+            label: 'Staggered',
           ),
           NavigationDestination(
             icon: Icon(FontAwesomeIcons.list),
@@ -258,12 +277,29 @@ class _bottomNavigationState extends State<bottomNavigation> {
       //   ),
       ,
       body: <Widget>[
-        homeList(
-          userDoc: widget.userDoc,
-          ad: _banner,
-        ),
+        FoodHome(),
+        //MyAppmainWeb(),
+        // MyTabCategory(
+        //   userDoc: widget.userDoc,
+        // ),
+
+        //MyFirestoreListView(),
+        //YourPageWithCategoryFilter(),
+        // HomeScreen_food(
+        //   userDoc: widget.userDoc,
+        // ),
+        //homeList_StateFull(userDoc: widget.userDoc),
+        ChatListScreen(),
+        homelist_staggered(userDoc: widget.userDoc),
+
+        // homeList(
+        //   userDoc: widget.userDoc,
+        //   ad: _banner,
+        //   //showInterstitialAd: _showInterstitialAd,
+        // ),
         insta(
           userDoc: widget.userDoc,
+          //showInterstitialAd: _showInterstitialAd,
         ),
         //HotelAvailability(),
         //HotelAvailabilityScreen(),

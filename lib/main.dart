@@ -19,9 +19,12 @@ import 'pages/ProvidersPublic.dart';
 import 'pages/adminLoggedPage.dart';
 import 'pages/unloggerPublicPage.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/date_symbol_data_local.dart'; // Importez cette ligne
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  initializeDateFormatting(
+      'fr_FR', null); // Initialisez la localisation française
   MobileAds.instance.initialize(); ////////////////////////////////ads
   await Firebase.initializeApp(
       //options: DefaultFirebaseOptions.currentPlatform,

@@ -111,7 +111,6 @@ class _uploading_functionsState extends State<uploading_functions> {
               //     ),
               //   ],
               // ),
-
               Row(
                 children: [
                   DropdownButton<String>(
@@ -152,6 +151,39 @@ class _uploading_functionsState extends State<uploading_functions> {
                     ),
                     icon: const Icon(FontAwesomeIcons.add),
                   ),
+                ],
+              ),
+              Row(
+                children: [
+                  DropdownButton<String>(
+                    // Step 3.
+                    value: collection, //dropdownValue,
+                    // Step 4.
+                    items: <String>[
+                      'Products',
+                      'Instalives',
+                      'Caroussel',
+                      'CarousselInsta',
+                    ].map<DropdownMenuItem<String>>((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(
+                          value,
+                          style: TextStyle(fontSize: 30),
+                        ),
+                      );
+                    }).toList(),
+                    // Step 5.
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        //dropdownValue
+                        collection = newValue!;
+                      });
+                    },
+                  ),
+                  TextButton(
+                      onPressed: () => updateLikes_Views(collection, 4, 12),
+                      child: Text('Likes'))
                 ],
               ),
               Divider(),
@@ -496,5 +528,32 @@ void uploadRandom(int itemsNum, String collection) async {
     );
 
     postCollection.add(post);
+  }
+}
+
+Future<void> updateLikes_Views(collection, likes, views) async {
+  try {
+    QuerySnapshot querySnapshot =
+        await FirebaseFirestore.instance.collection(collection).get();
+
+    for (QueryDocumentSnapshot documentSnapshot in querySnapshot.docs) {
+      String documentId = documentSnapshot.id;
+
+      int currentLikes = documentSnapshot['likes'];
+      int currentViews = documentSnapshot['views'];
+
+      // Mise à jour des attributs
+      await FirebaseFirestore.instance
+          .collection(collection)
+          .doc(documentId)
+          .update({
+        'likes': currentLikes + likes,
+        'views': currentViews + views,
+      });
+    }
+
+    print('Documents updated successfully!');
+  } catch (e) {
+    print('Error updating documents: $e');
   }
 }

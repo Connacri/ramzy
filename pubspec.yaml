@@ -77,9 +77,11 @@ dependencies:
   googleapis_auth:
   fuzzy:
   google_mobile_ads:
-  #######################################################################
+#######################################################################
   cupertino_icons: ^1.0.2
   firebase_in_app_messaging: ^0.7.3+2
+  sqflite:
+  path:
 
 dev_dependencies:
   flutter_test:
@@ -140,4 +142,6 @@ flutter:
     - assets/images/ic_launcher/1024.png
     - assets/firebase_logo.png
     - assets/google_logo.png
+    - assets/foodsList.json
+    - assets/maliste.json
 

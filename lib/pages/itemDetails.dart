@@ -10,12 +10,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_osm_plugin/flutter_osm_plugin.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:intl/intl.dart';
 import 'package:open_location_picker/open_location_picker.dart';
 import 'package:ramzy/pages/EditItem.dart';
-import 'package:ramzy/pages/homeList.dart';
+import 'package:ramzy/pages/UsersListScreen.dart';
+import 'package:ramzy/pages/homeList_StateFull.dart';
 import 'package:ramzy/pages/insta.dart';
 import 'package:ramzy/pages/itemDetails.dart';
+import 'package:ramzy/services/ad_mob_service.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:intl/intl.dart' as intl;
 import 'package:timeago/timeago.dart' as timeago;
@@ -73,10 +76,101 @@ class _SilverdetailItemState extends State<SilverdetailItem> {
   //   // Retourne le flux du contrôleur
   //   return controller.stream;
   // }
+  //BannerAd? _banner;
+  // InterstitialAd? _interstitialAd;
+  @override
+  void initState() {
+    super.initState();
+    // _createBannerAd();
+    // _createInterstitialAd();
+    // _showInterstitialAd();
+
+    // MobileAds.instance.initialize();
+    //_createInterstitialAd2();
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+    //   _createInterstitialAd();
+    // });
+  }
+
+  // void _createBannerAd() {
+  //   _banner = BannerAd(
+  //     size: AdSize.largeBanner,
+  //     adUnitId: AdMobService.bannerAdUnitId!,
+  //     listener: AdMobService.bannerListener,
+  //     request: const AdRequest(),
+  //   )..load();
+  // }
+
+  // void _showInterstitialAd() {
+  //   if (_interstitialAd != null) {
+  //     _interstitialAd!.fullScreenContentCallback =
+  //         FullScreenContentCallback(onAdDismissedFullScreenContent: (ad) {
+  //       ad.dispose();
+  //       _createInterstitialAd();
+  //     }, onAdFailedToShowFullScreenContent: (ad, error) {
+  //       ad.dispose();
+  //       _createInterstitialAd();
+  //     });
+  //     _interstitialAd!.show();
+  //     _interstitialAd = null;
+  //   }
+  // }
+  //
+  // void _createInterstitialAd() {
+  //   InterstitialAd.load(
+  //       adUnitId: AdMobService.interstatitialAdUnitId!,
+  //       request: const AdRequest(),
+  //       adLoadCallback: InterstitialAdLoadCallback(
+  //           onAdLoaded: (ad) => _interstitialAd = ad,
+  //           onAdFailedToLoad: (LoadAdError error) => _interstitialAd = null));
+  // }
+
+  int clickCount = 0;
+  final int interstitialFrequency =
+      4; // Affichez l'interstitial ad après chaque 4 clics
+
+  // Future<void> _createInterstitialAd2() async {
+  //   final adUnitId = AdMobService
+  //       .interstatitialAdUnitId!; // Remplacez cet ID par votre ID d'unité d'annonce réelle
+  //
+  //   InterstitialAd.load(
+  //     adUnitId: adUnitId,
+  //     request: AdRequest(),
+  //     adLoadCallback: InterstitialAdLoadCallback(
+  //       onAdLoaded: (InterstitialAd ad) {
+  //         _interstitialAd = ad;
+  //       },
+  //       onAdFailedToLoad: (LoadAdError error) {
+  //         print('InterstitialAd failed to load: $error');
+  //       },
+  //     ),
+  //   );
+  // }
+
+  // void handleButtonPress() {
+  //   clickCount++;
+  //
+  //   if (clickCount % interstitialFrequency == 0) {
+  //     _interstitialAd?.show();
+  //     _createInterstitialAd(); // Chargez un nouvel interstitial ad après l'affichage
+  //   }
+  //
+  //   // Votre code de traitement supplémentaire ici
+  //   Navigator.push(context, MaterialPageRoute(builder: (_) {
+  //     return Container();
+  //   }));
+  // }
+
+  @override
+  void dispose() {
+    // _interstitialAd?.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     timeago.setLocaleMessages('fr', timeago.FrMessages());
+    final String? userEmail = FirebaseAuth.instance.currentUser!.email;
 
     LatLng? point = widget.data['position'] != null
         ? LatLng(
@@ -128,7 +222,7 @@ class _SilverdetailItemState extends State<SilverdetailItem> {
                         const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
                     child: Text(
                       '${widget.data['views']} Vue',
-                      style: TextStyle(fontSize: 8),
+                      style: TextStyle(fontSize: 8, color: Colors.white70),
                     ),
                   ),
                 ],
@@ -229,9 +323,19 @@ class _SilverdetailItemState extends State<SilverdetailItem> {
               ],
             ),
           ),
+          // SliverToBoxAdapter(
+          //   child: Center(
+          //     child: _banner == null
+          //         ? Container()
+          //         : Container(
+          //             height: _banner!.size.height.toDouble(),
+          //             width: _banner!.size.width.toDouble(),
+          //             child: AdWidget(ad: _banner!)),
+          //   ),
+          // ),
           SliverToBoxAdapter(
             child: Padding(
-              padding: const EdgeInsets.all(20.0),
+              padding: const EdgeInsets.fromLTRB(15, 20, 10, 20), //.all(20.0),
               child: FutureBuilder<DocumentSnapshot>(
                 future: FirebaseFirestore.instance
                     .collection('Users')
@@ -283,18 +387,19 @@ class _SilverdetailItemState extends State<SilverdetailItem> {
                           SizedBox(
                             width: 5,
                           ),
-                          Text(
-                            "${dataU['displayName']}", // - ${data['email']}",
-                            style: TextStyle(fontSize: 14),
+                          Container(
+                            width: 140,
+                            child: Text(
+                              // 'lqsihdiqhsd lkqsdklhqlskdh lSHDKLHDSLKSHCKL',
+                              "${dataU['displayName']}", // - ${data['email']}",
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(fontSize: 14),
+                            ),
                           ),
                           Expanded(
                               child: SizedBox(
                             width: 50,
                           )),
-                          // Text(
-                          //   "+213${data['phone']}", // - ${data['email']}",
-                          //   style: TextStyle(fontSize: 14),
-                          // ),
                           IconButton(
                               icon: Icon(
                                 Icons.call,
@@ -333,6 +438,22 @@ class _SilverdetailItemState extends State<SilverdetailItem> {
                                   print("Unable to open whatsapp");
                                 }
                               }),
+                          // IconButton(
+                          //   icon: Icon(
+                          //     FontAwesomeIcons.facebookMessenger,
+                          //     color: Colors.blueAccent,
+                          //   ),
+                          //   onPressed: () async {
+                          //     await Navigator.of(context).push(
+                          //       MaterialPageRoute(
+                          //         builder: (context) => ChatListScreen(),
+                          //         //     ChatScreen(
+                          //         //   id: dataU['id'],
+                          //         // ),
+                          //       ),
+                          //     );
+                          //   },
+                          // ),
                         ],
                       ),
                     );
@@ -636,6 +757,104 @@ class _SilverdetailItemState extends State<SilverdetailItem> {
               ],
             ),
           ),
+          userEmail == 'forslog@gmail.com'
+              ? SliverToBoxAdapter(
+                  child: Column(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(100, 10, 100, 10),
+                        child: TextButton.icon(
+                          style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.blue),
+                          onPressed: () =>
+                              Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (context) => EditItem(
+                                        itemId: widget.idDoc,
+                                        itemData: widget.data,
+                                      ))),
+                          icon: Icon(
+                            Icons.edit,
+                            color: Colors.white,
+                          ),
+                          label: Text(
+                            'Modifier',
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        ),
+                      ),
+                      TextButton(
+                        onPressed: () async {
+                          bool confirmed = await showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: Text('Confirmation'),
+                                content: Text(
+                                    'Êtes-vous sûr de vouloir supprimer cet élément ?'),
+                                actions: [
+                                  TextButton(
+                                    child: Text('Annuler'),
+                                    onPressed: () {
+                                      Navigator.of(context).pop(
+                                          false); // Retourne false pour indiquer l'annulation
+                                    },
+                                  ),
+                                  TextButton(
+                                    child: Text('Supprimer'),
+                                    onPressed: () {
+                                      Navigator.of(context).pop(
+                                          true); // Retourne true pour indiquer la confirmation
+                                    },
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+
+                          if (confirmed ?? false) {
+                            // L'utilisateur a confirmé la suppression, procédez à la suppression de l'élément
+                            // Get the document from Firestore
+                            docProducts
+                                .doc(widget.idDoc)
+                                .get()
+                                .then((documentSnapshot) async {
+                              print(userId);
+                              print(widget.data['userID']);
+                              if (documentSnapshot.exists) {
+                                // Document exists, check if the field is equal to user ID
+                                var data = documentSnapshot;
+                                final String fieldValue = data['userID'];
+                                if (fieldValue == userId) {
+                                  await docProducts
+                                      .doc(widget.idDoc)
+                                      .delete()
+                                      .whenComplete(() {
+                                    Navigator.of(context)
+                                        .pop(); // Ferme la boîte de dialogue de confirmation
+                                    // Navigator.of(context)
+                                    //     .pop(); // Ferme la page actuelle
+                                  });
+                                }
+                              } else {
+                                print(
+                                    'tu n\'est pas le proprietaire du document');
+                              }
+                            }).catchError((error) {
+                              // Handle the error
+                            });
+                          }
+                        },
+                        child: Text(
+                          'Delete',
+                          style: TextStyle(color: Colors.red),
+                        ),
+                      ),
+                    ],
+                  ),
+                )
+              : SliverToBoxAdapter(
+                  child: Container(),
+                ),
           widget.data['userID'] != userId ||
                   widget.data['category'] == null ||
                   widget.data['category'] == '' ||
@@ -775,6 +994,10 @@ class _SilverdetailItemState extends State<SilverdetailItem> {
               : SliverToBoxAdapter(
                   child: Container(),
                 ),
+          // SliverToBoxAdapter(
+          //     child: Center(
+          //   child: Text(userEmail.toString()),
+          // )),
           SliverToBoxAdapter(
             child: SizedBox(
               height: 100,
@@ -809,39 +1032,6 @@ class UnsplashD extends StatelessWidget {
             builder: (_) => ImageViewerDetail(
                   UnsplashUrl: UnsplashUrl,
                 ));
-        // showDialog(
-        //     context: context,
-        //     builder: (_) => ImageViewerDetail(
-        //           UnsplashUrl: UnsplashUrl,
-        //         )
-        //     //     AlertDialog(
-        //     //   backgroundColor: Colors.transparent,
-        //     //   contentPadding: EdgeInsets.zero,
-        //     //   scrollable: true,
-        //     //   content: ShaderMask(
-        //     //     shaderCallback: (rect) {
-        //     //       return const LinearGradient(
-        //     //         begin: Alignment.topCenter,
-        //     //         end: Alignment.bottomLeft,
-        //     //         colors: [Colors.transparent, Colors.black],
-        //     //       ).createShader(Rect.fromLTRB(0, 0, rect.width, rect.height));
-        //     //     },
-        //     //     blendMode: BlendMode.darken,
-        //     //     child: CachedNetworkImage(
-        //     //       fadeInCurve: Curves.easeIn,
-        //     //       filterQuality: FilterQuality.high,
-        //     //       width: MediaQuery.of(context).size.width,
-        //     //       height: MediaQuery.of(context).size.width,
-        //     //       fit: BoxFit.contain,
-        //     //       imageUrl: UnsplashUrl,
-        //     //       errorWidget: (context, url, error) => const Icon(
-        //     //         Icons.error,
-        //     //         color: Colors.red,
-        //     //       ),
-        //     //     ),
-        //     //   ),
-        //     // ),
-        //     );
       },
       child: Card(
         shape: RoundedRectangleBorder(
