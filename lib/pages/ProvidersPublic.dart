@@ -9,7 +9,9 @@ import 'package:provider/provider.dart';
 import 'package:ramzy/food/MyTabCategories.dart';
 import 'package:ramzy/food/home_screen_food.dart';
 import 'package:ramzy/food/webScrab.dart';
+import 'package:ramzy/food2/MesAchatsPage.dart';
 import 'package:ramzy/food2/main.dart';
+import 'package:ramzy/food2/test.dart';
 import '../pages/homeList_StateFull.dart';
 import '../pages/homeList_StateFull_staggered.dart';
 import '../messenger/ChatListScreen.dart';
@@ -237,10 +239,10 @@ class _bottomNavigationState extends State<bottomNavigation> {
         },
         selectedIndex: currentPageIndex,
         destinations: <Widget>[
-          // NavigationDestination(
-          //   icon: Icon(FontAwesomeIcons.home),
-          //   label: 'Home',
-          // ),
+          NavigationDestination(
+            icon: Icon(FontAwesomeIcons.home),
+            label: 'Home',
+          ),
           NavigationDestination(
             icon: Icon(FontAwesomeIcons.home),
             label: 'Home',
@@ -288,7 +290,7 @@ class _bottomNavigationState extends State<bottomNavigation> {
         // HomeScreen_food(
         //   userDoc: widget.userDoc,
         // ),
-        //homeList_StateFull(userDoc: widget.userDoc),
+        homeList_StateFull(userDoc: widget.userDoc),
         ChatListScreen(),
         homelist_staggered(userDoc: widget.userDoc),
 

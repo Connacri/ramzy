@@ -114,14 +114,14 @@ class DataProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> addToFavorites(Map<String, dynamic> item) async {
-    List<Object> favorites = _prefs.getStringList('favorites') ?? [];
-
-    favorites.add(item);
-    await _prefs.setStringList(
-        'favorites', favorites.map((e) => e.toString()).toList());
-    notifyListeners();
-  }
+  // Future<void> addToFavorites(Map<String, dynamic> item) async {
+  //   List<Object> favorites = _prefs.getStringList('favorites') ?? [];
+  //
+  //   favorites.add(item);
+  //   await _prefs.setStringList(
+  //       'favorites', favorites.map((e) => e.toString()).toList());
+  //   notifyListeners();
+  // }
 
   List<Map<String, dynamic>> getCart() {
     if (!_prefsInitialized) {
@@ -179,6 +179,48 @@ class DataProvider extends ChangeNotifier {
     return {};
   }
 
+  Map<String, dynamic> _currentUserData = {};
+  Map<String, dynamic> get currentUserData => _currentUserData;
+
+  Future<Map<String, dynamic>> fetchCurrentUserData() async {
+    final User? user = FirebaseAuth.instance.currentUser;
+
+    if (user != null) {
+      final DocumentSnapshot<Map<String, dynamic>> userSnapshot =
+          await _firestore.collection('Users').doc(user.uid).get();
+
+      if (userSnapshot.exists) {
+        _currentUserData = userSnapshot.data()!;
+
+        notifyListeners();
+        return _currentUserData; // Ajoutez cette ligne pour renvoyer les données
+      }
+    }
+
+    return {}; // Ajoutez cette ligne pour renvoyer un objet vide si les données ne sont pas trouvées
+  }
+
+  ///////////////////////////2///////////////////////////////////////////
+  Map<String, dynamic> _scannedUserData = {};
+  Map<String, dynamic> get scannedUserData => _scannedUserData;
+
+  Future<Map<String, dynamic>> fetchScannedUserData(String scannedUser) async {
+    if (scannedUser != null) {
+      final DocumentSnapshot<Map<String, dynamic>> userSnapshot =
+          await _firestore.collection('Users').doc(scannedUser).get();
+
+      if (userSnapshot.exists) {
+        _scannedUserData = userSnapshot.data()!;
+
+        notifyListeners();
+        return _scannedUserData; // Ajoutez cette ligne pour renvoyer les données
+      }
+    }
+
+    return {}; // Ajoutez cette ligne pour renvoyer un objet vide si les données ne sont pas trouvées
+  }
+
+  ///////////////////////////2///////////////////////////////////////////
   // Méthode pour augmenter la quantité d'un article
   void increaseQuantity(int index) {
     List<Map<String, dynamic>> cartItems = getCart();
@@ -246,6 +288,35 @@ class DataProvider extends ChangeNotifier {
     }
 
     return total;
+  }
+
+  Future<void> passerCommande(
+      List<Map<String, dynamic>> items, double cartTotal) async {
+    final User? user = FirebaseAuth.instance.currentUser;
+
+    if (user != null) {
+      // Créez un document pour la commande dans la collection "commande"
+      final DocumentReference<Map<String, dynamic>> commandeRef =
+          FirebaseFirestore.instance.collection('commande').doc();
+
+      // Créez un objet pour représenter la commande
+      final Map<String, dynamic> commandeData = {
+        'userId': user.uid,
+        'items': items,
+        'cartTotal': cartTotal,
+        'statut': 'En attente', // Vous pouvez définir le statut initial ici
+        'timestamp': FieldValue
+            .serverTimestamp(), // Pour enregistrer la date et l'heure actuelles du serveur
+      };
+
+      // Ajoutez la commande à la collection "commande"
+      await commandeRef.set(commandeData);
+
+      // Effacez le panier après avoir passé la commande
+      clearCart();
+
+      // Vous pouvez également mettre à jour d'autres informations ou effectuer des actions supplémentaires ici si nécessaire.
+    }
   }
 }
 

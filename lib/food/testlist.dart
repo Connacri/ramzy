@@ -11,6 +11,7 @@ import 'package:provider/provider.dart';
 import 'package:ramzy/food/DetailFood.dart';
 import 'package:ramzy/food/home_screen_food.dart';
 import 'package:ramzy/food/list_food_Models.dart';
+import 'package:timelines/timelines.dart';
 
 class CategoryFilterModel extends ChangeNotifier {
   String _catSelected = '';
@@ -402,6 +403,41 @@ class _MyFirestoreListViewState extends State<MyFirestoreListView> {
             return Center(child: Text('Error loading data'));
           }
         },
+      ),
+    );
+  }
+}
+
+class testchkil extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double
+          .infinity, // Définir la largeur sur 100% de la largeur de l'écran
+      child: SizedBox(
+        height: 140,
+        child: FixedTimeline.tileBuilder(
+          direction: Axis.horizontal,
+          verticalDirection: VerticalDirection.down,
+          builder: TimelineTileBuilder.connectedFromStyle(
+            contentsAlign: ContentsAlign.reverse,
+            oppositeContentsBuilder: (context, index) => Padding(
+                padding: const EdgeInsets.all(8.0), child: Text('testologie')),
+            contentsBuilder: (context, index) => Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                children: [
+                  Text('positionList'),
+                ],
+              ),
+            ),
+            connectorStyleBuilder: (context, index) => ConnectorStyle.solidLine,
+            firstConnectorStyle: ConnectorStyle.transparent,
+            lastConnectorStyle: ConnectorStyle.transparent,
+            indicatorStyleBuilder: (context, index) => IndicatorStyle.container,
+            itemCount: 3,
+          ),
+        ),
       ),
     );
   }

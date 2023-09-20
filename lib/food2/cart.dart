@@ -257,125 +257,140 @@ class CartPage2 extends StatelessWidget {
     final cartItems = dataProvider.getCart();
     final totalAmount = calculateTotalAmount(cartItems);
 
-    return Scaffold(
-      appBar: AppBar(
-        toolbarHeight: 80.0,
-        title: Text('Mon Panier'),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20.0),
-            child: Text(
-              intl.NumberFormat.currency(symbol: 'DZD ', decimalDigits: 2)
-                  .format(totalAmount),
-              overflow: TextOverflow.ellipsis,
-              style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.orange),
+    return WillPopScope(
+      // Cette fonction sera appelée lorsque l'utilisateur appuie sur le bouton de retour
+      onWillPop: () async {
+        // Utilisez popUntil pour revenir à la première page
+        Navigator.popUntil(context, (route) => route.isFirst);
+        return false; // Empêche la navigation arrière standard
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          toolbarHeight: 80.0,
+          title: Text('Mon Panier'),
+          actions: [
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20.0),
+              child: Text(
+                intl.NumberFormat.currency(symbol: 'DZD ', decimalDigits: 2)
+                    .format(totalAmount),
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.orange),
+              ),
             ),
-          ),
-        ],
-      ),
-      body: Column(
-        children: [
-          Expanded(
-            child: ListView.builder(
-              itemCount: cartItems.length,
-              itemBuilder: (context, index) {
-                final cartItem = cartItems[index];
+          ],
+        ),
+        body: Column(
+          children: [
+            Expanded(
+              child: ListView.builder(
+                itemCount: cartItems.length,
+                itemBuilder: (context, index) {
+                  final cartItem = cartItems[index];
 
-                return Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Row(
-                    children: [
-                      SizedBox(width: 10),
-                      Container(
-                        width: 50,
-                        height: 50,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          image: DecorationImage(
-                            fit: BoxFit.cover,
-                            image: cartItem['image'] == null
-                                ? CachedNetworkImageProvider(
-                                    "https://cdn.pixabay.com/photo/2020/05/17/04/22/pizza-5179939_640.jpg")
-                                : CachedNetworkImageProvider(cartItem['image']),
+                  return Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Row(
+                      children: [
+                        SizedBox(width: 10),
+                        Container(
+                          width: 50,
+                          height: 50,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            image: DecorationImage(
+                              fit: BoxFit.cover,
+                              image: cartItem['image'] == null
+                                  ? CachedNetworkImageProvider(
+                                      "https://cdn.pixabay.com/photo/2020/05/17/04/22/pizza-5179939_640.jpg")
+                                  : CachedNetworkImageProvider(
+                                      cartItem['image']),
+                            ),
                           ),
                         ),
-                      ),
-                      SizedBox(width: 10),
-                      Text(
-                        cartItem['qty'] > 99
-                            ? 'nd'
-                            : cartItem['qty'].toString().padLeft(2, '0'),
-                        style: TextStyle(fontSize: 35),
-                      ),
-                      SizedBox(width: 10),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                        SizedBox(width: 10),
+                        Text(
+                          cartItem['qty'] > 99
+                              ? 'nd'
+                              : cartItem['qty'].toString().padLeft(2, '0'),
+                          style: TextStyle(fontSize: 35),
+                        ),
+                        SizedBox(width: 10),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(cartItem['item']),
+                              Text(
+                                  'DZD ${cartItem['price'].toStringAsFixed(2)}'),
+                            ],
+                          ),
+                        ),
+                        Row(
                           children: [
-                            Text(cartItem['item']),
-                            Text('DZD ${cartItem['price'].toStringAsFixed(2)}'),
+                            IconButton(
+                              icon: Icon(Icons.remove),
+                              onPressed: () {
+                                Provider.of<DataProvider>(context,
+                                        listen: false)
+                                    .decreaseQuantity(index);
+                              },
+                            ),
+                            IconButton(
+                              icon: Icon(Icons.add),
+                              onPressed: () {
+                                Provider.of<DataProvider>(context,
+                                        listen: false)
+                                    .increaseQuantity(index);
+                              },
+                            ),
+                            IconButton(
+                              icon: Icon(
+                                Icons.delete,
+                                color: Colors.red,
+                              ),
+                              onPressed: () {
+                                Provider.of<DataProvider>(context,
+                                        listen: false)
+                                    .removeItemFromCart(index);
+                              },
+                            ),
                           ],
                         ),
-                      ),
-                      Row(
-                        children: [
-                          IconButton(
-                            icon: Icon(Icons.remove),
-                            onPressed: () {
-                              Provider.of<DataProvider>(context, listen: false)
-                                  .decreaseQuantity(index);
-                            },
-                          ),
-                          IconButton(
-                            icon: Icon(Icons.add),
-                            onPressed: () {
-                              Provider.of<DataProvider>(context, listen: false)
-                                  .increaseQuantity(index);
-                            },
-                          ),
-                          IconButton(
-                            icon: Icon(
-                              Icons.delete,
-                              color: Colors.red,
-                            ),
-                            onPressed: () {
-                              Provider.of<DataProvider>(context, listen: false)
-                                  .removeItemFromCart(index);
-                            },
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                );
-              },
+                      ],
+                    ),
+                  );
+                },
+              ),
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Padding(
-                  padding: EdgeInsets.all(16.0),
-                  child: Text(
-                    'Total : \DZD ${totalAmount.toStringAsFixed(2)}',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Padding(
+                    padding: EdgeInsets.all(16.0),
+                    child: Text(
+                      'Total : \DZD ${totalAmount.toStringAsFixed(2)}',
+                      style:
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    ),
                   ),
-                ),
-                IconButton(
-                  icon: Icon(Icons.send, color: Colors.green),
-                  onPressed: () async {
-                    confirmAndSendToFirestore(context, cartItems, totalAmount);
-                  },
-                ),
-              ],
+                  IconButton(
+                    icon: Icon(Icons.send, color: Colors.green),
+                    onPressed: () async {
+                      confirmAndSendToFirestore(
+                          context, cartItems, totalAmount);
+                    },
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -391,6 +406,8 @@ class CartPage2 extends StatelessWidget {
       final String userId = userData['id'];
 
       try {
+        // Appel de dataProvider.passerCommande() avec les variables nécessaires
+        dataProvider.passerCommande(cartItems, totalAmount);
         final userRef = FirebaseFirestore.instance
             .collection('usersCommande')
             .doc(userId)
@@ -407,7 +424,7 @@ class CartPage2 extends StatelessWidget {
             //'flav': cartItem['flav'],
             // 'createdAt': currentTime,
             //'user': cartItem['user'],
-            'qty': cartItem['qty']
+            'qty': cartItem['qty'],
           };
         }).toList();
 
@@ -415,6 +432,8 @@ class CartPage2 extends StatelessWidget {
           'items': itemsList,
           'cartTotal': totalAmount,
           'createdAt': currentTime,
+          'statut': 'client',
+          'position': 'ici',
         };
 
         await userRef.set(cartData);

@@ -788,7 +788,7 @@ class _SilverdetailItemState extends State<SilverdetailItem> {
                             context: context,
                             builder: (BuildContext context) {
                               return AlertDialog(
-                                title: Text('Confirmation'),
+                                title: Text('Confirmation de Suppresion'),
                                 content: Text(
                                     'Êtes-vous sûr de vouloir supprimer cet élément ?'),
                                 actions: [
@@ -811,7 +811,7 @@ class _SilverdetailItemState extends State<SilverdetailItem> {
                             },
                           );
 
-                          if (confirmed ?? false) {
+                          if (confirmed) {
                             // L'utilisateur a confirmé la suppression, procédez à la suppression de l'élément
                             // Get the document from Firestore
                             docProducts
@@ -819,6 +819,8 @@ class _SilverdetailItemState extends State<SilverdetailItem> {
                                 .get()
                                 .then((documentSnapshot) async {
                               print(userId);
+                              print(documentSnapshot.id);
+                              print(widget.idDoc);
                               print(widget.data['userID']);
                               if (documentSnapshot.exists) {
                                 // Document exists, check if the field is equal to user ID
@@ -986,7 +988,7 @@ class _SilverdetailItemState extends State<SilverdetailItem> {
                       },
                       child: Text(
                         'Delete',
-                        style: TextStyle(color: Colors.red),
+                        style: TextStyle(color: Colors.yellow),
                       ),
                     ),
                   ),
