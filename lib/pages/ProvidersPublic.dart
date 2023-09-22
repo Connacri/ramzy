@@ -11,7 +11,7 @@ import 'package:ramzy/food/home_screen_food.dart';
 import 'package:ramzy/food/webScrab.dart';
 import 'package:ramzy/food2/MesAchatsPage.dart';
 import 'package:ramzy/food2/main.dart';
-import 'package:ramzy/food2/test.dart';
+import 'package:ramzy/food2/paymentPage.dart';
 import '../pages/homeList_StateFull.dart';
 import '../pages/homeList_StateFull_staggered.dart';
 import '../messenger/ChatListScreen.dart';

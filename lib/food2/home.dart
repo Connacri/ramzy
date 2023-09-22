@@ -19,7 +19,7 @@ import 'package:ramzy/food2/main.dart';
 import 'package:ramzy/food2/models.dart';
 import 'package:ramzy/food2/foodDetail.dart';
 import 'package:ramzy/food2/recharger.dart';
-import 'package:ramzy/food2/test.dart';
+import 'package:ramzy/food2/paymentPage.dart';
 
 class MonWidget extends StatelessWidget {
   double calculateTotalAmount(List<Map<String, dynamic>> cartItems) {
@@ -145,6 +145,18 @@ class MonWidget extends StatelessWidget {
                                   child: CircleAvatar(
                                     backgroundImage: CachedNetworkImageProvider(
                                         userImageUrl), // Utilisez une image par défaut si l'URL de l'image n'est pas disponible.
+                                  ),
+                                ),
+                                IconButton(
+                                  onPressed: () {
+                                    Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                QrScanner2()));
+                                  },
+                                  icon: Icon(
+                                    Icons.qr_code,
+                                    size: 35,
                                   ),
                                 ),
                                 IconButton.outlined(
@@ -433,8 +445,6 @@ class CustomDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double maxWidth = MediaQuery.of(context).size.width * 0.7;
-
     return Drawer(
       child: FutureBuilder<Map<String, dynamic>>(
         future:

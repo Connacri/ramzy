@@ -142,6 +142,7 @@ flutter:
   assets:
     - assets/
     - assets/lotties/
+    - assets/lotties/124102-loading-screen.json
     - assets/lotties/8998-scanning.json
     - assets/images/ic_launcher/1024.png
     - assets/firebase_logo.png
