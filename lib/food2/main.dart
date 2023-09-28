@@ -186,6 +186,7 @@ class DataProvider extends ChangeNotifier {
     final User? user = FirebaseAuth.instance.currentUser;
 
     if (user != null) {
+      final String currentUserId = user.uid;
       final DocumentSnapshot<Map<String, dynamic>> userSnapshot =
           await _firestore.collection('Users').doc(user.uid).get();
 
@@ -198,6 +199,10 @@ class DataProvider extends ChangeNotifier {
     }
 
     return {}; // Ajoutez cette ligne pour renvoyer un objet vide si les données ne sont pas trouvées
+  }
+
+  Stream<QuerySnapshot> getTransactionStream() {
+    return FirebaseFirestore.instance.collection('transactions').snapshots();
   }
 
   ///////////////////////////2///////////////////////////////////////////

@@ -314,7 +314,8 @@ class MesAchatsList extends StatelessWidget {
                 'fr_FR', // Utilisez 'fr_FR' pour la locale française.
               ); // Format de date souhaité
               final String formattedDate = dateFormatter.format(createdAt);
-              final NumberFormat cartTotalFormatter = NumberFormat.currency(
+              final NumberFormat cartTotalFormatter = NumberFormat.currency( locale:
+              'fr_FR',
                 symbol:
                     'DZD ', // Vous pouvez définir le symbole de la devise ici s'il est nécessaire.
                 decimalDigits:

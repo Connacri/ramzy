@@ -85,6 +85,7 @@ dependencies:
   path:
   timeline_tile_nic: ^2.0.1
   timelines:
+  animated_flip_counter: ^0.2.6
 
 dev_dependencies:
   flutter_test:

@@ -1,5 +1,9 @@
+import 'package:animated_flip_counter/animated_flip_counter.dart';
+import 'package:avatar_glow/avatar_glow.dart';
+import 'package:calendar_timeline/calendar_timeline.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -7,9 +11,9 @@ import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import 'package:ramzy/food2/main.dart';
 import 'package:intl/intl.dart' as intl;
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:ramzy/food2/models.dart';
 import 'package:ramzy/food2/usersListCoins.dart';
 
 class TransactionPage2 extends StatefulWidget {
@@ -27,6 +31,14 @@ class _TransactionPage2State extends State<TransactionPage2> {
   final GlobalKey<FormState> _formCoinsMKey = GlobalKey<FormState>();
   bool _isSubmitting =
       false; // Variable pour suivre l'état de soumission du formulaire
+  @override
+  void dispose() {
+    Provider.of<DataProvider>(context, listen: false).fetchCurrentUserData();
+    Provider.of<DataProvider>(context, listen: false)
+        .fetchScannedUserData(widget.scannedUserId);
+    amountController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -65,15 +77,28 @@ class _TransactionPage2State extends State<TransactionPage2> {
                               fontWeight: FontWeight.w500,
                               color: Colors.black54),
                         ),
-                        subtitle: PriceWidget(
-                          price: userData['coins'],
+                        subtitle: AnimatedFlipCounter(
+                          value: userData[
+                              'coins'], // Utilisez la partie entière de priceValue.
+                          prefix: "DZD ",
+                          textStyle: TextStyle(
+                            fontFamily: 'OSWALD',
+                            color: Colors.green,
+                            fontSize: 20,
+                            fontWeight: FontWeight.w500,
+                          ),
                         ),
+                        //     PriceWidget(
+                        //   price: userData['coins'],
+                        // ),
                         //trailing: Icon(Icons.add),
                       ),
                       IncrementCoinsRow(
                         userId: userData['id'],
                       ),
-                      ScannedConsumer(widget.scannedUserId),
+                      ScannedConsumer(
+                        scannedUserId: widget.scannedUserId,
+                      ),
                       Padding(
                         padding: const EdgeInsets.fromLTRB(8, 0, 8, 40),
                         child: Text(
@@ -491,7 +516,8 @@ class PriceWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(
       intl.NumberFormat.currency(
-        symbol: 'DZD ',
+        locale: 'fr_FR',
+        symbol: 'DZD',
         decimalDigits: 2,
       ).format(price),
       overflow: TextOverflow.ellipsis,
@@ -687,10 +713,17 @@ class _IncrementCoinsRowState extends State<IncrementCoinsRow> {
 }
 
 class ScannedConsumer extends StatelessWidget {
-  const ScannedConsumer(String scannedUserId, {super.key});
+  const ScannedConsumer({
+    super.key,
+    required this.scannedUserId,
+  });
+
+  final String scannedUserId;
 
   @override
   Widget build(BuildContext context) {
+    Provider.of<DataProvider>(context, listen: false)
+        .fetchScannedUserData(scannedUserId);
     return Consumer<DataProvider>(
       builder: (context, dataProvider, child) {
         final userData = dataProvider.scannedUserData;
@@ -771,18 +804,35 @@ class TransactionSubmitButton extends StatefulWidget {
 
 class _TransactionSubmitButtonState extends State<TransactionSubmitButton> {
   bool _isSubmitting = false;
+  final TextEditingController _amountController = TextEditingController();
+
+  String? _validateAmount(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Entrez un montant';
+    }
+    double? amount = double.tryParse(value);
+    if (amount == null || amount <= 0 || amount > 5000) {
+      return 'Montant invalide\nMontant doit etre entre 0 et 5000';
+    }
+
+    return null;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Form(
       key: widget.formKey,
       child: Padding(
-        padding: EdgeInsets.fromLTRB(15, 0, 015, 0),
+        padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
         child: TextFormField(
           readOnly: _isSubmitting ? true : false,
           textAlign: TextAlign.center,
           style: TextStyle(
-            fontSize: 18,
+            fontSize: 35,
           ),
+          inputFormatters: [
+            LengthLimitingTextInputFormatter(4), // Limite à 4 caractères
+          ],
           keyboardType: TextInputType.number,
           controller: widget.amountController,
           decoration: InputDecoration(
@@ -881,14 +931,25 @@ class _TransactionSubmitButtonState extends State<TransactionSubmitButton> {
                                 receiverRef,
                                 {'coins': receiverCoins + amount},
                                 SetOptions(merge: true));
+                            showCongratulationsDialog(
+                              context,
+                              amount,
+                              receiverCoins + amount,
+                            );
+                            addTransactionToFirestore(widget.userData['id'],
+                                widget.scannedUserId, amount);
                           });
 
                           // Une fois la transaction réussie, vous pouvez mettre à jour les soldes
                           // Vous pouvez également ajouter un message de réussite ici
+                          //Navigator.of(context).pushReplacement(newRoute)
                         } catch (e) {
                           // Gestion des erreurs de transaction
                           print('Erreur lors de la transaction : $e');
                           // Vous pouvez afficher un message d'erreur ici
+                          // Affichez la boîte de dialogue d'erreur avec un message approprié
+                          showTransactionErrorDialog(
+                              context, "La transaction a échoué : $e");
                         }
 
                         // Réinitialisez l'état pour indiquer que la soumission est terminée
@@ -897,25 +958,25 @@ class _TransactionSubmitButtonState extends State<TransactionSubmitButton> {
                         });
                         widget.amountController.clear();
                         FocusScope.of(context).unfocus();
+                        //Navigator.of(context).pushReplacement(newRoute)
                       }
                     },
               child: _isSubmitting
-                  ? Padding(
-                      padding: const EdgeInsets.fromLTRB(0, 0, 10, 0),
-                      child: FittedBox(
-                        child: Lottie.asset(
-                          'assets/lotties/animation_lmqwk3oz.json',
-                          animate: true,
-                          repeat: true,
-                          width: 50,
-                          height: 50,
+                  ? Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        FittedBox(
+                          child: Lottie.asset(
+                            'assets/lotties/animation_lmtavzq3.json',
+                            // repeat: false,
+                          ),
                         ),
-                      ),
+                        Text(
+                          widget.amountController.text,
+                          style: TextStyle(fontSize: 25),
+                        ),
+                      ],
                     )
-                  // Padding(
-                  //     padding: const EdgeInsets.all(10.0),
-                  //     child: CircularProgressIndicator(),
-                  //   )
                   : Icon(
                       Icons.send,
                       color: Color.fromARGB(255, 0, 127, 232),
@@ -925,23 +986,209 @@ class _TransactionSubmitButtonState extends State<TransactionSubmitButton> {
             filled: _isSubmitting ? true : false, //<-- SEE HERE
             fillColor: _isSubmitting ? Colors.grey.shade200 : null,
             hintStyle: TextStyle(
+              fontSize: 35,
               color: Colors.black38,
             ),
-            hintText: 'Montant à envoyer',
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(7.0),
-            ),
+            hintText: 'Montant à Envoyer',
+            // border: OutlineInputBorder(
+            //   borderRadius: BorderRadius.circular(10.0),
+            // ),
 
-            contentPadding: EdgeInsets.all(15),
+            //contentPadding: EdgeInsets.all(25),
           ),
-          validator: (value) {
-            if (value == null || value.isEmpty) {
-              return 'Entrer Le Montant';
-            }
-            return null;
-          },
+          validator: _validateAmount,
+          //     (value) {
+          //   if (value == null || value.isEmpty) {
+          //     return 'Entrer Le Montant';
+          //   }
+          //   return null;
+          // },
+
+          maxLength: 4,
         ),
       ),
     );
+  }
+}
+
+void showCongratulationsDialog(
+    BuildContext context, double Coins, double total) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: Text("Félicitations !"),
+        content: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            AvatarGlow(
+              glowColor: Colors.blue,
+              endRadius: 90.0,
+              duration: Duration(milliseconds: 2000),
+              repeat: true,
+              showTwoGlows: true,
+              repeatPauseDuration: Duration(milliseconds: 100),
+              child: Material(
+                // Replace this child with your own
+                elevation: 8.0,
+                shape: CircleBorder(),
+                child: CircleAvatar(
+                  backgroundColor: Colors.grey[100],
+                  child: Lottie.asset(
+                    'assets/lotties/animation_lmqwfkzg.json',
+                    height: 60,
+                    width: 60,
+                    repeat: true,
+                  ),
+                  radius: 40.0,
+                ),
+              ),
+            ),
+            FittedBox(
+              child: Text(
+                'Envoyer : ' +
+                    intl.NumberFormat.currency(
+                      locale: 'fr_FR',
+                      symbol: 'DZD',
+                      decimalDigits: 2,
+                    ).format(Coins),
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  color: Colors.green,
+                  fontSize: 30,
+                  fontWeight: FontWeight.w400,
+                ),
+              ),
+            ),
+            Lottie.asset(
+              'assets/lotties/animation_lmqwf1by.json', // Chemin vers votre animation Lottie
+              width: 150,
+              height: 150,
+              repeat: true,
+              animate: true,
+            ),
+            SizedBox(height: 20),
+            Text(
+              'Beneficier Solde : '.toString().capitalize(),
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                color: Colors.blue,
+                fontSize: 20,
+                fontWeight: FontWeight.w400,
+              ),
+            ),
+            Text(
+              intl.NumberFormat.currency(
+                locale: 'fr_FR',
+                symbol: 'DZD',
+                decimalDigits: 2,
+              ).format(total),
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                color: Colors.blue,
+                fontSize: 20,
+                fontWeight: FontWeight.w400,
+              ),
+            ),
+            Text("La transaction a réussi !".toString().capitalize()),
+          ],
+        ),
+        actions: [
+          Center(
+            child: TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Fermez la boîte de dialogue
+              },
+              child: Text("Fermer"),
+            ),
+          ),
+        ],
+      );
+    },
+  );
+}
+
+void showTransactionErrorDialog(BuildContext context, String errorMessage) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: Text("Erreur de transaction"),
+        content: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            SizedBox(
+              height: 100,
+            ),
+            AvatarGlow(
+              glowColor: Colors.blue,
+              endRadius: 90.0,
+              duration: Duration(milliseconds: 2000),
+              repeat: true,
+              showTwoGlows: true,
+              repeatPauseDuration: Duration(milliseconds: 100),
+              child: Material(
+                // Replace this child with your own
+                elevation: 8.0,
+                shape: CircleBorder(),
+                child: CircleAvatar(
+                  backgroundColor: Colors.grey[100],
+                  child: Lottie.asset(
+                    'assets/lotties/animation_lmqwfkzg.json',
+                    height: 60,
+                    width: 60,
+                  ),
+                  radius: 40.0,
+                ),
+              ),
+            ),
+            Lottie.asset(
+              'assets/lotties/animation_lmqwf1by.json', // Chemin vers votre animation Lottie
+              width: 150,
+              height: 150,
+              repeat: false,
+              animate: true,
+            ),
+            SizedBox(height: 20),
+            Text("Erreur de la transaction!".toString().capitalize()),
+          ],
+        ),
+        actions: [
+          Center(
+            child: TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Fermez la boîte de dialogue
+              },
+              child: Text("Fermer"),
+            ),
+          ),
+        ],
+      );
+    },
+  );
+}
+
+void addTransactionToFirestore(
+    String senderUserId, String receiverUserId, double amount) async {
+  try {
+    final Timestamp timestamp = Timestamp.now();
+    final TransactionModel transaction = TransactionModel(
+      senderUserId: senderUserId,
+      receiverUserId: receiverUserId,
+      amount: amount,
+      timestamp: timestamp,
+    );
+
+    final DocumentReference transactionRef =
+        FirebaseFirestore.instance.collection('transactions').doc();
+
+    await transactionRef.set(transaction.toMap());
+    print('Transaction réussie et ajoutée à la collection Firestore.');
+  } catch (e) {
+    print('Erreur lors de l\'ajout de la transaction à Firestore : $e');
   }
 }

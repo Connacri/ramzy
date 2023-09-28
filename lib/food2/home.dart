@@ -20,6 +20,7 @@ import 'package:ramzy/food2/models.dart';
 import 'package:ramzy/food2/foodDetail.dart';
 import 'package:ramzy/food2/recharger.dart';
 import 'package:ramzy/food2/paymentPage.dart';
+import 'package:ramzy/food2/usersListCoins.dart';
 
 class MonWidget extends StatelessWidget {
   double calculateTotalAmount(List<Map<String, dynamic>> cartItems) {
@@ -73,31 +74,18 @@ class MonWidget extends StatelessWidget {
                         child: Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: FittedBox(
-                              child: Row(
-                                crossAxisAlignment:
-                                    CrossAxisAlignment.values.first,
-                                children: [
-                                  Text(
-                                    intl.NumberFormat.currency(
-                                      symbol: '',
-                                      decimalDigits: 2,
-                                    ).format(userData['coins']),
-                                    //overflow: TextOverflow.ellipsis,
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 30,
-                                      fontWeight: FontWeight.w400,
-                                    ),
-                                  ),
-                                  Text(
-                                    ' DZD',
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.w400,
-                                    ),
-                                  ),
-                                ],
+                              child: Text(
+                                intl.NumberFormat.currency(
+                                  locale: 'fr_FR',
+                                  symbol: 'DZD',
+                                  decimalDigits: 2,
+                                ).format(userData['coins']),
+                                //overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 30,
+                                  fontWeight: FontWeight.w400,
+                                ),
                               ),
                             ))),
                   ),
@@ -114,7 +102,9 @@ class MonWidget extends StatelessWidget {
                         ),
                         Text(
                           intl.NumberFormat.currency(
-                                  symbol: 'DZD ', decimalDigits: 2)
+                                  locale: 'fr_FR',
+                                  symbol: 'DZD ',
+                                  decimalDigits: 2)
                               .format(totalAmount),
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
@@ -150,12 +140,26 @@ class MonWidget extends StatelessWidget {
                                 IconButton(
                                   onPressed: () {
                                     Navigator.of(context).push(
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                QrScanner2()));
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            QrScanner(), //QrScanner2(),
+                                      ),
+                                    );
                                   },
                                   icon: Icon(
                                     Icons.qr_code,
+                                    size: 35,
+                                  ),
+                                ),
+                                IconButton(
+                                  onPressed: () {
+                                    Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                UserListPage()));
+                                  },
+                                  icon: Icon(
+                                    Icons.earbuds_battery_outlined,
                                     size: 35,
                                   ),
                                 ),
@@ -393,7 +397,8 @@ class MonWidget extends StatelessWidget {
                                                       Text(
                                                         intl.NumberFormat
                                                             .currency(
-                                                          symbol: 'DZD ',
+                                                          locale: 'fr_FR',
+                                                          symbol: 'DZD',
                                                           decimalDigits: 2,
                                                         ).format(food.price),
                                                         overflow: TextOverflow
@@ -503,31 +508,18 @@ class CustomDrawer extends StatelessWidget {
                         child: Padding(
                             padding: const EdgeInsets.all(18.0),
                             child: FittedBox(
-                              child: Row(
-                                crossAxisAlignment:
-                                    CrossAxisAlignment.values.first,
-                                children: [
-                                  Text(
-                                    intl.NumberFormat.currency(
-                                      symbol: '',
-                                      decimalDigits: 2,
-                                    ).format(userData['coins']),
-                                    //overflow: TextOverflow.ellipsis,
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 30,
-                                      fontWeight: FontWeight.w400,
-                                    ),
-                                  ),
-                                  Text(
-                                    ' DZD',
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.w400,
-                                    ),
-                                  ),
-                                ],
+                              child: Text(
+                                intl.NumberFormat.currency(
+                                  locale: 'fr_FR',
+                                  symbol: 'DZD',
+                                  decimalDigits: 2,
+                                ).format(userData['coins']),
+                                //overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 30,
+                                  fontWeight: FontWeight.w400,
+                                ),
                               ),
                             ))),
                   ),
@@ -558,7 +550,7 @@ class CustomDrawer extends StatelessWidget {
                   title: Text("Envoyer des Coins"),
                   onTap: () {
                     Navigator.of(context).push(
-                        MaterialPageRoute(builder: (context) => QrScanner2()));
+                        MaterialPageRoute(builder: (context) => QrScanner()));
                   },
                 ),
                 ListTile(
@@ -748,6 +740,7 @@ class CategoryList extends StatelessWidget {
                               Text(categoryItem.cat),
                               Text(
                                 intl.NumberFormat.currency(
+                                  locale: 'fr_FR',
                                   symbol: 'DZD ',
                                   decimalDigits: 2,
                                 ).format(categoryItem.price),

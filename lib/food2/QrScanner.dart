@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
+import 'package:ramzy/food2/paymentPage.dart';
 
 class QrScanner extends StatefulWidget {
   const QrScanner({Key? key}) : super(key: key);
@@ -71,7 +72,10 @@ class _QrScannerState extends State<QrScanner> {
                                 return ItemDontExist(result!.code);
                               }
                               return Center(
-                                child: CircularProgressIndicator(),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(28.0),
+                                  child: LinearProgressIndicator(),
+                                ),
                               );
                             },
                           ),
@@ -150,19 +154,19 @@ class _QrScannerState extends State<QrScanner> {
                     ),
               ),
             ),
-            Positioned(
-              bottom: 0,
-              child: ElevatedButton(
-                onPressed: () {
-                  // Navigator.of(context).push(MaterialPageRoute(
-                  //   builder: (context) => Addingitems(
-                  //     code: code,
-                  //   ),
-                  // ));
-                },
-                child: Text('Add New Item'),
-              ),
-            ),
+            // Positioned(
+            //   bottom: 0,
+            //   child: ElevatedButton(
+            //     onPressed: () {
+            //       // Navigator.of(context).push(MaterialPageRoute(
+            //       //   builder: (context) => Addingitems(
+            //       //     code: code,
+            //       //   ),
+            //       // ));
+            //     },
+            //     child: Text('Add New Item'),
+            //   ),
+            // ),
           ],
         ),
       ],
@@ -400,193 +404,81 @@ class _FutureBuilderScannedItemSingleState
             );
           }
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Padding(
-              padding: const EdgeInsets.all(60.0),
-              child: CircularProgressIndicator(
-                color: Colors.black45,
-              ),
+            return Center(
+              child: Padding(
+                  padding: const EdgeInsets.all(60.0),
+                  child: Lottie.asset('assets/lotties/animation_lmtxbxih.json')
+                  //CircularProgressIndicator(),
+                  ),
             );
           }
           if (snapshot.connectionState == ConnectionState.done) {
             if (snapshot.hasData) {
-              var PriceSingle = snapshot.data;
-              var dataid = PriceSingle.id;
-              //print(PriceSingle);
-              print(dataid);
-
-              if (PriceSingle == 0) {
-                return buildIfPriceEmptyorNull(context);
-              } else {
-                return Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 18.0),
-                  child: ListView(
-                    shrinkWrap: true,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                        child: Text(PriceSingle['model'].toString(),
-                            maxLines: 3,
-                            textAlign: TextAlign.center,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                                color: Colors.black87,
-                                fontWeight: FontWeight.w500,
-                                fontSize: 18)),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                        child: Text(PriceSingle['description'].toString(),
-                            maxLines: 3,
-                            textAlign: TextAlign.center,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                                color: Colors.black87,
-                                fontWeight: FontWeight.w500,
-                                fontSize: 12)),
-                      ),
-                      // SizedBox(
-                      //   height: 30,
-                      // ),
-                      Center(
-                          child: FittedBox(
-                        child: Text(
-                          dataid.toString(),
-                          style: TextStyle(fontSize: 40),
-                        ),
-                      )),
-                      Card(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.only(left: 10),
-                              child: Text(PriceSingle['oldStock'].toString(),
-                                  style: const TextStyle(
-                                      color: Colors.black87,
-                                      fontWeight: FontWeight.w500,
-                                      fontSize: 40)),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(left: 10),
-                              child: Text('FACTORY',
-                                  style: const TextStyle(
-                                      color: Colors.black87,
-                                      fontWeight: FontWeight.w500,
-                                      fontSize: 40)),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(right: 18),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                crossAxisAlignment: CrossAxisAlignment.end,
-                                children: [
-                                  Text('USD ' +
-                                      NumberFormat.currency(symbol: '')
-                                          .format(PriceSingle['prixAchat'])),
-                                  Text(
-                                    'AED ' +
-                                        NumberFormat.currency(symbol: '')
-                                            .format(PriceSingle['prixAchat'] *
-                                                3.68), //.toString() + '0'),
-                                  )
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Card(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.only(left: 10),
-                              child: Text('BUY',
-                                  style: const TextStyle(
-                                      color: Colors.black87,
-                                      fontWeight: FontWeight.w500,
-                                      fontSize: 40)),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(left: 18),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                crossAxisAlignment: CrossAxisAlignment.end,
-                                children: [
-                                  Text('USD ' +
-                                      NumberFormat.currency(symbol: '').format(
-                                          PriceSingle['prixVente'] / 3.68)),
-                                  Text(
-                                    'AED ' +
-                                        NumberFormat.currency(symbol: '')
-                                            .format(PriceSingle[
-                                                'prixVente']), //.toString() + '0'),
-                                  )
-                                ],
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(left: 10),
-                              child: Text('REST',
-                                  style: const TextStyle(
-                                      color: Colors.black87,
-                                      fontWeight: FontWeight.w500,
-                                      fontSize: 40)),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(right: 18),
-                              child: Text(PriceSingle['stock'].toString(),
-                                  style: TextStyle(
-                                      color: Colors.amber,
-                                      fontWeight: FontWeight.w500,
-                                      fontSize: 40)),
-                            ),
-                          ],
-                        ),
-                      ),
-                      // ListTile(
-                      //   style: ListTileStyle.drawer,
-                      //   dense: true,
-                      //   horizontalTitleGap: 5.0,
-                      //   title: Text((PriceSingle['prixAchat'] * 3.68).toString()),
-                      //   subtitle: Text(PriceSingle['prixVente'].toString()),
-                      //   leading: Container(
-                      //     color: Colors.cyan,
-                      //     child: Text(PriceSingle['stock'].toString(),
-                      //         style: const TextStyle(
-                      //             color: Colors.black87,
-                      //             fontWeight: FontWeight.w500,
-                      //             fontSize: 45)),
-                      //   ),
-                      //   trailing: Container(
-                      //     color: Colors.amber,
-                      //     child: Text(PriceSingle['oldStock'].toString(),
-                      //         style: TextStyle(
-                      //             color: Colors.black87,
-                      //             fontWeight: FontWeight.w500,
-                      //             fontSize: 18)),
-                      //   ),
-                      // ),
-                      ElevatedButton(
-                        onPressed: () {
-                          // int itemcount = availibility.length;
-                          // uploadItems(itemcount);
-                          // Navigator.of(context).push(MaterialPageRoute(
-                          //   builder: (context) =>
-                          //       AddingDealerPrice(
-                          //     code: widget.result.toString(),
-                          //   ),
-                          // ));
-                          addToDevisDialog(dataid, PriceSingle);
-                        },
-                        child: Text('Add to Estimate'),
-                      ),
-                    ],
+              var data = snapshot.data;
+              var dataid = data.id;
+              Future.delayed(Duration(milliseconds: 100), () {
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(
+                    builder: (context) =>
+                        TransactionPage2(scannedUserId: dataid.toString()),
                   ),
                 );
-              }
+              });
+
+              // return Padding(
+              //   padding: const EdgeInsets.symmetric(horizontal: 18.0),
+              //   child: ListView(
+              //     shrinkWrap: true,
+              //     children: [
+              //       Padding(
+              //         padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              //         child: Text(data['id'].toString(),
+              //             maxLines: 3,
+              //             textAlign: TextAlign.center,
+              //             overflow: TextOverflow.ellipsis,
+              //             style: TextStyle(
+              //                 color: Colors.black87,
+              //                 fontWeight: FontWeight.w500,
+              //                 fontSize: 18)),
+              //       ),
+              //       Padding(
+              //         padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              //         child: Text(data['displayName'].toString(),
+              //             maxLines: 3,
+              //             textAlign: TextAlign.center,
+              //             overflow: TextOverflow.ellipsis,
+              //             style: TextStyle(
+              //                 color: Colors.black87,
+              //                 fontWeight: FontWeight.w500,
+              //                 fontSize: 12)),
+              //       ),
+              //       Center(
+              //           child: FittedBox(
+              //         child: Text(
+              //           dataid.toString(),
+              //         ),
+              //       )),
+              //       Card(
+              //         child: Row(
+              //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              //           crossAxisAlignment: CrossAxisAlignment.center,
+              //           children: [
+              //             FittedBox(
+              //               child: Padding(
+              //                 padding: const EdgeInsets.all(10),
+              //                 child: Text(data['email'].toString(),
+              //                     style: const TextStyle(
+              //                       color: Colors.black87,
+              //                       fontWeight: FontWeight.w500,
+              //                     )),
+              //               ),
+              //             ),
+              //           ],
+              //         ),
+              //       ),
+              //     ],
+              //   ),
+              // );
             }
           }
           return Text('');

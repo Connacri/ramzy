@@ -197,7 +197,8 @@ class DetailFood2 extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            intl.NumberFormat.currency(
+                            intl.NumberFormat.currency( locale:
+                            'fr_FR',
                               symbol: 'DZD ',
                               decimalDigits: 2,
                             ).format(food.price),

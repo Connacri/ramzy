@@ -40,7 +40,8 @@ import 'package:intl/intl.dart' as intl;
 //           Padding(
 //             padding: const EdgeInsets.symmetric(horizontal: 20.0),
 //             child: Text(
-//               intl.NumberFormat.currency(symbol: 'DZD ', decimalDigits: 2)
+//               intl.NumberFormat.currency( locale:
+//                                                 'fr_FR', symbol: 'DZD ', decimalDigits: 2)
 //                   .format(totalAmount),
 //               overflow: TextOverflow.ellipsis,
 //               style: TextStyle(
@@ -272,7 +273,8 @@ class CartPage2 extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20.0),
               child: Text(
-                intl.NumberFormat.currency(symbol: 'DZD ', decimalDigits: 2)
+                intl.NumberFormat.currency( locale:
+                'fr_FR', symbol: 'DZD ', decimalDigits: 2)
                     .format(totalAmount),
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
