@@ -9,23 +9,24 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
-import 'package:ramzy/food2/main.dart';
 import 'package:intl/intl.dart' as intl;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:ramzy/food2/models.dart';
+import 'package:ramzy/f_wallet/main.dart';
+import 'package:ramzy/f_wallet/models.dart';
+import 'package:ramzy/f_wallet/usersList.dart';
 import 'package:ramzy/food2/usersListCoins.dart';
 
-class TransactionPage2 extends StatefulWidget {
+class TransactionPage extends StatefulWidget {
   final String scannedUserId;
 
-  TransactionPage2({required this.scannedUserId});
+  TransactionPage({required this.scannedUserId});
 
   @override
-  State<TransactionPage2> createState() => _TransactionPage2State();
+  State<TransactionPage> createState() => _TransactionPageState();
 }
 
-class _TransactionPage2State extends State<TransactionPage2> {
+class _TransactionPageState extends State<TransactionPage> {
   final TextEditingController amountController = TextEditingController();
   // Ajout de cette ligne
   final GlobalKey<FormState> _formCoinsMKey = GlobalKey<FormState>();
@@ -33,9 +34,9 @@ class _TransactionPage2State extends State<TransactionPage2> {
       false; // Variable pour suivre l'état de soumission du formulaire
   @override
   void dispose() {
-    Provider.of<DataCurrentUserProvider>(context, listen: false)
+    Provider.of<UserDataProvider>(context, listen: false)
         .fetchCurrentUserData();
-    Provider.of<DataCurrentUserProvider>(context, listen: false)
+    Provider.of<UserDataProvider>(context, listen: false)
         .fetchScannedUserData(widget.scannedUserId);
     amountController.dispose();
     super.dispose();
@@ -43,18 +44,18 @@ class _TransactionPage2State extends State<TransactionPage2> {
 
   @override
   Widget build(BuildContext context) {
-    Provider.of<DataCurrentUserProvider>(context, listen: false)
+    Provider.of<UserDataProvider>(context, listen: false)
         .fetchCurrentUserData();
-    Provider.of<DataCurrentUserProvider>(context, listen: false)
+    Provider.of<UserDataProvider>(context, listen: false)
         .fetchScannedUserData(widget.scannedUserId);
-
+    Provider.of<UserDataProvider>(context, listen: false).gainesStream;
     return Scaffold(
       appBar: AppBar(
         title: Text('User Profile'),
       ),
       body: ListView(
         children: [
-          Consumer<DataCurrentUserProvider>(
+          Consumer<UserDataProvider>(
             builder: (context, dataProvider, child) {
               final userData = dataProvider.currentUserData;
 
@@ -67,6 +68,12 @@ class _TransactionPage2State extends State<TransactionPage2> {
                 return Center(
                   child: Column(
                     children: [
+                      // IconButton(
+                      //     onPressed: () => Navigator.of(context).push(
+                      //         MaterialPageRoute(
+                      //             builder: (context) => TotalCoinsWidget())),
+                      //     icon: Icon(FontAwesomeIcons.moneyBill)),
+                      TotalCoinsWidget(),
                       ListTile(
                         dense: true,
                         leading: CircleAvatar(
@@ -117,7 +124,7 @@ class _TransactionPage2State extends State<TransactionPage2> {
                         child: ElevatedButton(
                             onPressed: () {
                               Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) => UserListPage()));
+                                  builder: (context) => UserListPageCoins()));
                             },
                             child: Text('Users')),
                       )
@@ -315,9 +322,9 @@ class ScannedConsumer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Provider.of<DataCurrentUserProvider>(context, listen: false)
+    Provider.of<UserDataProvider>(context, listen: false)
         .fetchScannedUserData(scannedUserId);
-    return Consumer<DataCurrentUserProvider>(
+    return Consumer<UserDataProvider>(
       builder: (context, dataProvider, child) {
         final userData = dataProvider.scannedUserData;
 
@@ -433,15 +440,8 @@ class _TransactionSubmitButtonState extends State<TransactionSubmitButton> {
               onTap: _isSubmitting
                   ? null
                   : () async {
-                      // Vérifiez si le formulaire est déjà en cours de soumission
                       if (_isSubmitting) return;
-
                       if (widget.formKey.currentState!.validate()) {
-                        // Mettez à jour l'état pour indiquer que la soumission est en cours
-                        setState(() {
-                          _isSubmitting = true;
-                        });
-
                         // Récupérez le montant saisi par l'utilisateur depuis le champ de texte
                         String amountStr = widget.amountController.text;
                         double amount = double.tryParse(amountStr) ?? 0.0;
@@ -451,14 +451,11 @@ class _TransactionSubmitButtonState extends State<TransactionSubmitButton> {
                           // Montant invalide, affichez un message d'erreur
                           // Vous pouvez afficher un dialogue d'erreur ou un message d'erreur ici
                           print('Montant invalide');
-
-                          // Réinitialisez l'état pour indiquer que la soumission est terminée
-                          setState(() {
-                            _isSubmitting = false;
-                          });
-
                           return;
                         }
+
+                        // Calculez la commission de 3.5%
+                        double commission = amount * 0.1;
 
                         try {
                           // Effectuez la transaction Firestore
@@ -469,7 +466,6 @@ class _TransactionSubmitButtonState extends State<TransactionSubmitButton> {
                                 .instance
                                 .collection('Users')
                                 .doc(widget.userData['id']);
-
                             DocumentReference receiverRef = FirebaseFirestore
                                 .instance
                                 .collection('Users')
@@ -481,12 +477,12 @@ class _TransactionSubmitButtonState extends State<TransactionSubmitButton> {
                             DocumentSnapshot receiverSnapshot =
                                 await transaction.get(receiverRef);
 
-                            // Vérifiez si l'utilisateur a suffisamment de coins à envoyer
+                            // Vérifiez si l'utilisateur a suffisamment de coins à envoyer (incluant la commission)
                             double senderCoins = senderSnapshot['coins'] ?? 0.0;
-                            if (senderCoins < amount) {
+                            if (senderCoins < (amount - commission)) {
                               // L'utilisateur n'a pas suffisamment de coins, annulez la transaction
                               print('Solde insuffisant');
-
+                              // Affichez un message d'erreur ici
                               showDialog(
                                 context: context,
                                 builder: (BuildContext context) {
@@ -504,7 +500,6 @@ class _TransactionSubmitButtonState extends State<TransactionSubmitButton> {
                                   );
                                 },
                               );
-
                               return;
                             }
 
@@ -512,10 +507,11 @@ class _TransactionSubmitButtonState extends State<TransactionSubmitButton> {
                             transaction.set(
                                 senderRef,
                                 {
-                                  'coins': senderCoins - amount,
+                                  'coins': senderCoins - (amount + commission),
                                   'dialogShown': false
                                 },
                                 SetOptions(merge: true));
+
                             double receiverCoins =
                                 receiverSnapshot['coins'] ?? 0.0;
                             transaction.set(
@@ -525,36 +521,154 @@ class _TransactionSubmitButtonState extends State<TransactionSubmitButton> {
                                   'dialogShown': false
                                 },
                                 SetOptions(merge: true));
-                            showCongratulationsDialog(
-                              context,
-                              amount,
-                              receiverCoins + amount,
-                            );
-                            addTransactionToFirestore(widget.userData['id'],
-                                widget.scannedUserId, amount);
+
+                            // Enregistrez la transaction dans la collection "gaines"
+                            await FirebaseFirestore.instance
+                                .collection('gaines')
+                                .add({
+                              'percentage': 10,
+                              'coins': commission,
+                              'fromUserId': widget.userData['id'],
+                              'toUserId': widget.scannedUserId,
+                            });
+
+                            // Affichez un message de succès ici
                           });
 
-                          // Une fois la transaction réussie, vous pouvez mettre à jour les soldes
-                          // Vous pouvez également ajouter un message de réussite ici
-                          //Navigator.of(context).pushReplacement(newRoute)
+                          // Réinitialisez l'état après la transaction réussie
+                          widget.amountController.clear();
+                          FocusScope.of(context).unfocus();
                         } catch (e) {
                           // Gestion des erreurs de transaction
                           print('Erreur lors de la transaction : $e');
-                          // Vous pouvez afficher un message d'erreur ici
-                          // Affichez la boîte de dialogue d'erreur avec un message approprié
-                          showTransactionErrorDialog(
-                              context, "La transaction a échoué : $e");
+                          // Affichez un message d'erreur ici
                         }
-
-                        // Réinitialisez l'état pour indiquer que la soumission est terminée
-                        setState(() {
-                          _isSubmitting = false;
-                        });
-                        widget.amountController.clear();
-                        FocusScope.of(context).unfocus();
-                        //Navigator.of(context).pushReplacement(newRoute)
                       }
                     },
+
+              // () async {
+              //     // Vérifiez si le formulaire est déjà en cours de soumission
+              //     if (_isSubmitting) return;
+              //
+              //     if (widget.formKey.currentState!.validate()) {
+              //       // Mettez à jour l'état pour indiquer que la soumission est en cours
+              //       setState(() {
+              //         _isSubmitting = true;
+              //       });
+              //
+              //       // Récupérez le montant saisi par l'utilisateur depuis le champ de texte
+              //       String amountStr = widget.amountController.text;
+              //       double amount = double.tryParse(amountStr) ?? 0.0;
+              //
+              //       // Vérifiez que le montant est supérieur à zéro
+              //       if (amount <= 0) {
+              //         // Montant invalide, affichez un message d'erreur
+              //         // Vous pouvez afficher un dialogue d'erreur ou un message d'erreur ici
+              //         print('Montant invalide');
+              //
+              //         // Réinitialisez l'état pour indiquer que la soumission est terminée
+              //         setState(() {
+              //           _isSubmitting = false;
+              //         });
+              //
+              //         return;
+              //       }
+              //
+              //       try {
+              //         // Effectuez la transaction Firestore
+              //         await FirebaseFirestore.instance
+              //             .runTransaction((transaction) async {
+              //           // Récupérez les références des documents des deux utilisateurs
+              //           DocumentReference senderRef = FirebaseFirestore
+              //               .instance
+              //               .collection('Users')
+              //               .doc(widget.userData['id']);
+              //
+              //           DocumentReference receiverRef = FirebaseFirestore
+              //               .instance
+              //               .collection('Users')
+              //               .doc(widget.scannedUserId);
+              //
+              //           // Récupérez les données actuelles des deux utilisateurs
+              //           DocumentSnapshot senderSnapshot =
+              //               await transaction.get(senderRef);
+              //           DocumentSnapshot receiverSnapshot =
+              //               await transaction.get(receiverRef);
+              //
+              //           // Vérifiez si l'utilisateur a suffisamment de coins à envoyer
+              //           double senderCoins = senderSnapshot['coins'] ?? 0.0;
+              //           if (senderCoins < amount) {
+              //             // L'utilisateur n'a pas suffisamment de coins, annulez la transaction
+              //             print('Solde insuffisant');
+              //
+              //             showDialog(
+              //               context: context,
+              //               builder: (BuildContext context) {
+              //                 return AlertDialog(
+              //                   backgroundColor: Colors.red,
+              //                   title: Text(
+              //                     "ALERT",
+              //                     style: TextStyle(color: Colors.white),
+              //                   ),
+              //                   content: Text(
+              //                     "Votre Solde est Insuffisant \nVeuillez Recharger Votre Compte",
+              //                     style: TextStyle(
+              //                         color: Colors.white, fontSize: 20),
+              //                   ),
+              //                 );
+              //               },
+              //             );
+              //
+              //             return;
+              //           }
+              //
+              //           // Mettez à jour les soldes des deux utilisateurs
+              //           transaction.set(
+              //               senderRef,
+              //               {
+              //                 'coins': senderCoins - amount,
+              //                 'dialogShown': false
+              //               },
+              //               SetOptions(merge: true));
+              //           double receiverCoins =
+              //               receiverSnapshot['coins'] ?? 0.0;
+              //           transaction.set(
+              //               receiverRef,
+              //               {
+              //                 'coins': receiverCoins + amount,
+              //                 'dialogShown': false
+              //               },
+              //               SetOptions(merge: true));
+              //           showCongratulationsDialog(
+              //             context,
+              //             amount,
+              //             receiverCoins + amount,
+              //           );
+              //           addTransactionToFirestore(widget.userData['id'],
+              //               widget.scannedUserId, amount);
+              //         });
+              //
+              //         // Une fois la transaction réussie, vous pouvez mettre à jour les soldes
+              //         // Vous pouvez également ajouter un message de réussite ici
+              //         //Navigator.of(context).pushReplacement(newRoute)
+              //       } catch (e) {
+              //         // Gestion des erreurs de transaction
+              //         print('Erreur lors de la transaction : $e');
+              //         // Vous pouvez afficher un message d'erreur ici
+              //         // Affichez la boîte de dialogue d'erreur avec un message approprié
+              //         showTransactionErrorDialog(
+              //             context, "La transaction a échoué : $e");
+              //       }
+              //
+              //       // Réinitialisez l'état pour indiquer que la soumission est terminée
+              //       setState(() {
+              //         _isSubmitting = false;
+              //       });
+              //       widget.amountController.clear();
+              //       FocusScope.of(context).unfocus();
+              //       //Navigator.of(context).pushReplacement(newRoute)
+              //     }
+              //   },
               child: _isSubmitting
                   ? Stack(
                       alignment: Alignment.center,
@@ -784,5 +898,50 @@ void addTransactionToFirestore(
     print('Transaction réussie et ajoutée à la collection Firestore.');
   } catch (e) {
     print('Erreur lors de l\'ajout de la transaction à Firestore : $e');
+  }
+}
+
+class TotalCoinsWidget extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final gainesStream =
+        Provider.of<UserDataProvider>(context, listen: false).gainesStream;
+
+    return StreamBuilder<List<Gaine>>(
+      stream: gainesStream,
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) {
+          // Afficher un indicateur de chargement si les données ne sont pas encore disponibles.
+          return Center(
+              child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
+            child: LinearProgressIndicator(),
+          ));
+        }
+
+        final gaines = snapshot.data;
+
+        if (gaines == null || gaines.isEmpty) {
+          // Si la liste des "gaines" est vide ou nulle, affichez un message approprié.
+          return Center(
+            child:
+                FittedBox(child: Text("Aucune donnée de gaines disponible.")),
+          );
+        }
+
+        // Calculez le total des "gaines"
+        double totalGaines = 0;
+        for (var gaine in gaines) {
+          totalGaines += gaine.coins;
+        }
+
+        return Center(
+          child: Text(
+            'Gaines: $totalGaines',
+            style: TextStyle(fontSize: 18, color: Colors.teal),
+          ),
+        );
+      },
+    );
   }
 }

@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'package:animated_flip_counter/animated_flip_counter.dart';
 import 'package:calendar_timeline/calendar_timeline.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/gestures.dart';
@@ -6,6 +7,7 @@ import 'package:intl/intl.dart' as intl;
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:lottie/lottie.dart';
 import 'package:pretty_qr_code/pretty_qr_code.dart';
 import 'package:provider/provider.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
@@ -13,6 +15,7 @@ import 'package:ramzy/food/MyTabCategories.dart';
 import 'package:ramzy/food/addFood.dart';
 import 'package:ramzy/food/favShared.dart';
 import 'package:ramzy/food2/MesAchatsPage.dart';
+import 'package:ramzy/food2/MyListLotties.dart';
 import 'package:ramzy/food2/QrScanner.dart';
 import 'package:ramzy/food2/cart.dart';
 import 'package:ramzy/food2/main.dart';
@@ -21,8 +24,14 @@ import 'package:ramzy/food2/foodDetail.dart';
 import 'package:ramzy/food2/recharger.dart';
 import 'package:ramzy/food2/paymentPage.dart';
 import 'package:ramzy/food2/usersListCoins.dart';
+import 'package:pretty_qr_code/pretty_qr_code.dart';
+import 'package:ticket_widget/ticket_widget.dart';
 
 class MonWidget extends StatelessWidget {
+  final String
+      scannedUser; // Vous devez passer le "scannedUser" en tant que paramètre au constructeur.
+
+  MonWidget({required this.scannedUser});
   double calculateTotalAmount(List<Map<String, dynamic>> cartItems) {
     double totalAmount = 0.0;
 
@@ -44,398 +53,897 @@ class MonWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final dataProvider = Provider.of<DataProvider>(context);
+    final dataCurrentUserProvider =
+        Provider.of<DataCurrentUserProvider>(context);
     final cartItems = dataProvider.getCart(); // Obtenez les articles du panier
     final totalAmount = calculateTotalAmount(cartItems);
+    final userData = dataCurrentUserProvider.currentUserData;
 
-    return FutureBuilder<Map<String, dynamic>>(
-        future:
-            dataProvider.getCurrentUserDocument(), //getCurrentUserDocument(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(
-              child: CircularProgressIndicator(),
-            );
-          } else if (snapshot.hasError) {
-            return Text('Error: ${snapshot.error}');
-          } else {
-            final userData = snapshot.data;
-            final userImageUrl = userData!['avatar'];
-            final usertimeline = userData['timeline'];
-            final userName = userData['displayName'];
-
-            return Scaffold(
-              resizeToAvoidBottomInset: false,
-              drawer: CustomDrawer(dataProvider),
-              appBar: AppBar(
-                actions: [
-                  Center(
-                    child: Card(
-                        color: Colors.teal,
-                        child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: FittedBox(
-                              child: Text(
-                                intl.NumberFormat.currency(
-                                  locale: 'fr_FR',
-                                  symbol: 'DZD',
-                                  decimalDigits: 2,
-                                ).format(userData['coins']),
-                                //overflow: TextOverflow.ellipsis,
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 30,
-                                  fontWeight: FontWeight.w400,
-                                ),
-                              ),
-                            ))),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                    child: Row(
+    return Scaffold(
+      resizeToAvoidBottomInset: false,
+      drawer: CustomDrawer(dataProvider, dataCurrentUserProvider),
+      appBar: AppBar(
+        actions: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Text(
+              intl.NumberFormat.currency(
+                locale: 'fr_FR',
+                symbol: 'DZD',
+                decimalDigits: 2,
+              ).format(totalAmount),
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                color: Colors.green,
+                fontSize: 20,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+        ],
+      ),
+      body: SafeArea(
+        child: CustomScrollView(slivers: [
+          SliverToBoxAdapter(
+            child: Container(
+                padding: EdgeInsets.all(20),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        IconButton(
-                          color: Colors.green,
-                          onPressed: () => Navigator.of(context).push(
-                              MaterialPageRoute(
-                                  builder: (context) => CartPage2())),
-                          icon: Icon(Icons.add_shopping_cart),
+                        Consumer<DataCurrentUserProvider>(
+                          builder: (context, currentUserProvider, _) {
+                            final scannedUserData =
+                                currentUserProvider.scannedUserData;
+                            final avatarUrl = scannedUserData['avatar'] ??
+                                ''; // Remplacez 'avatarUrl' par la clé correcte pour l'avatar du scannedUser.
+                            final coins = scannedUserData['coins'] ??
+                                0; // Remplacez 'coins' par la clé correcte pour les pièces du scannedUser.
+
+                            return Row(
+                              children: [
+                                CircleAvatar(
+                                  backgroundImage: NetworkImage(avatarUrl),
+                                ),
+                                SizedBox(width: 10),
+                                Text('$coins'),
+                              ],
+                            );
+                          },
                         ),
-                        Text(
-                          intl.NumberFormat.currency(
-                                  locale: 'fr_FR',
-                                  symbol: 'DZD ',
-                                  decimalDigits: 2)
-                              .format(totalAmount),
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.green),
+                        IconButton(
+                          onPressed: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    QrScanner(), //QrScanner2(),
+                              ),
+                            );
+                          },
+                          icon: Icon(
+                            Icons.qr_code,
+                            size: 35,
+                          ),
+                        ),
+                        IconButton(
+                          onPressed: () {
+                            Navigator.of(context).push(MaterialPageRoute(
+                                builder: (context) => UserListPage()));
+                          },
+                          icon: Icon(
+                            Icons.earbuds_battery_outlined,
+                            size: 35,
+                          ),
+                        ),
+                        IconButton.outlined(
+                          onPressed: () {
+                            Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) => PizzaForm(),
+                            ));
+                          },
+                          icon: Icon(
+                            Icons.add,
+                          ),
+                        ),
+                        IconButton(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) {
+                                  return FavoritesPage();
+                                },
+                              ),
+                            );
+                          },
+                          icon: Icon(Icons.favorite),
+                        ),
+                        pizzaAnime(
+                          url:
+                              "https://cdn.pixabay.com/photo/2017/12/09/08/18/pizza-3007395_1280.jpg",
                         ),
                       ],
                     ),
-                  ),
-                ],
-              ),
-              body: SafeArea(
-                child: CustomScrollView(slivers: [
-                  SliverToBoxAdapter(
-                    child: Container(
-                        padding: EdgeInsets.all(20),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Container(
-                                  width: 40,
-                                  height: 40,
-                                  child: CircleAvatar(
-                                    backgroundImage: CachedNetworkImageProvider(
-                                        userImageUrl), // Utilisez une image par défaut si l'URL de l'image n'est pas disponible.
-                                  ),
-                                ),
-                                IconButton(
-                                  onPressed: () {
-                                    Navigator.of(context).push(
-                                      MaterialPageRoute(
-                                        builder: (context) =>
-                                            QrScanner(), //QrScanner2(),
-                                      ),
-                                    );
-                                  },
-                                  icon: Icon(
-                                    Icons.qr_code,
-                                    size: 35,
-                                  ),
-                                ),
-                                IconButton(
-                                  onPressed: () {
-                                    Navigator.of(context).push(
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                UserListPage()));
-                                  },
-                                  icon: Icon(
-                                    Icons.earbuds_battery_outlined,
-                                    size: 35,
-                                  ),
-                                ),
-                                IconButton.outlined(
-                                  onPressed: () {
-                                    Navigator.of(context)
-                                        .push(MaterialPageRoute(
-                                      builder: (context) => PizzaForm(),
-                                    ));
-                                  },
-                                  icon: Icon(
-                                    Icons.add,
-                                  ),
-                                ),
-                                IconButton(
-                                  onPressed: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) {
-                                          return FavoritesPage();
-                                        },
-                                      ),
-                                    );
-                                  },
-                                  icon: Icon(Icons.favorite),
-                                ),
-                                pizzaAnime(
-                                  url:
-                                      "https://cdn.pixabay.com/photo/2017/12/09/08/18/pizza-3007395_1280.jpg",
-                                ),
-                              ],
-                            ),
-                            SizedBox(height: 10),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  "Hello " +
-                                      userData['displayName']
-                                          .toString()
-                                          .toUpperCase(),
-                                  style: TextStyle(
-                                    fontSize: 24,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                                SizedBox(
-                                  height: 7,
-                                ),
-                                Text(
-                                  "What flavour do you want today?",
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        )),
-                  ),
-                  SliverToBoxAdapter(
-                    child: Container(
-                      padding: EdgeInsets.all(20),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            "Popular",
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.w600,
-                            ),
+                    SizedBox(height: 10),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "Hello " +
+                              userData['displayName'].toString().toUpperCase(),
+                          style: TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.w600,
                           ),
-                          pizzaAnime(
-                              url:
-                                  "https://cdn.pixabay.com/photo/2020/05/17/04/22/pizza-5179939_640.jpg"),
-                        ],
-                      ),
+                        ),
+                        SizedBox(
+                          height: 7,
+                        ),
+                        Text(
+                          "What flavour do you want today?",
+                          style: TextStyle(
+                            fontSize: 16,
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
-                  SliverToBoxAdapter(
-                    child: Container(
-                      padding: EdgeInsets.only(left: 15),
-                      margin: EdgeInsets.only(bottom: 10),
-                      height: 350,
-                      child: FutureBuilder<List<ListFood2>>(
-                        future: dataProvider.getFilteredAndSortedData('pizza'),
-                        builder: (context, snapshot) {
-                          if (snapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            return Center(child: CircularProgressIndicator());
-                          } else if (snapshot.hasError) {
-                            return Text('Erreur : ${snapshot.error}');
-                          } else if (!snapshot.hasData ||
-                              snapshot.data!.isEmpty) {
-                            return Text('Aucune donnée disponible.');
-                          }
+                  ],
+                )),
+          ),
+          SliverToBoxAdapter(
+            child: Container(
+              padding: EdgeInsets.only(left: 15),
+              margin: EdgeInsets.only(bottom: 10),
+              height: 350,
+              child: FutureBuilder<List<ListFood2>>(
+                future: dataProvider.getFilteredAndSortedData('tacos'),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return Center(
+                        child:
+                            CircularProgressIndicator()); // Show a loading indicator while waiting for data.
+                  } else if (snapshot.hasError) {
+                    return Text('Erreur : ${snapshot.error}');
+                  }
 
-                          List<ListFood2> foodDocs = snapshot.data!;
+                  final pizzaData = snapshot.data;
+                  if (pizzaData == null || pizzaData.isEmpty) {
+                    return Text('Aucune donnée disponible.');
+                  }
 
-                          return ListView.builder(
-                            scrollDirection: Axis.horizontal,
-                            shrinkWrap: true,
-                            itemCount: foodDocs.length,
-                            itemBuilder: (context, index) {
-                              final food = foodDocs[index];
+                  return ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    shrinkWrap: true,
+                    itemCount: pizzaData.length,
+                    itemBuilder: (context, index) {
+                      final food = pizzaData[index];
 
-                              return GestureDetector(
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) =>
-                                          DetailFood2(food: food),
-                                    ),
-                                  );
-                                },
-                                child: Container(
-                                  padding: EdgeInsets.only(right: 15, left: 0),
-                                  width: 250,
-                                  child: Card(
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(20),
-                                    ),
-                                    clipBehavior: Clip.antiAliasWithSaveLayer,
-                                    elevation: 1,
-                                    child: Stack(
-                                      alignment: Alignment.bottomCenter,
-                                      children: [
-                                        Container(
-                                          height: 342,
-                                          decoration: BoxDecoration(
-                                            image: DecorationImage(
-                                              image: CachedNetworkImageProvider(
-                                                food.image,
-                                              ),
-                                              fit: BoxFit.cover,
-                                              alignment: Alignment.center,
-                                            ),
-                                          ),
-                                        ),
-                                        Padding(
-                                          padding: const EdgeInsets.all(18.0),
-                                          child: ClipRRect(
-                                            borderRadius:
-                                                BorderRadius.circular(15.0),
-                                            child: BackdropFilter(
-                                              filter: ImageFilter.blur(
-                                                sigmaX: 10.0,
-                                                sigmaY: 10.0,
-                                              ),
-                                              child: IntrinsicHeight(
-                                                child: Container(
-                                                  color: Colors.black45
-                                                      .withAlpha(70),
-                                                  padding: EdgeInsets.fromLTRB(
-                                                      15.0, 15.0, 15.0, 15.0),
-                                                  child: Column(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .spaceEvenly,
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
-                                                    children: <Widget>[
-                                                      Text(
-                                                        food.item
-                                                            .toString()
-                                                            .toUpperCase(),
-                                                        overflow: TextOverflow
-                                                            .ellipsis,
-                                                        maxLines: 1,
-                                                        textAlign: isArabic(
-                                                          food.item,
-                                                        )
-                                                            ? TextAlign.right
-                                                            : TextAlign.left,
-                                                        style: isArabic(
-                                                          food.item,
-                                                        )
-                                                            ? GoogleFonts.cairo(
-                                                                fontSize: 22,
-                                                                color: Colors
-                                                                    .white,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w800)
-                                                            : TextStyle(
-                                                                color: Colors
-                                                                    .white,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w700,
-                                                                fontSize: 20,
-                                                              ),
-                                                      ),
-                                                      Text(
-                                                        food.flav,
-                                                        overflow: TextOverflow
-                                                            .ellipsis,
-                                                        maxLines: 2,
-                                                        textAlign: isArabic(
-                                                          food.flav,
-                                                        )
-                                                            ? TextAlign.right
-                                                            : TextAlign.left,
-                                                        style: isArabic(
-                                                          food.flav,
-                                                        )
-                                                            ? GoogleFonts.cairo(
-                                                                fontSize: 16,
-                                                                color: Colors
-                                                                    .white70,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w600)
-                                                            : TextStyle(
-                                                                color: Colors
-                                                                    .white70,
-                                                                fontSize: 16,
-                                                              ),
-                                                      ),
-                                                      Text(
-                                                        food.flav,
-                                                        maxLines: 1,
-                                                        style: TextStyle(
-                                                          color: Colors.white70,
-                                                          fontSize: 16,
-                                                        ),
-                                                      ),
-                                                      Divider(
-                                                        color: Colors.white70,
-                                                      ),
-                                                      Text(
-                                                        intl.NumberFormat
-                                                            .currency(
-                                                          locale: 'fr_FR',
-                                                          symbol: 'DZD',
-                                                          decimalDigits: 2,
-                                                        ).format(food.price),
-                                                        overflow: TextOverflow
-                                                            .ellipsis,
-                                                        style: TextStyle(
-                                                          color: Colors.orange,
-                                                          fontSize: 20,
-                                                          fontWeight:
-                                                              FontWeight.w600,
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              );
-                            },
+                      return GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => DetailFood2(food: food),
+                            ),
                           );
                         },
-                      ),
+                        child: Container(
+                          padding: EdgeInsets.only(right: 15, left: 0),
+                          width: 250,
+                          child: Card(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            clipBehavior: Clip.antiAliasWithSaveLayer,
+                            elevation: 1,
+                            child: Stack(
+                              alignment: Alignment.bottomCenter,
+                              children: [
+                                Container(
+                                  height: 342,
+                                  decoration: BoxDecoration(
+                                    image: DecorationImage(
+                                      image: CachedNetworkImageProvider(
+                                        food.image,
+                                      ),
+                                      fit: BoxFit.cover,
+                                      alignment: Alignment.center,
+                                    ),
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.all(18.0),
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(15.0),
+                                    child: BackdropFilter(
+                                      filter: ImageFilter.blur(
+                                        sigmaX: 10.0,
+                                        sigmaY: 10.0,
+                                      ),
+                                      child: IntrinsicHeight(
+                                        child: Container(
+                                          color: Colors.black45.withAlpha(70),
+                                          padding: EdgeInsets.fromLTRB(
+                                              15.0, 15.0, 15.0, 15.0),
+                                          child: Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceEvenly,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: <Widget>[
+                                              Text(
+                                                food.item
+                                                    .toString()
+                                                    .toUpperCase(),
+                                                overflow: TextOverflow.ellipsis,
+                                                maxLines: 1,
+                                                textAlign: isArabic(
+                                                  food.item,
+                                                )
+                                                    ? TextAlign.right
+                                                    : TextAlign.left,
+                                                style: isArabic(
+                                                  food.item,
+                                                )
+                                                    ? GoogleFonts.cairo(
+                                                        fontSize: 22,
+                                                        color: Colors.white,
+                                                        fontWeight:
+                                                            FontWeight.w800)
+                                                    : TextStyle(
+                                                        color: Colors.white,
+                                                        fontWeight:
+                                                            FontWeight.w700,
+                                                        fontSize: 20,
+                                                      ),
+                                              ),
+                                              Text(
+                                                food.flav,
+                                                overflow: TextOverflow.ellipsis,
+                                                maxLines: 2,
+                                                textAlign: isArabic(
+                                                  food.flav,
+                                                )
+                                                    ? TextAlign.right
+                                                    : TextAlign.left,
+                                                style: isArabic(
+                                                  food.flav,
+                                                )
+                                                    ? GoogleFonts.cairo(
+                                                        fontSize: 16,
+                                                        color: Colors.white70,
+                                                        fontWeight:
+                                                            FontWeight.w600)
+                                                    : TextStyle(
+                                                        color: Colors.white70,
+                                                        fontSize: 16,
+                                                      ),
+                                              ),
+                                              Text(
+                                                food.flav,
+                                                maxLines: 1,
+                                                style: TextStyle(
+                                                  color: Colors.white70,
+                                                  fontSize: 16,
+                                                ),
+                                              ),
+                                              Divider(
+                                                color: Colors.white70,
+                                              ),
+                                              Text(
+                                                intl.NumberFormat.currency(
+                                                  locale: 'fr_FR',
+                                                  symbol: 'DZD',
+                                                  decimalDigits: 2,
+                                                ).format(food.price),
+                                                overflow: TextOverflow.ellipsis,
+                                                style: TextStyle(
+                                                  color: Colors.orange,
+                                                  fontSize: 20,
+                                                  fontWeight: FontWeight.w600,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  );
+                },
+              ),
+            ),
+          ),
+          SliverToBoxAdapter(
+            child: Container(
+              padding: EdgeInsets.all(20),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    "Popular",
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
-                  SliverFillRemaining(
-                    child: MyTabCategories(dataProvider: dataProvider),
-                  ),
-                ]),
+                  pizzaAnime(
+                      url:
+                          "https://cdn.pixabay.com/photo/2020/05/17/04/22/pizza-5179939_640.jpg"),
+                ],
               ),
-            );
-          }
-        });
+            ),
+          ),
+          SliverToBoxAdapter(
+            child: Container(
+              padding: EdgeInsets.only(left: 15),
+              margin: EdgeInsets.only(bottom: 10),
+              height: 350,
+              child: FutureBuilder<List<ListFood2>>(
+                future: dataProvider.getFilteredAndSortedData('pizza'),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return Center(child: CircularProgressIndicator());
+                  } else if (snapshot.hasError) {
+                    return Text('Erreur : ${snapshot.error}');
+                  } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                    return Text('Aucune donnée disponible.');
+                  }
+
+                  List<ListFood2> foodDocs = snapshot.data!;
+
+                  return ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    shrinkWrap: true,
+                    itemCount: foodDocs.length,
+                    itemBuilder: (context, index) {
+                      final food = foodDocs[index];
+
+                      return GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => DetailFood2(food: food),
+                            ),
+                          );
+                        },
+                        child: Container(
+                          padding: EdgeInsets.only(right: 15, left: 0),
+                          width: 250,
+                          child: Card(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            clipBehavior: Clip.antiAliasWithSaveLayer,
+                            elevation: 1,
+                            child: Stack(
+                              alignment: Alignment.bottomCenter,
+                              children: [
+                                Container(
+                                  height: 342,
+                                  decoration: BoxDecoration(
+                                    image: DecorationImage(
+                                      image: CachedNetworkImageProvider(
+                                        food.image,
+                                      ),
+                                      fit: BoxFit.cover,
+                                      alignment: Alignment.center,
+                                    ),
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.all(18.0),
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(15.0),
+                                    child: BackdropFilter(
+                                      filter: ImageFilter.blur(
+                                        sigmaX: 10.0,
+                                        sigmaY: 10.0,
+                                      ),
+                                      child: IntrinsicHeight(
+                                        child: Container(
+                                          color: Colors.black45.withAlpha(70),
+                                          padding: EdgeInsets.fromLTRB(
+                                              15.0, 15.0, 15.0, 15.0),
+                                          child: Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceEvenly,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: <Widget>[
+                                              Text(
+                                                food.item
+                                                    .toString()
+                                                    .toUpperCase(),
+                                                overflow: TextOverflow.ellipsis,
+                                                maxLines: 1,
+                                                textAlign: isArabic(
+                                                  food.item,
+                                                )
+                                                    ? TextAlign.right
+                                                    : TextAlign.left,
+                                                style: isArabic(
+                                                  food.item,
+                                                )
+                                                    ? GoogleFonts.cairo(
+                                                        fontSize: 22,
+                                                        color: Colors.white,
+                                                        fontWeight:
+                                                            FontWeight.w800)
+                                                    : TextStyle(
+                                                        color: Colors.white,
+                                                        fontWeight:
+                                                            FontWeight.w700,
+                                                        fontSize: 20,
+                                                      ),
+                                              ),
+                                              Text(
+                                                food.flav,
+                                                overflow: TextOverflow.ellipsis,
+                                                maxLines: 2,
+                                                textAlign: isArabic(
+                                                  food.flav,
+                                                )
+                                                    ? TextAlign.right
+                                                    : TextAlign.left,
+                                                style: isArabic(
+                                                  food.flav,
+                                                )
+                                                    ? GoogleFonts.cairo(
+                                                        fontSize: 16,
+                                                        color: Colors.white70,
+                                                        fontWeight:
+                                                            FontWeight.w600)
+                                                    : TextStyle(
+                                                        color: Colors.white70,
+                                                        fontSize: 16,
+                                                      ),
+                                              ),
+                                              Text(
+                                                food.flav,
+                                                maxLines: 1,
+                                                style: TextStyle(
+                                                  color: Colors.white70,
+                                                  fontSize: 16,
+                                                ),
+                                              ),
+                                              Divider(
+                                                color: Colors.white70,
+                                              ),
+                                              Text(
+                                                intl.NumberFormat.currency(
+                                                  locale: 'fr_FR',
+                                                  symbol: 'DZD',
+                                                  decimalDigits: 2,
+                                                ).format(food.price),
+                                                overflow: TextOverflow.ellipsis,
+                                                style: TextStyle(
+                                                  color: Colors.orange,
+                                                  fontSize: 20,
+                                                  fontWeight: FontWeight.w600,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  );
+                },
+              ),
+            ),
+          ),
+          SliverFillRemaining(
+            child: MyTabCategories(dataProvider: dataProvider),
+          ),
+        ]),
+      ),
+    );
+
+    // return FutureBuilder<Map<String, dynamic>>(
+    //   future: dataProvider.getCurrentUserDocument(), //getCurrentUserDocument(),
+    //   builder: (context, snapshot) {
+    //     if (snapshot.connectionState == ConnectionState.waiting) {
+    //       return Center(
+    //         child: CircularProgressIndicator(),
+    //       );
+    //     } else if (snapshot.hasError) {
+    //       return Text('Error: ${snapshot.error}');
+    //     } else {
+    //       final userData = snapshot.data;
+    //       final userImageUrl = userData!['avatar'];
+    //       final usertimeline = userData['timeline'];
+    //       final userName = userData['displayName'];
+    //
+    //       return Scaffold(
+    //         resizeToAvoidBottomInset: false,
+    //         drawer: CustomDrawer(dataProvider),
+    //         appBar: AppBar(
+    //           actions: [
+    //             Center(
+    //               child: Card(
+    //                   color: Colors.teal,
+    //                   child: Padding(
+    //                       padding: const EdgeInsets.all(8.0),
+    //                       child: FittedBox(
+    //                         child: Text(
+    //                           intl.NumberFormat.currency(
+    //                             locale: 'fr_FR',
+    //                             symbol: 'DZD',
+    //                             decimalDigits: 2,
+    //                           ).format(userData['coins']),
+    //                           //overflow: TextOverflow.ellipsis,
+    //                           style: TextStyle(
+    //                             color: Colors.white,
+    //                             fontSize: 30,
+    //                             fontWeight: FontWeight.w400,
+    //                           ),
+    //                         ),
+    //                       ))),
+    //             ),
+    //             Padding(
+    //               padding: const EdgeInsets.symmetric(horizontal: 20.0),
+    //               child: Row(
+    //                 children: [
+    //                   IconButton(
+    //                     color: Colors.green,
+    //                     onPressed: () => Navigator.of(context).push(
+    //                         MaterialPageRoute(
+    //                             builder: (context) => CartPage2())),
+    //                     icon: Icon(Icons.add_shopping_cart),
+    //                   ),
+    //                   Text(
+    //                     intl.NumberFormat.currency(
+    //                             locale: 'fr_FR',
+    //                             symbol: 'DZD ',
+    //                             decimalDigits: 2)
+    //                         .format(totalAmount),
+    //                     overflow: TextOverflow.ellipsis,
+    //                     style: TextStyle(
+    //                         fontSize: 20,
+    //                         fontWeight: FontWeight.w600,
+    //                         color: Colors.green),
+    //                   ),
+    //                 ],
+    //               ),
+    //             ),
+    //           ],
+    //         ),
+    //         body: SafeArea(
+    //           child: CustomScrollView(slivers: [
+    //             SliverToBoxAdapter(
+    //               child: Container(
+    //                   padding: EdgeInsets.all(20),
+    //                   child: Column(
+    //                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    //                     crossAxisAlignment: CrossAxisAlignment.start,
+    //                     children: [
+    //                       Row(
+    //                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    //                         children: [
+    //                           Container(
+    //                             width: 40,
+    //                             height: 40,
+    //                             child: CircleAvatar(
+    //                               backgroundImage: CachedNetworkImageProvider(
+    //                                   userImageUrl), // Utilisez une image par défaut si l'URL de l'image n'est pas disponible.
+    //                             ),
+    //                           ),
+    //                           IconButton(
+    //                             onPressed: () {
+    //                               Navigator.of(context).push(
+    //                                 MaterialPageRoute(
+    //                                   builder: (context) =>
+    //                                       QrScanner(), //QrScanner2(),
+    //                                 ),
+    //                               );
+    //                             },
+    //                             icon: Icon(
+    //                               Icons.qr_code,
+    //                               size: 35,
+    //                             ),
+    //                           ),
+    //                           IconButton(
+    //                             onPressed: () {
+    //                               Navigator.of(context).push(MaterialPageRoute(
+    //                                   builder: (context) => UserListPage()));
+    //                             },
+    //                             icon: Icon(
+    //                               Icons.earbuds_battery_outlined,
+    //                               size: 35,
+    //                             ),
+    //                           ),
+    //                           IconButton.outlined(
+    //                             onPressed: () {
+    //                               Navigator.of(context).push(MaterialPageRoute(
+    //                                 builder: (context) => PizzaForm(),
+    //                               ));
+    //                             },
+    //                             icon: Icon(
+    //                               Icons.add,
+    //                             ),
+    //                           ),
+    //                           IconButton(
+    //                             onPressed: () {
+    //                               Navigator.push(
+    //                                 context,
+    //                                 MaterialPageRoute(
+    //                                   builder: (context) {
+    //                                     return FavoritesPage();
+    //                                   },
+    //                                 ),
+    //                               );
+    //                             },
+    //                             icon: Icon(Icons.favorite),
+    //                           ),
+    //                           pizzaAnime(
+    //                             url:
+    //                                 "https://cdn.pixabay.com/photo/2017/12/09/08/18/pizza-3007395_1280.jpg",
+    //                           ),
+    //                         ],
+    //                       ),
+    //                       SizedBox(height: 10),
+    //                       Column(
+    //                         crossAxisAlignment: CrossAxisAlignment.start,
+    //                         children: [
+    //                           Text(
+    //                             "Hello " +
+    //                                 userData['displayName']
+    //                                     .toString()
+    //                                     .toUpperCase(),
+    //                             style: TextStyle(
+    //                               fontSize: 24,
+    //                               fontWeight: FontWeight.w600,
+    //                             ),
+    //                           ),
+    //                           SizedBox(
+    //                             height: 7,
+    //                           ),
+    //                           Text(
+    //                             "What flavour do you want today?",
+    //                             style: TextStyle(
+    //                               fontSize: 16,
+    //                             ),
+    //                           ),
+    //                         ],
+    //                       ),
+    //                     ],
+    //                   )),
+    //             ),
+    //             SliverToBoxAdapter(
+    //               child: Container(
+    //                 padding: EdgeInsets.all(20),
+    //                 child: Row(
+    //                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    //                   children: [
+    //                     Text(
+    //                       "Popular",
+    //                       style: TextStyle(
+    //                         fontSize: 20,
+    //                         fontWeight: FontWeight.w600,
+    //                       ),
+    //                     ),
+    //                     pizzaAnime(
+    //                         url:
+    //                             "https://cdn.pixabay.com/photo/2020/05/17/04/22/pizza-5179939_640.jpg"),
+    //                   ],
+    //                 ),
+    //               ),
+    //             ),
+    //             SliverToBoxAdapter(
+    //               child: Container(
+    //                 padding: EdgeInsets.only(left: 15),
+    //                 margin: EdgeInsets.only(bottom: 10),
+    //                 height: 350,
+    //                 child: FutureBuilder<List<ListFood2>>(
+    //                   future: dataProvider.getFilteredAndSortedData('pizza'),
+    //                   builder: (context, snapshot) {
+    //                     if (snapshot.connectionState ==
+    //                         ConnectionState.waiting) {
+    //                       return Center(child: CircularProgressIndicator());
+    //                     } else if (snapshot.hasError) {
+    //                       return Text('Erreur : ${snapshot.error}');
+    //                     } else if (!snapshot.hasData ||
+    //                         snapshot.data!.isEmpty) {
+    //                       return Text('Aucune donnée disponible.');
+    //                     }
+    //
+    //                     List<ListFood2> foodDocs = snapshot.data!;
+    //
+    //                     return ListView.builder(
+    //                       scrollDirection: Axis.horizontal,
+    //                       shrinkWrap: true,
+    //                       itemCount: foodDocs.length,
+    //                       itemBuilder: (context, index) {
+    //                         final food = foodDocs[index];
+    //
+    //                         return GestureDetector(
+    //                           onTap: () {
+    //                             Navigator.push(
+    //                               context,
+    //                               MaterialPageRoute(
+    //                                 builder: (context) =>
+    //                                     DetailFood2(food: food),
+    //                               ),
+    //                             );
+    //                           },
+    //                           child: Container(
+    //                             padding: EdgeInsets.only(right: 15, left: 0),
+    //                             width: 250,
+    //                             child: Card(
+    //                               shape: RoundedRectangleBorder(
+    //                                 borderRadius: BorderRadius.circular(20),
+    //                               ),
+    //                               clipBehavior: Clip.antiAliasWithSaveLayer,
+    //                               elevation: 1,
+    //                               child: Stack(
+    //                                 alignment: Alignment.bottomCenter,
+    //                                 children: [
+    //                                   Container(
+    //                                     height: 342,
+    //                                     decoration: BoxDecoration(
+    //                                       image: DecorationImage(
+    //                                         image: CachedNetworkImageProvider(
+    //                                           food.image,
+    //                                         ),
+    //                                         fit: BoxFit.cover,
+    //                                         alignment: Alignment.center,
+    //                                       ),
+    //                                     ),
+    //                                   ),
+    //                                   Padding(
+    //                                     padding: const EdgeInsets.all(18.0),
+    //                                     child: ClipRRect(
+    //                                       borderRadius:
+    //                                           BorderRadius.circular(15.0),
+    //                                       child: BackdropFilter(
+    //                                         filter: ImageFilter.blur(
+    //                                           sigmaX: 10.0,
+    //                                           sigmaY: 10.0,
+    //                                         ),
+    //                                         child: IntrinsicHeight(
+    //                                           child: Container(
+    //                                             color: Colors.black45
+    //                                                 .withAlpha(70),
+    //                                             padding: EdgeInsets.fromLTRB(
+    //                                                 15.0, 15.0, 15.0, 15.0),
+    //                                             child: Column(
+    //                                               mainAxisAlignment:
+    //                                                   MainAxisAlignment
+    //                                                       .spaceEvenly,
+    //                                               crossAxisAlignment:
+    //                                                   CrossAxisAlignment.start,
+    //                                               children: <Widget>[
+    //                                                 Text(
+    //                                                   food.item
+    //                                                       .toString()
+    //                                                       .toUpperCase(),
+    //                                                   overflow:
+    //                                                       TextOverflow.ellipsis,
+    //                                                   maxLines: 1,
+    //                                                   textAlign: isArabic(
+    //                                                     food.item,
+    //                                                   )
+    //                                                       ? TextAlign.right
+    //                                                       : TextAlign.left,
+    //                                                   style: isArabic(
+    //                                                     food.item,
+    //                                                   )
+    //                                                       ? GoogleFonts.cairo(
+    //                                                           fontSize: 22,
+    //                                                           color:
+    //                                                               Colors.white,
+    //                                                           fontWeight:
+    //                                                               FontWeight
+    //                                                                   .w800)
+    //                                                       : TextStyle(
+    //                                                           color:
+    //                                                               Colors.white,
+    //                                                           fontWeight:
+    //                                                               FontWeight
+    //                                                                   .w700,
+    //                                                           fontSize: 20,
+    //                                                         ),
+    //                                                 ),
+    //                                                 Text(
+    //                                                   food.flav,
+    //                                                   overflow:
+    //                                                       TextOverflow.ellipsis,
+    //                                                   maxLines: 2,
+    //                                                   textAlign: isArabic(
+    //                                                     food.flav,
+    //                                                   )
+    //                                                       ? TextAlign.right
+    //                                                       : TextAlign.left,
+    //                                                   style: isArabic(
+    //                                                     food.flav,
+    //                                                   )
+    //                                                       ? GoogleFonts.cairo(
+    //                                                           fontSize: 16,
+    //                                                           color: Colors
+    //                                                               .white70,
+    //                                                           fontWeight:
+    //                                                               FontWeight
+    //                                                                   .w600)
+    //                                                       : TextStyle(
+    //                                                           color: Colors
+    //                                                               .white70,
+    //                                                           fontSize: 16,
+    //                                                         ),
+    //                                                 ),
+    //                                                 Text(
+    //                                                   food.flav,
+    //                                                   maxLines: 1,
+    //                                                   style: TextStyle(
+    //                                                     color: Colors.white70,
+    //                                                     fontSize: 16,
+    //                                                   ),
+    //                                                 ),
+    //                                                 Divider(
+    //                                                   color: Colors.white70,
+    //                                                 ),
+    //                                                 Text(
+    //                                                   intl.NumberFormat
+    //                                                       .currency(
+    //                                                     locale: 'fr_FR',
+    //                                                     symbol: 'DZD',
+    //                                                     decimalDigits: 2,
+    //                                                   ).format(food.price),
+    //                                                   overflow:
+    //                                                       TextOverflow.ellipsis,
+    //                                                   style: TextStyle(
+    //                                                     color: Colors.orange,
+    //                                                     fontSize: 20,
+    //                                                     fontWeight:
+    //                                                         FontWeight.w600,
+    //                                                   ),
+    //                                                 ),
+    //                                               ],
+    //                                             ),
+    //                                           ),
+    //                                         ),
+    //                                       ),
+    //                                     ),
+    //                                   ),
+    //                                 ],
+    //                               ),
+    //                             ),
+    //                           ),
+    //                         );
+    //                       },
+    //                     );
+    //                   },
+    //                 ),
+    //               ),
+    //             ),
+    //             SliverFillRemaining(
+    //               child: MyTabCategories(dataProvider: dataProvider),
+    //             ),
+    //           ]),
+    //         ),
+    //       );
+    //     }
+    //   },
+    // );
   }
 
   bool isArabic(String text) {
@@ -445,15 +953,16 @@ class MonWidget extends StatelessWidget {
 
 class CustomDrawer extends StatelessWidget {
   final DataProvider dataProvider;
+  final DataCurrentUserProvider dataCurrentUserProvider;
 
-  CustomDrawer(this.dataProvider);
+  CustomDrawer(this.dataProvider, this.dataCurrentUserProvider);
 
   @override
   Widget build(BuildContext context) {
     return Drawer(
       child: FutureBuilder<Map<String, dynamic>>(
-        future:
-            dataProvider.getCurrentUserDocument(), //getCurrentUserDocument(),
+        future: dataCurrentUserProvider
+            .getCurrentUserDocument(), //getCurrentUserDocument(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(
@@ -579,6 +1088,20 @@ class CustomDrawer extends StatelessWidget {
                   height: 10,
                 ),
                 ListTile(
+                  leading: Icon(Icons.light),
+                  title: Text('Mes Lotties'),
+                  onTap: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => LottieListPage(),
+                      ),
+                    );
+                  },
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                ListTile(
                   leading: Icon(Icons.account_box),
                   title: Text("About"),
                   onTap: () {
@@ -588,10 +1111,60 @@ class CustomDrawer extends StatelessWidget {
                       builder: (BuildContext context) {
                         return AlertDialog(
                           title: Center(child: Text('Mon Code QR')),
-                          content: SizedBox(
-                              width: 200,
-                              height: 200,
-                              child: PrettyQr(data: userData['id'])),
+                          content:
+                              // SizedBox(
+                              //     width: 200,
+                              //     height: 200,
+                              //     child:
+                              //     Center(
+                              //         child: PrettyQrView.data(
+                              //   data: userData['id'],
+                              //   decoration: PrettyQrDecoration(
+                              //     shape: PrettyQrSmoothSymbol(
+                              //         roundFactor: 1, color: Colors.blue),
+                              //     image: PrettyQrDecorationImage(
+                              //       padding: EdgeInsets.all(50),
+                              //       image:
+                              //           AssetLottie(), //const AssetImage('assets/images/icon.png'),
+                              //       position:
+                              //           PrettyQrDecorationImagePosition.embedded,
+                              //     ),
+                              //   ),
+                              // )),
+                              Center(
+                            child: Stack(
+                              alignment: Alignment.center,
+                              children: [
+                                PrettyQrView.data(
+                                    data: userData['id'],
+                                    decoration: PrettyQrDecoration(
+                                      shape: PrettyQrSmoothSymbol(
+                                          roundFactor: 1, color: Colors.blue),
+                                      image: const PrettyQrDecorationImage(
+                                        scale: 0.3,
+                                        padding: EdgeInsets.all(50),
+                                        image: const AssetImage(
+                                            'assets/images/icon.png'),
+                                        position:
+                                            PrettyQrDecorationImagePosition
+                                                .embedded,
+                                      ),
+                                    )),
+                                // Positionnez l'animation Lottie par-dessus le PrettyQrView
+                                //Positioned.fill(child:
+                                Center(
+                                  child: Lottie.asset(
+                                    'assets/lotties/125469-meditating-panda.json',
+                                    width: 130,
+                                    height: 130,
+                                    animate: true,
+                                    options: LottieOptions(),
+                                  ),
+                                ),
+                                //),
+                              ],
+                            ),
+                          ),
                           actions: <Widget>[
                             Center(
                               child: Padding(

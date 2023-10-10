@@ -2,10 +2,14 @@ import 'dart:ui';
 import 'package:calendar_timeline/calendar_timeline.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
+import '../f_wallet/main.dart' as wallet;
 import 'package:ramzy/food/MyTabCategories.dart';
 import 'package:ramzy/food/home_screen_food.dart';
 import 'package:ramzy/food/webScrab.dart';
@@ -201,10 +205,41 @@ class bottomNavigation extends StatefulWidget {
 
 class _bottomNavigationState extends State<bottomNavigation> {
   BannerAd? _banner;
+  User? currentUser = FirebaseAuth.instance.currentUser!;
   @override
   void initState() {
     super.initState();
     _createBannerAd();
+
+    // FirebaseFirestore.instance
+    //     .collection('Users')
+    //     .doc(currentUser!.uid)
+    //     .snapshots()
+    //     .listen((DocumentSnapshot snapshot) {
+    //   if (snapshot.exists) {
+    //     var monAttribut = snapshot['coins'];
+    //     bool dialogShown = snapshot['dialogShown'];
+    //     if (!dialogShown) {
+    //       // Affichez une boîte de dialogue lorsque l'attribut change
+    //       showDialog(
+    //         context: context,
+    //         barrierDismissible: false,
+    //         builder: (BuildContext context) {
+    //           return WillPopScope(
+    //             onWillPop: () async {
+    //               // Empêche la fermeture en utilisant le bouton de retour arrière
+    //               return false;
+    //             },
+    //             child: CongratulationsDialog(
+    //               animationAsset: 'assets/lotties/animation_lmqwfkzg.json',
+    //               coins: monAttribut,
+    //             ),
+    //           );
+    //         },
+    //       );
+    //     }
+    //   }
+    // });
   }
 
   void _createBannerAd() {
@@ -240,7 +275,11 @@ class _bottomNavigationState extends State<bottomNavigation> {
         selectedIndex: currentPageIndex,
         destinations: <Widget>[
           NavigationDestination(
-            icon: Icon(FontAwesomeIcons.home),
+            icon: Icon(FontAwesomeIcons.wallet),
+            label: 'Wallet',
+          ),
+          NavigationDestination(
+            icon: Icon(FontAwesomeIcons.bowlFood),
             label: 'Home',
           ),
           NavigationDestination(
@@ -251,10 +290,10 @@ class _bottomNavigationState extends State<bottomNavigation> {
             icon: Icon(FontAwesomeIcons.facebookMessenger),
             label: 'Messenges',
           ),
-          NavigationDestination(
-            icon: Icon(FontAwesomeIcons.airbnb),
-            label: 'Staggered',
-          ),
+          // NavigationDestination(
+          //   icon: Icon(FontAwesomeIcons.airbnb),
+          //   label: 'Staggered',
+          // ),
           NavigationDestination(
             icon: Icon(FontAwesomeIcons.list),
             label: 'Lives',
@@ -279,6 +318,7 @@ class _bottomNavigationState extends State<bottomNavigation> {
       //   ),
       ,
       body: <Widget>[
+        wallet.MyWalletApp(),
         FoodHome(),
         //MyAppmainWeb(),
         // MyTabCategory(
@@ -292,7 +332,7 @@ class _bottomNavigationState extends State<bottomNavigation> {
         // ),
         homeList_StateFull(userDoc: widget.userDoc),
         ChatListScreen(),
-        homelist_staggered(userDoc: widget.userDoc),
+        // homelist_staggered(userDoc: widget.userDoc),
 
         // homeList(
         //   userDoc: widget.userDoc,
@@ -307,6 +347,72 @@ class _bottomNavigationState extends State<bottomNavigation> {
         //HotelAvailabilityScreen(),
         Profile(),
       ][currentPageIndex],
+    );
+  }
+}
+
+class CongratulationsDialog extends StatelessWidget {
+  final String animationAsset; // Chemin de l'animation Lottie
+  final double coins;
+
+  CongratulationsDialog({required this.animationAsset, required this.coins});
+
+  get currentUser => FirebaseAuth.instance.currentUser!.uid;
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      backgroundColor: Colors.transparent, // Fond transparent
+      elevation: 0, // Pas d'ombre
+      child: Container(
+        padding: EdgeInsets.all(16.0),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(10.0),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Lottie.asset(
+              animationAsset, // Utilisez le chemin de l'animation Lottie fourni
+              width: 100,
+              height: 100,
+            ),
+            SizedBox(height: 16.0),
+            Text(
+              'Félicitations !',
+              style: TextStyle(
+                fontSize: 20.0,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            SizedBox(height: 8.0),
+            Text(
+              'Votre Avez Reçu.',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 16.0,
+              ),
+            ),
+            PriceWidget(
+              price: coins,
+            ),
+            SizedBox(height: 16.0),
+            ElevatedButton(
+              onPressed: () {
+                FirebaseFirestore.instance
+                    .collection('Users')
+                    .doc(currentUser!)
+                    .set({'dialogShown': true}, SetOptions(merge: true)).then(
+                  (value) => Navigator.of(context).pop(),
+                );
+                // Fermez la boîte de dialogue
+              },
+              child: Text('OK'),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

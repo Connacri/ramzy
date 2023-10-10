@@ -20,6 +20,8 @@ import 'pages/adminLoggedPage.dart';
 import 'pages/unloggerPublicPage.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/date_symbol_data_local.dart'; // Importez cette ligne
+import 'dart:async';
+import 'dart:convert';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -61,6 +63,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
+
     return ChangeNotifierProvider(
         create: (context) => googleSignInProvider(),
         //lazy: true,

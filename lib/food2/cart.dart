@@ -273,8 +273,8 @@ class CartPage2 extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20.0),
               child: Text(
-                intl.NumberFormat.currency( locale:
-                'fr_FR', symbol: 'DZD ', decimalDigits: 2)
+                intl.NumberFormat.currency(
+                        locale: 'fr_FR', symbol: 'DZD ', decimalDigits: 2)
                     .format(totalAmount),
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
@@ -400,9 +400,11 @@ class CartPage2 extends StatelessWidget {
   void confirmAndSendToFirestore(BuildContext context,
       List<Map<String, dynamic>> cartItems, double totalAmount) async {
     final dataProvider = Provider.of<DataProvider>(context, listen: false);
+    final dataCurrentUserProvider =
+        Provider.of<DataCurrentUserProvider>(context, listen: false);
     final currentTime = DateTime.now();
     final Map<String, dynamic> userData =
-        await dataProvider.getCurrentUserDocument();
+        await dataCurrentUserProvider.getCurrentUserDocument();
 
     if (userData.isNotEmpty && userData.containsKey('id')) {
       final String userId = userData['id'];

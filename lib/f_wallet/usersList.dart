@@ -6,14 +6,14 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
-import 'package:ramzy/food2/main.dart';
-import 'package:ramzy/food2/models.dart';
-import 'package:ramzy/food2/paymentPage.dart';
+
 import 'package:intl/intl.dart';
+import 'package:ramzy/f_wallet/main.dart';
+import 'package:ramzy/f_wallet/payment.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:intl/intl.dart' as intl;
 
-class UserListPage extends StatelessWidget {
+class UserListPageCoins extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -82,7 +82,7 @@ class UserListPage extends StatelessWidget {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(
                 child: Container(
-                    height: 20, width: 20, child: CircularProgressIndicator()));
+                    height: 30, width: 30, child: CircularProgressIndicator()));
           }
 
           if (snapshot.hasError) {
@@ -109,7 +109,7 @@ class UserListPage extends StatelessWidget {
                   onTap: () {
                     Navigator.of(context).push(MaterialPageRoute(
                         builder: (context) =>
-                            TransactionPage2(scannedUserId: users[index].id)));
+                            TransactionPage(scannedUserId: users[index].id)));
                   },
                   child: CircleAvatar(
                     backgroundImage: NetworkImage(user['avatar'] ?? ''),
@@ -161,14 +161,14 @@ class Historique extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final dataProvider = Provider.of<DataProvider>(context, listen: false);
+    final dataProvider = Provider.of<UserDataProvider>(context, listen: false);
     final dataCurrentUserProvider =
-        Provider.of<DataCurrentUserProvider>(context, listen: false);
+        Provider.of<UserDataProvider>(context, listen: false);
 
     final User? user = FirebaseAuth.instance.currentUser;
-    Provider.of<DataCurrentUserProvider>(context, listen: false)
+    Provider.of<UserDataProvider>(context, listen: false)
         .fetchCurrentUserData();
-    Provider.of<DataCurrentUserProvider>(context, listen: false)
+    Provider.of<UserDataProvider>(context, listen: false)
         .fetchScannedUserData(user!.uid);
     return Scaffold(
       body: StreamBuilder<QuerySnapshot>(
@@ -220,7 +220,7 @@ class Historique extends StatelessWidget {
                             fontWeight: FontWeight.w400,
                           ),
                         ),
-                        Consumer<DataCurrentUserProvider>(
+                        Consumer<UserDataProvider>(
                           builder: (context, dataProvider, child) {
                             final userData = dataProvider.currentUserData;
 
@@ -256,7 +256,7 @@ class Historique extends StatelessWidget {
                           Rect.fromLTRB(0, 0, rect.width, rect.height));
                     },
                     blendMode: BlendMode.darken,
-                    child: Consumer<DataCurrentUserProvider>(
+                    child: Consumer<UserDataProvider>(
                       builder: (context, dataProvider, child) {
                         final userData = dataProvider.currentUserData;
 
@@ -298,7 +298,7 @@ class Historique extends StatelessWidget {
                                   color: _color,
                                 ),
                               ),
-                              Consumer<DataCurrentUserProvider>(
+                              Consumer<UserDataProvider>(
                                 builder: (context, dataProvider, child) {
                                   final userData = dataProvider.currentUserData;
 
@@ -473,201 +473,3 @@ class Historique extends StatelessWidget {
     }
   }
 }
-
-// class Historique extends StatelessWidget {
-//   const Historique({Key? key}) : super(key: key);
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     final dataProvider = Provider.of<DataProvider>(context, listen: false);
-//     final User? user = FirebaseAuth.instance.currentUser;
-//     // final userData = dataProvider.currentUserData;
-//     // final coins =
-//     //     userData['coins'] as num; // Assurez-vous que 'coins' est un nombre
-//     Provider.of<DataProvider>(context, listen: false).fetchCurrentUserData();
-//     Provider.of<DataProvider>(context, listen: false)
-//         .fetchScannedUserData(user!.uid);
-//     return Scaffold(
-//       appBar: AppBar(
-//         title: Consumer<DataProvider>(
-//           builder: (context, dataProvider, child) {
-//             final userData = dataProvider.currentUserData;
-//
-//             if (userData.isEmpty) {
-//               // Display a loading indicator while data is being fetched.
-//               return Center(
-//                   //child: CircularProgressIndicator(),
-//                   );
-//             } else {
-//               return AnimatedFlipCounter(
-//                 value: userData[
-//                     'coins'], // Utilisez la partie entière de priceValue.
-//                 prefix: "DZD ",
-//                 textStyle: TextStyle(
-//                   fontFamily: 'OSWALD',
-//                   color: Colors.green,
-//                   fontSize: 20,
-//                   fontWeight: FontWeight.w500,
-//                 ),
-//               );
-//             }
-//           },
-//         ),
-//       ),
-//       body: CustomScrollView(
-//         slivers: <Widget>[
-//           SliverList(
-//               delegate: SliverChildListDelegate([
-//             StreamBuilder<QuerySnapshot>(
-//               stream: FirebaseFirestore.instance
-//                   .collection('transactions')
-//                   //.where('senderUserId', isEqualTo: user?.uid)
-//                   .orderBy('timestamp',
-//                       descending: true) // Tri par timestamp décroissant
-//                   .snapshots(),
-//               builder: (context, snapshot) {
-//                 if (snapshot.connectionState == ConnectionState.waiting) {
-//                   return Center(
-//                     child: CircularProgressIndicator(),
-//                   );
-//                 }
-//
-//                 if (snapshot.hasError) {
-//                   return Center(
-//                     child:
-//                         Text('Une erreur s\'est produite : ${snapshot.error}'),
-//                   );
-//                 }
-//
-//                 if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-//                   return Center(
-//                     child:
-//                         Lottie.asset('assets/lotties/animation_lmqwf1by.json'),
-//                   );
-//                   //Center(child: Text('Aucune transaction trouvée.'));
-//                 }
-//
-//                 final transactions = snapshot.data!.docs;
-// // Tri des transactions par date (timestamp)
-// //           transactions.sort((a, b) {
-// //             final timestampA = a['timestamp'] as Timestamp;
-// //             final timestampB = b['timestamp'] as Timestamp;
-// //             return timestampB.compareTo(
-// //                 timestampA); // Tri décroissant (le plus récent en premier)
-// //           });
-//                 return ListView.builder(
-//                   itemCount: transactions.length,
-//                   itemBuilder: (context, index) {
-//                     final transactionData =
-//                         transactions[index].data() as Map<String, dynamic>;
-//
-//                     final receiverUserId = transactionData['receiverUserId'];
-//
-//                     final senderUserId = transactionData['senderUserId'];
-//
-//                     // Vérifiez si le current user est soit le senderUserId ou le receiverUserId
-//                     final isCurrentUserTransaction =
-//                         senderUserId == user?.uid ||
-//                             receiverUserId == user?.uid;
-//
-//                     if (!isCurrentUserTransaction) {
-//                       // Si ce n'est pas la transaction de l'utilisateur actuel, sautez-la
-//                       return SizedBox.shrink();
-//                     }
-//                     return FutureBuilder(
-//                       future: dataProvider.fetchScannedUserData(receiverUserId),
-//                       builder: (context, userDataSnapshot) {
-//                         if (userDataSnapshot.connectionState ==
-//                             ConnectionState.waiting) {
-//                           return Shimmer.fromColors(
-//                             child: ListTile(
-//                                 title: Text(
-//                                     'Transaction #${transactions[index].id}'),
-//                                 subtitle: Text('Transaction #$receiverUserId'),
-//                                 trailing: PriceWidget(
-//                                   price: transactionData['amount'],
-//                                 )
-//                                 // Text('Montant: ${transactionData['amount']}'),
-//                                 ),
-//                             baseColor: Colors.grey[300]!,
-//                             highlightColor: Colors.grey[100]!,
-//                           );
-//                         }
-//
-//                         if (userDataSnapshot.hasError) {
-//                           return ListTile(
-//                               title: Text(
-//                                   'Transaction #${transactions[index].id}'),
-//                               subtitle: Text('Transaction #$receiverUserId'),
-//                               trailing: PriceWidget(
-//                                 price: transactionData['amount'],
-//                               )
-//                               // Text('Montant: ${transactionData['amount']}'),
-//                               );
-//                         }
-//
-//                         final userData =
-//                             userDataSnapshot.data as Map<String, dynamic>;
-//                         final displayName = userData['displayName'];
-//                         final email = userData['email'];
-//                         final coins = userData['coins'];
-//
-//                         return ListTile(
-//                             leading: CircleAvatar(
-//                               backgroundImage: NetworkImage(userData['avatar']),
-//                             ),
-//                             subtitle:
-//                                 // Column(
-//                                 //   children: [
-//                                 Text(
-//                               dateText(transactionData['timestamp']),
-//                               //'Transaction #${transactions[index].id}'.toUpperCase(),
-//                               style: TextStyle(
-//                                   color: Colors.black45, fontSize: 13),
-//                             ),
-//                             // Text('Transaction #$receiverUserId'),
-//                             //   ],
-//                             // ),
-//                             title: Text(
-//                               userData['displayName'].toString().toUpperCase(),
-//                               overflow: TextOverflow.ellipsis,
-//                             ),
-//                             trailing: Text(
-//                               intl.NumberFormat.currency( locale:
-//                                                 'fr_FR',
-//                                 symbol: 'DZD ',
-//                                 decimalDigits: 2,
-//                               ).format(transactionData['amount']),
-//                               overflow: TextOverflow.ellipsis,
-//                               style: TextStyle(
-//                                 color: Colors.blue,
-//                                 fontSize: 18,
-//                                 fontWeight: FontWeight.w400,
-//                               ),
-//                             )
-//
-//                             //Text('Montant: ${transactionData['amount']}'),
-//                             );
-//                       },
-//                     );
-//                   },
-//                 );
-//               },
-//             ),
-//           ])),
-//         ],
-//       ),
-//     );
-//   }
-//
-//   String dateText(Timestamp? timestamp) {
-//     if (timestamp != null) {
-//       final dateTime = timestamp.toDate(); // Convertir Timestamp en DateTime
-//       final dateFormatter =
-//           DateFormat('dd MMM yyyy HH:mm'); // Format de date souhaité
-//       return dateFormatter.format(dateTime);
-//     } else {
-//       return ''; // Retourne une chaîne vide si le timestamp est null
-//     }
-//   }
-// }

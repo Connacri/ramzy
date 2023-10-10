@@ -34,7 +34,6 @@ dependencies:
   carousel_slider: ^4.2.1
   image_picker: ^0.8.6+4
   intl_phone_field: ^3.1.0
-  pretty_qr_code: ^2.0.3
   qr_code_scanner: ^1.0.1
   ticket_widget: ^0.0.1
   readmore: ^2.2.0
@@ -86,6 +85,9 @@ dependencies:
   timeline_tile_nic: ^2.0.1
   timelines:
   animated_flip_counter: ^0.2.6
+  pretty_qr_code: ^3.0.0
+
+
 
 dev_dependencies:
   flutter_test:
@@ -146,6 +148,8 @@ flutter:
     - assets/lotties/124102-loading-screen.json
     - assets/lotties/8998-scanning.json
     - assets/images/ic_launcher/1024.png
+    - assets/images/744878.png
+    - assets/images/icon.png
     - assets/firebase_logo.png
     - assets/google_logo.png
     - assets/foodsList.json

@@ -10,15 +10,80 @@ import 'package:ramzy/food2/models.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class FoodHome extends StatelessWidget {
-  const FoodHome({super.key});
+  const FoodHome({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (_) => DataProvider(),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider<DataCurrentUserProvider>(
+            create: (_) => DataCurrentUserProvider()),
+        ChangeNotifierProvider<DataProvider>(create: (_) => DataProvider()),
+      ],
       child: MyApp(),
     );
   }
+}
+
+class DataCurrentUserProvider extends ChangeNotifier {
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  Future<Map<String, dynamic>> getCurrentUserDocument() async {
+    final User? user = FirebaseAuth.instance.currentUser;
+
+    if (user != null) {
+      final DocumentSnapshot<Map<String, dynamic>> userSnapshot =
+          await _firestore.collection('Users').doc(user.uid).get();
+
+      if (userSnapshot.exists) {
+        return userSnapshot.data()!;
+      }
+    }
+
+    return {};
+  }
+
+  ///////////////////////////2///////////////////////////////////////////
+  Map<String, dynamic> _currentUserData = {};
+  Map<String, dynamic> get currentUserData => _currentUserData;
+  Future<Map<String, dynamic>> fetchCurrentUserData() async {
+    final User? user = FirebaseAuth.instance.currentUser;
+
+    if (user != null) {
+      final String currentUserId = user.uid;
+      final DocumentSnapshot<Map<String, dynamic>> userSnapshot =
+          await _firestore.collection('Users').doc(user.uid).get();
+
+      if (userSnapshot.exists) {
+        _currentUserData = userSnapshot.data()!;
+
+        notifyListeners();
+        return _currentUserData; // Ajoutez cette ligne pour renvoyer les données
+      }
+    }
+
+    return {}; // Ajoutez cette ligne pour renvoyer un objet vide si les données ne sont pas trouvées
+  }
+
+  Map<String, dynamic> _scannedUserData = {};
+  Map<String, dynamic> get scannedUserData => _scannedUserData;
+
+  Future<Map<String, dynamic>> fetchScannedUserData(String scannedUser) async {
+    if (scannedUser != null) {
+      final DocumentSnapshot<Map<String, dynamic>> userSnapshot =
+          await _firestore.collection('Users').doc(scannedUser).get();
+
+      if (userSnapshot.exists) {
+        _scannedUserData = userSnapshot.data()!;
+
+        notifyListeners();
+        return _scannedUserData; // Ajoutez cette ligne pour renvoyer les données
+      }
+    }
+
+    return {}; // Ajoutez cette ligne pour renvoyer un objet vide si les données ne sont pas trouvées
+  }
+
+///////////////////////////2///////////////////////////////////////////
 }
 
 class DataProvider extends ChangeNotifier {
@@ -114,15 +179,6 @@ class DataProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  // Future<void> addToFavorites(Map<String, dynamic> item) async {
-  //   List<Object> favorites = _prefs.getStringList('favorites') ?? [];
-  //
-  //   favorites.add(item);
-  //   await _prefs.setStringList(
-  //       'favorites', favorites.map((e) => e.toString()).toList());
-  //   notifyListeners();
-  // }
-
   List<Map<String, dynamic>> getCart() {
     if (!_prefsInitialized) {
       // Wait for initialization to complete.
@@ -164,68 +220,10 @@ class DataProvider extends ChangeNotifier {
         as Stream<QuerySnapshot<Map<String, dynamic>>>;
   }
 
-  Future<Map<String, dynamic>> getCurrentUserDocument() async {
-    final User? user = FirebaseAuth.instance.currentUser;
-
-    if (user != null) {
-      final DocumentSnapshot<Map<String, dynamic>> userSnapshot =
-          await _firestore.collection('Users').doc(user.uid).get();
-
-      if (userSnapshot.exists) {
-        return userSnapshot.data()!;
-      }
-    }
-
-    return {};
-  }
-
-  Map<String, dynamic> _currentUserData = {};
-  Map<String, dynamic> get currentUserData => _currentUserData;
-
-  Future<Map<String, dynamic>> fetchCurrentUserData() async {
-    final User? user = FirebaseAuth.instance.currentUser;
-
-    if (user != null) {
-      final String currentUserId = user.uid;
-      final DocumentSnapshot<Map<String, dynamic>> userSnapshot =
-          await _firestore.collection('Users').doc(user.uid).get();
-
-      if (userSnapshot.exists) {
-        _currentUserData = userSnapshot.data()!;
-
-        notifyListeners();
-        return _currentUserData; // Ajoutez cette ligne pour renvoyer les données
-      }
-    }
-
-    return {}; // Ajoutez cette ligne pour renvoyer un objet vide si les données ne sont pas trouvées
-  }
-
   Stream<QuerySnapshot> getTransactionStream() {
     return FirebaseFirestore.instance.collection('transactions').snapshots();
   }
 
-  ///////////////////////////2///////////////////////////////////////////
-  Map<String, dynamic> _scannedUserData = {};
-  Map<String, dynamic> get scannedUserData => _scannedUserData;
-
-  Future<Map<String, dynamic>> fetchScannedUserData(String scannedUser) async {
-    if (scannedUser != null) {
-      final DocumentSnapshot<Map<String, dynamic>> userSnapshot =
-          await _firestore.collection('Users').doc(scannedUser).get();
-
-      if (userSnapshot.exists) {
-        _scannedUserData = userSnapshot.data()!;
-
-        notifyListeners();
-        return _scannedUserData; // Ajoutez cette ligne pour renvoyer les données
-      }
-    }
-
-    return {}; // Ajoutez cette ligne pour renvoyer un objet vide si les données ne sont pas trouvées
-  }
-
-  ///////////////////////////2///////////////////////////////////////////
   // Méthode pour augmenter la quantité d'un article
   void increaseQuantity(int index) {
     List<Map<String, dynamic>> cartItems = getCart();
@@ -326,6 +324,8 @@ class DataProvider extends ChangeNotifier {
 }
 
 class MyApp extends StatelessWidget {
+  get currentUser => FirebaseAuth.instance.currentUser!.uid;
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -338,7 +338,9 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSwatch(
             primarySwatch: Colors.lightBlue, backgroundColor: Colors.white),
       ),
-      home: MonWidget(),
+      home: MonWidget(
+        scannedUser: currentUser,
+      ),
     );
   }
 }
