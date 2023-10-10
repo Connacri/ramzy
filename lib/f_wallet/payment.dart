@@ -442,6 +442,9 @@ class _TransactionSubmitButtonState extends State<TransactionSubmitButton> {
                   : () async {
                       if (_isSubmitting) return;
                       if (widget.formKey.currentState!.validate()) {
+                        setState(() {
+                          _isSubmitting = true;
+                        });
                         // Récupérez le montant saisi par l'utilisateur depuis le champ de texte
                         String amountStr = widget.amountController.text;
                         double amount = double.tryParse(amountStr) ?? 0.0;
@@ -451,6 +454,9 @@ class _TransactionSubmitButtonState extends State<TransactionSubmitButton> {
                           // Montant invalide, affichez un message d'erreur
                           // Vous pouvez afficher un dialogue d'erreur ou un message d'erreur ici
                           print('Montant invalide');
+                          setState(() {
+                            _isSubmitting = false;
+                          });
                           return;
                         }
 
@@ -514,6 +520,7 @@ class _TransactionSubmitButtonState extends State<TransactionSubmitButton> {
 
                             double receiverCoins =
                                 receiverSnapshot['coins'] ?? 0.0;
+
                             transaction.set(
                                 receiverRef,
                                 {
@@ -533,6 +540,8 @@ class _TransactionSubmitButtonState extends State<TransactionSubmitButton> {
                             });
 
                             // Affichez un message de succès ici
+                            addTransactionToFirestore(widget.userData['id'],
+                                widget.scannedUserId, amount);
                           });
 
                           // Réinitialisez l'état après la transaction réussie
@@ -543,6 +552,12 @@ class _TransactionSubmitButtonState extends State<TransactionSubmitButton> {
                           print('Erreur lors de la transaction : $e');
                           // Affichez un message d'erreur ici
                         }
+                        setState(() {
+                          _isSubmitting = false;
+                        });
+                        widget.amountController.clear();
+                        FocusScope.of(context).unfocus();
+                        //Navigator.of(context).pushReplacement(newRoute)
                       }
                     },
 
